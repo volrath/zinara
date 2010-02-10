@@ -1,0 +1,11 @@
+*.pdf
+*.log
+*.aux
+*.out
+*.toc
+*.url
+
+*.class
+zinara/parser/parser.java
+zinara/parser/sym.java
+
