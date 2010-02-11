@@ -6,16 +6,28 @@ init with {: scanner.init();              :};
 scan with {: return scanner.next_token(); :};
 
 /* Terminals (tokens returned by the scanner). */
-terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
-terminal           UMINUS, LPAREN, RPAREN;
-terminal           IDENTIFIER;
-terminal           INTEGER_V;
-terminal           FLOAT_V;
-terminal           BOOL_V;
-terminal           CHAR_V;
+terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD, POW, UMINUS;
+terminal MAIN; 
+terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF; 
+terminal INTEGER_V, FLOAT_V, CHAR_V, TRUE, FALSE, STRING;
+terminal INTEGER, FLOAT, CHAR, BOOL;
+terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
+terminal COMMA, DOUBLEDOT, IDENTIFIER, RETURN, RETURNS;
+terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
+terminal LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ, IN; 
+terminal AND, SAND, OR, SOR, XOR; 
+terminal IF, WHILE, CYCLE, FOR, DEF, ASIG; 
+
 
 /* Non-terminals */
-nonterminal            expr_list, expr_part;
+nonterminal program, main, type, type_list, dict_types, dict_type;
+nonterminal decl_list, declaration, decl, args_list, def_decl, arg;
+nonterminal arithmetic_op, relational_op, logical_op, expr_comma_list;
+nonterminal dict_vals, dict_val, instruction, ctrl_struct, s_ident_list;
+nonterminal code_block, s_asig, s_asig_list, asig, asig_list, conds;
+nonterminal fi, elihw, elcyc, rof, fed, print, number, identifier;
+nonterminal inst_list, cycle_blocks;
+nonterminal            expr_list, expr_part, bool;
 nonterminal            expr;
 
 /* Precedences */
@@ -91,10 +103,10 @@ expr_part ::= expr SEMI;
 
 expr      ::= number
             | CHAR_V
-            | BOOL_V
+            | bool
             | identifier
     /* ----- Basic types ----- */
-            | expr artimethic_op expr
+            | expr arithmetic_op expr
             | expr relational_op expr
             | expr logical_op expr
 	    | MINUS expr
@@ -117,7 +129,7 @@ expr      ::= number
             | READ
 	    ;
 
-artimethic_op ::= PLUS
+arithmetic_op ::= PLUS
                 | MINUS
                 | TIMES
                 | DIVIDE
@@ -163,7 +175,7 @@ instruction   ::= asig
                 | RETURN
                 ;
 
-ctrl_structs  ::= IF conds DOUBLEDOT code_block fi
+ctrl_struct   ::= IF conds DOUBLEDOT code_block fi
                 | WHILE conds DOUBLEDOT code_block elihw
                 | FOR IDENTIFIER IN expr DOUBLEDOT code_block rof
                 | CYCLE DOUBLEDOT code_block cycle_blocks elcyc
@@ -199,6 +211,8 @@ print     ::= PRINT LPAREN STRING RPAREN;
 number       ::= INTEGER_V
                | FLOAT_V
                ;
+
+bool         ::= TRUE | FALSE;
 
 // as l-value
 identifier   ::= IDENTIFIER
