@@ -8,11 +8,15 @@ scan with {: return scanner.next_token(); :};
 /* Terminals (tokens returned by the scanner). */
 terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
 terminal           UMINUS, LPAREN, RPAREN;
-terminal Integer   NUMBER;
+terminal           IDENTIFIER;
+terminal           INTEGER_V;
+terminal           FLOAT_V;
+terminal           BOOL_V;
+terminal           CHAR_V;
 
 /* Non-terminals */
 nonterminal            expr_list, expr_part;
-nonterminal Integer    expr;
+nonterminal            expr;
 
 /* Precedences */
 precedence left PLUS, MINUS;
@@ -20,33 +24,188 @@ precedence left TIMES, DIVIDE, MOD;
 precedence left UMINUS;
 
 /* The grammar */
-expr_list ::= expr_list expr_part 
+
+/*
+      THE PROGRAM
+ */
+program   ::= main 
+            | decl_list main
+            ;
+
+main      ::= MAIN code_block END;
+
+/*
+      DECLARATIONS
+ */
+// Types
+type         ::= INTEGER
+               | FLOAT
+               | CHAR
+               | BOOL
+               | LBRACKET type RBRACKET      // [type]
+               | LPAREN type_list RPAREN     // (type0, type1, ..., typen)
+               | LBRACET dict_types RBRACET   // {ident0:type0, ident1:type1 ..., identn:typen}
+               ;
+
+type_list    ::= type_list COMMA type
+               | type
+               ;
+
+dict_types   ::= dict_types COMMA dict_type
+               | dict_type
+               ;
+
+dict_type    ::= IDENTIFIER DOUBLEDOT type;
+
+decl_list    ::= decl_list declaration
+               | decl_list def_decl
+               | declaration
+               | def_decl
+               ;
+
+declaration  ::= VAR decl
+               | decl
+               ;
+decl         ::= type s_asig
+               | type s_ident_list
+               | type IDENTIFIER
+               ;
+
+def_decl     ::= DEF IDENTIFIER LPAREN args_list RETURNS LT type GT DOUBLEDOT code_block fed;
+
+args_list    ::= args_list COMMA arg
+               | arg
+               ;
+
+arg          ::= COPY IDENTIFIER DOUBLEDOT type
+               | IDENTIFIER DOUBLEDOT type
+               ;
+
+/*
+      EXPRESIONS
+ */
+expr_list ::= expr_list expr_part
             | expr_part;
 
-expr_part ::= expr:e {: System.out.println("= " + e); :} SEMI;
+expr_part ::= expr SEMI;
 
-expr      ::= expr:e1 PLUS expr:e2
-	      {: RESULT = new Integer(e1.intValue() + e2.intValue()); :} 
-	      | 
-              expr:e1 MINUS expr:e2    
-              {: RESULT = new Integer(e1.intValue() - e2.intValue()); :} 
-	      | 
-              expr:e1 TIMES expr:e2 
-	      {: RESULT = new Integer(e1.intValue() * e2.intValue()); :} 
-	      | 
-              expr:e1 DIVIDE expr:e2 
-	      {: RESULT = new Integer(e1.intValue() / e2.intValue()); :} 
-	      | 
-              expr:e1 MOD expr:e2 
-	      {: RESULT = new Integer(e1.intValue() % e2.intValue()); :} 
-	      | 
-              NUMBER:n                 
-	      {: RESULT = n; :} 
-	      | 
-              MINUS expr:e             
-	      {: RESULT = new Integer(0 - e.intValue()); :} 
-	      %prec UMINUS
-	      | 
-              LPAREN expr:e RPAREN     
-	      {: RESULT = e; :} 
-	      ;
+expr      ::= number
+            | CHAR_V
+            | BOOL_V
+            | identifier
+    /* ----- Basic types ----- */
+            | expr artimethic_op expr
+            | expr relational_op expr
+            | expr logical_op expr
+	    | MINUS expr
+	    | LPAREN expr RPAREN
+    /* ----- Composed types ----- */
+            // literals
+            | LBRACKET expr_comma_list RBRACKET                 // list
+                                                                // comprehension list
+            | LPAREN expr_comma_list RPAREN                     // tuple
+            | LBRACET dict_vals RBRACET                         // dict
+            // operations
+            | IDENTIFIER LBRACKET expr RBRACKET                 // indexing
+            | IDENTIFIER LBRACKET expr DOUBLEDOT expr RBRACKET  // slicing
+            | expr PLUSPLUS expr                                // plosplos
+            | expr LTLT expr                                    // push
+            | expr GTGT expr                                    // pop
+    /* ----- Functions calls ----- */
+            | IDENTIFIER LPAREN expr_list RPAREN
+    /* ----- Other expressions ----- */
+            | READ
+	    ;
+
+artimethic_op ::= PLUS
+                | MINUS
+                | TIMES
+                | DIVIDE
+                | MOD
+                | POW
+                ;
+
+relational_op ::= LT
+                | GT
+                | LTE
+                | GTE
+                | SHEQ
+                | DEEQ
+                | NOEQ
+                ;
+
+logical_op    ::= AND
+                | SAND  // &
+                | OR
+                | SOR   // |
+                | XOR
+                ;
+/*
+bitwise_op    ::= ???
+*/
+
+expr_comma_list ::= expr_comma_list COMMA expr
+                  | expr
+                  ;
+
+dict_vals       ::= dict_vals COMMA dict_val
+                  | dict_val
+                  ;
+dict_val        ::= IDENTIFIER DOUBLEDOT expr;
+
+
+/*
+      INSTRUCTIONS
+ */
+instruction   ::= asig
+                | print
+                | ctrl_struct
+                | RETURN
+                ;
+
+ctrl_structs  ::= IF conds DOUBLEDOT code_block fi
+                | WHILE conds DOUBLEDOT code_block elihw
+                | FOR IDENTIFIER IN expr DOUBLEDOT code_block rof
+                | CYCLE DOUBLEDOT code_block cycle_blocks elcyc
+                | CYCLE cycle_blocks elcyc
+                ;
+
+code_block    ::= code_block expr_list
+                | code_block inst_list
+                | expr_list
+                | inst_list
+                ;
+
+s_asig      ::= IDENTIFIER s_asig_list expr_list;
+s_asig_list ::= COMMA IDENTIFIER s_asig_list expr COMMA
+              | ASIG
+              ;
+asig        ::= identifier asig_list expr;
+asig_list   ::= COMMA identifier asig_list expr COMMA
+              | ASIG
+              ;
+
+fi        ::= END | ENDIF;
+elihw     ::= END | ENDWHILE;
+rof       ::= END | ENDFOR;
+elcyc     ::= END | ENDCYCLE;
+fed       ::= END | ENDDEF;
+
+print     ::= PRINT LPAREN STRING RPAREN;
+
+/*
+      USELESS STUFF
+ */
+number       ::= INTEGER_V
+               | FLOAT_V
+               ;
+
+// as l-value
+identifier   ::= IDENTIFIER
+               | IDENTIFIER LBRACKET INTEGER_V RBRACKET
+               | IDENTIFIER LBRACKET IDENTIFIER RBRACKET
+               ;
+
+s_ident_list ::= s_ident_list IDENTIFIER
+               | IDENTIFIER
+               ;
