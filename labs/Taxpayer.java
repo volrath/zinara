@@ -41,7 +41,8 @@ class Taxpayer {
     int income; 
     
     /* CONSTRUCTOR */
-    
+    //@ invariant isFemale != isMale;
+    //@ invariant isMarried ==> (spouse != null);
     Taxpayer(boolean jongetje, Taxpayer ma, Taxpayer pa) {
 	age = 0;
 	isMarried = false;
@@ -62,19 +63,22 @@ class Taxpayer {
     
     /* Marry to new_spouse */
     //@ requires new_spouse != null;
+    //@ requires (new_spouse.isFemale && this.isMale) || (new_spouse.isMale && this.isFemale);
     //@ ensures spouse != null;
+    //@ ensures new_spouse.spouse == this;
     void marry(Taxpayer new_spouse) {
+	new_spouse.spouse = this;
 	spouse = new_spouse;
 	isMarried = true;
     }
     
     /* Divorce from current spouse */
     //@ requires spouse != null;
-    //@ requires spouse.spouse != null;
-    // this one is not really necessary
     //@ requires spouse.spouse == this;
-    //@ ensures spouse == null;
+    //@ ensures spouse == null && isMarried == false;
+    //@ ensures \old(spouse).spouse == null && \old(spouse).isMarried == false;
     void divorce() {
+	spouse.isMarried = false;
 	spouse.spouse = null;
 	spouse = null;
 	isMarried = false;
