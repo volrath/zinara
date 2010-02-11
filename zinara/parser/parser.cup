@@ -27,13 +27,22 @@ nonterminal dict_vals, dict_val, instruction, ctrl_struct, s_ident_list;
 nonterminal code_block, s_asig, s_asig_list, asig, asig_list, conds;
 nonterminal fi, elihw, elcyc, rof, fed, print, number, identifier;
 nonterminal inst_list, cycle_blocks;
-nonterminal            expr_list, expr_part, bool;
-nonterminal            expr;
+nonterminal expr_list, expr_part, bool;
+nonterminal expr;
 
 /* Precedences */
+precedence left AND, SAND, OR, SOR, XOR;
+precedence left LT, LTE, GT, GTE;
+precedence left SHEQ, DEEQ, NOEQ;
+
+precedence left LTLT, GTGT, PLUSPLUS;
+
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE, MOD;
+precedence left POW;
 precedence left UMINUS;
+
+//precedence left INTEGER_V, FLOAT_V, CHAR_V, TRUE, FALSE;
 
 /* The grammar */
 
@@ -79,7 +88,6 @@ declaration  ::= VAR decl
                | decl
                ;
 decl         ::= type s_asig
-               | type s_ident_list
                | type IDENTIFIER
                ;
 
@@ -109,10 +117,13 @@ expr      ::= number
             | expr arithmetic_op expr
             | expr relational_op expr
             | expr logical_op expr
-	    | MINUS expr
+	    | UMINUS expr
 	    | LPAREN expr RPAREN
     /* ----- Composed types ----- */
             // literals
+            | LBRACKET RBRACKET
+            | LPAREN RPAREN
+            | LBRACET RBRACET
             | LBRACKET expr_comma_list RBRACKET                 // list
                                                                 // comprehension list
             | LPAREN expr_comma_list RPAREN                     // tuple
@@ -188,7 +199,7 @@ code_block    ::= code_block expr_list
                 | inst_list
                 ;
 
-s_asig      ::= IDENTIFIER s_asig_list expr_list;
+s_asig      ::= IDENTIFIER s_asig_list expr;
 s_asig_list ::= COMMA IDENTIFIER s_asig_list expr COMMA
               | ASIG
               ;
