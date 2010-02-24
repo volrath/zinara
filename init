@@ -1,3 +1,4 @@
 #/usr/bin/bash
 export PATH=/usr/java-1.4.2-19/j2sdk1.4.2_19/bin/:$PATH
 export CLASSPATH=`pwd`/tools/cup/:$CLASSPATH
+export JAVACMD=/usr/java-1.4.2-19/j2sdk1.4.2_19/bin/java
