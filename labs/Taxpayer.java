@@ -1,5 +1,8 @@
 
 /* 
+   Daniel Barreto N. #04-36723
+   ----------------------------------------------------------------------
+
    This assignment illustrates how specifications (esp invariants and 
    preconditions)  written in a formal language can help in removing 
    errors in code. 
@@ -26,7 +29,7 @@ class Taxpayer {
     boolean isMarried; 
     
     /* Reference to spouce if person is married, null otherwise */
-    Taxpayer spouse; 
+    Taxpayer spouse;
     
     /* Constant default income tax allowance (belastingvrije som) */
     static final int DEFAULT_ALLOWANCE = 5000;
@@ -75,9 +78,17 @@ class Taxpayer {
     /* Divorce from current spouse */
     //@ requires spouse != null;
     //@ requires spouse.spouse == this;
+    //@ requires spouse != this;
     //@ ensures spouse == null && isMarried == false;
     //@ ensures \old(spouse).spouse == null && \old(spouse).isMarried == false;
+    //@ ensures age < 65 && \old(tax_allowance) > DEFAULT_ALLOWANCE ==> tax_allowance == DEFAULT_ALLOWANCE && \old(spouse).tax_allowance == \old(spouse.tax_allowance) + (\old(tax_allowance) - DEFAULT_ALLOWANCE);
+    //@ ensures age >= 65 && \old(tax_allowance) > ALLOWANCE_OAP ==> tax_allowance == ALLOWANCE_OAP && \old(spouse).tax_allowance == \old(spouse.tax_allowance) + (\old(tax_allowance) - ALLOWANCE_OAP);
     void divorce() {
+	if (age < 65 && tax_allowance > DEFAULT_ALLOWANCE)
+	    transferAllowance(tax_allowance - DEFAULT_ALLOWANCE);
+	else
+	    transferAllowance(tax_allowance - ALLOWANCE_OAP);
+
 	spouse.isMarried = false;
 	spouse.spouse = null;
 	spouse = null;
@@ -86,7 +97,10 @@ class Taxpayer {
     
     /* Transfer change of the tax allowance from this person to his/her spouse */
     //@ requires spouse != null;
+    //@ requires spouse.spouse == this;
     //@ requires spouse != this;
+    //@ ensures tax_allowance == \old(tax_allowance) - change;
+    //@ ensures spouse.tax_allowance == \old(spouse.tax_allowance) + change;
     void transferAllowance(int change) {
 	tax_allowance = tax_allowance - change;
 	spouse.tax_allowance = spouse.tax_allowance + change;
@@ -94,6 +108,8 @@ class Taxpayer {
     
     /* Taxpayer has a birthday and the age increases by one */
     // @ensures age == \old(age) + 1;
+    // @ensures age >= 65 ==> tax_allowance <= ALLOWANCE_OAP;
+    // @ensures age < 65 ==> tax_allowance <= DEFAULT_ALLOWANCE;
     void haveBirthday() {
 	age++;
     }
