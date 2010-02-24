@@ -5,6 +5,9 @@
 *.toc
 *.url
 
+tools/jflex/doc
+tools/jflex/examples
+
 *.class
 zinara/parser/parser.java
 zinara/parser/sym.java
