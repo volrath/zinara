@@ -1,16 +1,17 @@
 package zinara.lexer;
 /* JFlex example: part of Java language lexer specification */
-import java_cup.runtime.*;
-import java_cup.runtime.Symbol;
 
-import zinara.parser.sym;
+import java_cup.runtime.*;
+
+import zinara.parser.*;
 
 /**
  * This class is a simple example lexer.
  */
 %%
 
-%class Lexer
+%class Scanner
+%public
 %unicode
 %cup
 %line
@@ -18,16 +19,16 @@ import zinara.parser.sym;
 
 %{
   private Symbol symbol(int type) {
-    return new Symbol(type, yyline, yyline);
+    return new Symbol(type, yyline, yycolumn);
   }
   private Symbol symbol(int type, Object value) {
-    return new Symbol(type, yyline, yyline, value);
+    return new Symbol(type, yyline, yycolumn, value);
   }
 %}
 
-LineTerminator = \n
+LineTerminator = \r|\n|\r\n
 InputCharacter = [^\n]
-WhiteSpace     = [ \t\f]
+WhiteSpace     = {LineTerminator} | [ \t\f]
 //EmptyLine      = ^\ *[\n]*$
 Letter         = [a-zA-Z]
 Digit          = [0-9]

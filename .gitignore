@@ -9,7 +9,9 @@ tools/jflex/doc
 tools/jflex/examples
 
 *.class
-zinara/parser/parser.java
-zinara/parser/sym.java
-zinara/parser/python_grammar.txt
-zinara/lexer/Lexer.java
+project/src/zinara/parser/parser.java
+project/src/zinara/parser/sym.java
+project/src/zinara/parser/python_grammar.txt
+project/src/zinara/lexer/Scanner.java
+project/src/zinara/lexer/Lexer.java
+project/classes/
