@@ -1,12 +1,10 @@
-package zinara.ast;
+package zinara.ast.instructions;
 
-abstract class Instruction{}
-
-class Asignation extends Instruction{
+public class Assignation extends Instruction{
     private String id;
     private Expression expr;
 
-    public Asignation(String name, Expression ex){
+    public Assignation(String name, Expression ex){
 	this.id = name;
 	this.expr = ex;
     }
