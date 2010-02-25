@@ -37,16 +37,15 @@ Alphanumeric   = [a-zA-Z0-9]
 
 Comment = {MultipleComment} | {SimpleComment}
 
-MultipleComment   = "/\." [^\.] ~"\./" | "/\." "\."+ "\./" "\ "* "\n"?
+MultipleComment   = "/\." [^\.] ~"\./" "\ "* "\n"?| "/\." "\."+ "\./" "\ "* "\n"?
 SimpleComment     = "//" {InputCharacter}* {LineTerminator}
 
 Identifier  = {Letter} {Alphanumeric}*
 Number      = {Digit}+
 
-
 %%
 
-//{Comment}                        {}
+{Comment}                        {}
 {WhiteSpace}                     {}
 ^{EmptyLine}                     {}
 

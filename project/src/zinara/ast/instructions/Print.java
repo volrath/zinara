@@ -1,4 +1,7 @@
 package zinara.ast.instructions;
+
+import zinara.ast.expression.Expression;
+
 class Print extends Instruction{
     private Expression expr;
 

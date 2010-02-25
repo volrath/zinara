@@ -1,4 +1,7 @@
 package zinara.ast.instructions;
+
+import zinara.ast.expression.ExpressionList;
+
 class FunctionCall extends Instruction{
     private ExpressionList expr_list;
     private String func_name;

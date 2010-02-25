@@ -1,4 +1,7 @@
 package zinara.ast.instructions;
+
+import zinara.ast.expression.Expression;
+
 class While extends Instruction{
     private Expression expr;
     private CodeBlock code;
