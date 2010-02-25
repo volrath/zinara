@@ -2,7 +2,7 @@ package zinara.ast.instructions;
 
 import java.util.ArrayList;
 
-class CodeBlock extends Instruction{
+public class CodeBlock extends Instruction{
     private ArrayList block;
 
     public CodeBlock(ArrayList b){
@@ -11,5 +11,9 @@ class CodeBlock extends Instruction{
 
     public ArrayList getBlock(){
 	return this.block;
+    }
+
+    public void addInst(Instruction i){
+	this.block.add(i);
     }
 }

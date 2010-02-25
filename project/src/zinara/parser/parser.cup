@@ -14,6 +14,8 @@ import java.util.ArrayList;
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
 parser code {:
+
+    public Symtable ST;
     
     /* Change the method report_error so it will display the line and
        column of where the error occurred in the input as well as the
@@ -77,7 +79,8 @@ terminal String PLUS, MINUS, TIMES, DIVIDE, MOD, POW;
 terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
 terminal String AND, SAND, OR, SOR, XOR;
 
-terminal CHAR_V, STRING_V, SEMI, UMINUS;
+terminal Character CHAR_V;
+terminal STRING_V, SEMI, UMINUS;
 terminal Main MAIN;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN; 
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
@@ -85,7 +88,7 @@ terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
 terminal COMMA, DOUBLEDOT, RETURN, RETURNS;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal AS, IN; 
-terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, FOR, DEF, ASIG; 
+terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG; 
 
 
 /* Non-terminals */
@@ -94,18 +97,21 @@ nonterminal Main main;
 nonterminal ArrayList decl_list, declaration, decl; // arraylist of declarations
 nonterminal Declaration def_decl;
 nonterminal ArrayList asig, asig_list, s_asig, s_asig_list; // arraylist of assignations
+nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
+nonterminal ArrayList cycle_default, cycle_on, else, elif; // arraylist of assignations
 nonterminal Type type;
 nonterminal ArrayList expr_list;  // arraylist of expressions
 nonterminal Expression expr;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal String identifier;
+nonterminal Instruction ctrl_struct, instruction, instruction_loop;
 
 nonterminal type_list, dict_types, dict_type;
 nonterminal args_list, arg;
-nonterminal dict_vals, dict_val, instruction, instruction_loop, ctrl_struct;
-nonterminal code_block, code_block_loop, conds;
+nonterminal dict_vals, dict_val;
+nonterminal conds;
 nonterminal fi, elihw, elcyc, rof, fed, print;
-nonterminal inst_list, cycle_blocks;
+nonterminal inst_list;
 nonterminal expr_part, elif_list;
 
 /* Precedences */
@@ -157,17 +163,17 @@ decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d);
                | def_decl:d SEMI                  {: RESULT = new ArrayList(); RESULT.add(d); :}
                ;
 
-declaration  ::= VAR decl:d                       {: for (int i = 0; i < d.size(); i++) d[i].setVariable(true); RESULT = d; :}
+declaration  ::= VAR decl:d                       {: for (int i = 0; i < d.size(); i++){((Const_Declaration)(d.get(i))).setVariable(true);}; RESULT = d; :}
                | decl:d                           {: RESULT = d; :}
                ;
-decl         ::= type:t s_asig:al                 {: RESULT = new ArrayList(); for (int i = 0; i < al.size(); i++) RESULT.add(new Declaration(t, al[i].getId(), al[i].getValue(), false)); :}
-               | type:t IDENTIFIER:id             {: RESULT = new ArrayList(); RESULT.add(new Declaration(t, new String(id), null, false)); :}
+decl         ::= type:t s_asig:al                 {: RESULT = new ArrayList(); for (int i = 0; i < al.size(); i++) RESULT.add(new Const_Declaration(t, ((Assignation)al.get(i)).getId(), ((Assignation)al.get(i)).getExpression(), false)); :}
+               | type:t IDENTIFIER:id             {: RESULT = new ArrayList(); RESULT.add(new Const_Declaration(t, new String(id), null, false)); :}
                ;
 
-def_decl     ::= DEF IDENTIFIER LPAREN args_list RPAREN RETURNS LT type GT DOUBLEDOT code_block fed  {: new Declaration(null,null,null,false); :};
+def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:st RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new Def_Declaration(t,id,null); :};
 
-args_list    ::= args_list COMMA arg
-               | arg
+args_list    ::= args_list:al COMMA arg:a
+               | arg:a
                ;
 
 arg          ::= COPY IDENTIFIER AS type
@@ -244,46 +250,54 @@ inst_list     ::= inst_list instruction SEMI
                 | instruction SEMI
                 ;
 
-instruction   ::= asig
-                | print
-		| declaration
-		| def_decl
-                | IDENTIFIER LPAREN expr_list RPAREN
-                | ctrl_struct
-                | RETURN expr
+instruction   ::= asig:a                                    {: RESULT = a; :}
+                | print expr:e                              {: RESULT = new Print(e); :}
+                | declaration:d                             {: RESULT = d; :}
+		| def_decl:dd                               {: RESULT = dd; :} 
+                | IDENTIFIER:n LPAREN expr_list:el RPAREN   {: RESULT = CallExp(n, el); :}
+                | ctrl_struct:cs                            {: RESULT = cs; :}
+                | RETURN expr:e                             {: RESULT = new Return(e); :}
                 ;
 
-instruction_loop  ::= asig
-                    | print
-     		    | declaration
-                    | IDENTIFIER LPAREN expr_list RPAREN
-                    | ctrl_struct
-                    | RETURN expr
+instruction_loop  ::= asig:a                                   {: RESULT = a; :}
+                    | print expr:e                             {: RESULT = new Print(e); :}
+                    | declaration:d                            {: RESULT = d; :}
+                    | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = CallExp(n, el); :}
+                    | ctrl_struct:cs                           {: RESULT = cs; :}
+                    | RETURN expr:e                            {: RESULT = new Return(e); :}
                     ;
 
-ctrl_struct   ::= IF expr DOUBLEDOT code_block elif_list fi
-                | WHILE expr DOUBLEDOT code_block_loop elihw
-                | FOR IDENTIFIER IN expr DOUBLEDOT code_block_loop rof
-                | CYCLE DOUBLEDOT code_block_loop cycle_blocks elcyc
-                | CYCLE SEMI cycle_blocks elcyc
+ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
+                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:}
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  {: RESULT = new For(id,cb,e);:}
+                | CYCLE DOUBLEDOT code_block_loop:cb cycle_default:cd elcyc     {: RESULT = new Cycle(cd,cb);:}
+                | CYCLE SEMI cycle_default:cd elcyc                             {: RESULT = new Cycle(cd,null);:}
                 ;
 
-elif_list     ::= elif_list ELIF expr DOUBLEDOT code_block
-                | elif_list ELSE DOUBLEDOT code_block
-		|
+else          ::= elif:el ELSE DOUBLEDOT code_block:cb   {: el.add(new IfCase(cb,new TrueExp())); RESULT = el; :}
+                | elif:el                                {: RESULT = el; :}
                 ;
 
-code_block    ::= code_block instruction SEMI
-                | instruction SEMI
+elif          ::= elif:el ELIF expr:e DOUBLEDOT code_block:cb   {: el.add(new IfCase(cb,e)); RESULT=el;:}
+                |                                               {: RESULT = new ArrayList(); :}
                 ;
 
-code_block_loop ::= code_block_loop instruction_loop SEMI
-                 | instruction_loop SEMI
+cycle_default  ::= DEFAULT DOUBLEDOT code_block_loop:cb               {: RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp())); :}
+                 | cycle_on:co DEFAULT DOUBLEDOT code_block_loop:cb   {: co.add(new CycleCase(cb,new TrueExp())); RESULT = co; :}
+                 | cycle_on:co                                        {: RESULT = co; :}
                  ;
 
-cycle_blocks  ::= cycle_blocks ON expr DO DOUBLEDOT code_block_loop
-                | ON expr DO DOUBLEDOT code_block_loop
+cycle_on       ::= cycle_on:co ON expr:e DO DOUBLEDOT code_block_loop:cb {: co.add(new CycleCase(cb,e)); RESULT = co; :}
+                 | ON expr:e DO DOUBLEDOT code_block_loop:cb             {: RESULT = (new ArrayList()); RESULT.add(new CycleCase(cb,e)); :}
+                 ;
+
+code_block    ::= code_block:cb instruction:i SEMI  {: cb.addInst(i); RESULT = cb; :}
+                | instruction:i SEMI                {: RESULT = new CodeBlock(new ArrayList()); RESULT.addInst(i); :}
                 ;
+
+code_block_loop ::= code_block_loop:cb instruction_loop:i SEMI  {: cb.addInst(i); RESULT = cb; :}
+                  | instruction_loop:i SEMI                     {: RESULT = new CodeBlock(new ArrayList()); RESULT.addInst(i); :}
+                  ;
 
 s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {: al.add(new Assignation(new String(id), e)); RESULT = al; :};
 s_asig_list ::= COMMA IDENTIFIER:id s_asig_list:al expr:e COMMA       {: al.add(new Assignation(new String(id), e)); RESULT = al; :}

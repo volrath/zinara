@@ -2,17 +2,17 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 
-public class Assignation extends Instruction{
-    private String id;
+public class IfCase{
     private Expression expr;
+    private CodeBlock code;
 
-    public Assignation(String name, Expression ex){
-	this.id = name;
+    public IfCase(CodeBlock cb, Expression ex){
+	this.code = cb;
 	this.expr = ex;
     }
 
-    public String getId(){
-	return this.id;
+    public CodeBlock getCode(){
+	return this.code;
     }
 
     public Expression getExpression(){

@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
-class Read extends Instruction{
+
+public class Read extends Instruction{
     public Read(){}
 }

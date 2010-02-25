@@ -2,7 +2,7 @@ package zinara.ast;
 
 import java.util.*;
 
-class Symtable{
+public class Symtable{
     private Hashtable symtable;
     
     public Symtable(){

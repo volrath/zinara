@@ -2,7 +2,7 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 
-class Print extends Instruction{
+public class Print extends Instruction{
     private Expression expr;
 
     public Print(Expression ex){
