@@ -30,14 +30,14 @@ import zinara.parser.*;
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\n]
 WhiteSpace     = [ \t\f]
-EmptyLine      = ( [\ ]* [\n] )
+EmptyLine      = [\ ]* "\n"
 Letter         = [a-zA-Z]
 Digit          = [0-9]
 Alphanumeric   = [a-zA-Z0-9]
 
 Comment = {MultipleComment} | {SimpleComment}
 
-MultipleComment   = "/\." [^\.] ~"\./" | "/\." "\."+ "\./"
+MultipleComment   = "/\." [^\.] ~"\./" | "/\." "\."+ "\./" "\ "* "\n"?
 SimpleComment     = "//" {InputCharacter}* {LineTerminator}
 
 Identifier  = {Letter} {Alphanumeric}*
@@ -46,9 +46,8 @@ Number      = {Digit}+
 
 %%
 
-// {Comment}                       {}
-{WhiteSpace}                    {}
-//{InputCharacter}
+//{Comment}                        {}
+{WhiteSpace}                     {}
 ^{EmptyLine}                     {}
 
  "main" "\ "* "\n"               { return symbol(sym.MAIN); }
