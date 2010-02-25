@@ -1,0 +1,58 @@
+def factorial ( copy n as Int, h90_' as Bool  ) returns < Char  >  :      
+    if n>2  : 
+       return   factorial(n-1)*n   
+    else  :   
+       return 1  
+    end   
+def factorial ( copy n as Int, h90_' as Bool  ) returns < Char  >  :      
+    if n>2  : 
+       return   factorial(n-1)*n   
+    else  :   
+       return 1  
+    end   
+end  
+end  
+
+Int gui
+
+Float a, b, c = .9 ,     8. , 9.1
+   
+main      
+var Char german',hola = ! (( -56  /78 )  <=> 90 | hola) AND 7^689,0
+var Int buuu = read
+print (  factorial  (german',u)  )       
+
+def factorial ( copy n as Int, h90_' as Bool  ) returns < Char  >  :      
+    if n>2  : 
+       return   factorial(n-1)*n   
+    else  :   
+       return 1  
+    end   
+end  
+
+for Hola in abuuuuuu:
+  cycle:
+
+  catdog,rt=make(6+7,read,gh-dharma),fghjk
+
+  	on po<=>uj do:
+  	  if a<=o:
+  	    po=i
+          elif dharma<=lost:
+            Char a,b = read,garabato
+          elif dharma <= lost:
+            Int a, v,d = read,garabato,h
+          else :
+            Int a,b = read,garabato
+  	  end
+
+  	on h<op do:
+  	  jaja=7<8
+          while 7<9:
+            y=1        
+          endwhile 
+	  print(jota)
+  end    
+end 
+
+endmain

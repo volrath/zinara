@@ -91,8 +91,8 @@ nonterminal Type type;
 nonterminal type_list, dict_types, dict_type;
 nonterminal args_list, arg;
 nonterminal arithmetic_op, relational_op, logical_op, expr_comma_list;
-nonterminal dict_vals, dict_val, instruction, ctrl_struct;
-nonterminal code_block, s_asig, s_asig_list, asig, asig_list, conds;
+nonterminal dict_vals, dict_val, instruction, instruction_loop, ctrl_struct;
+nonterminal code_block, code_block_loop, s_asig, s_asig_list, asig, asig_list, conds;
 nonterminal fi, elihw, elcyc, rof, fed, print, number, identifier;
 nonterminal inst_list, cycle_blocks;
 nonterminal expr_list, expr_part, bool, elif_list;
@@ -238,15 +238,25 @@ inst_list     ::= inst_list instruction SEMI
 
 instruction   ::= asig
                 | print
+		| declaration
+		| def_decl
                 | IDENTIFIER LPAREN expr_list RPAREN
                 | ctrl_struct
                 | RETURN expr
                 ;
 
+instruction_loop  ::= asig
+                    | print
+     		    | declaration
+                    | IDENTIFIER LPAREN expr_list RPAREN
+                    | ctrl_struct
+                    | RETURN expr
+                    ;
+
 ctrl_struct   ::= IF expr DOUBLEDOT code_block elif_list fi
-                | WHILE expr DOUBLEDOT code_block elihw
-                | FOR IDENTIFIER IN expr DOUBLEDOT code_block rof
-                | CYCLE DOUBLEDOT code_block cycle_blocks elcyc
+                | WHILE expr DOUBLEDOT code_block_loop elihw
+                | FOR IDENTIFIER IN expr DOUBLEDOT code_block_loop rof
+                | CYCLE DOUBLEDOT code_block_loop cycle_blocks elcyc
                 | CYCLE SEMI cycle_blocks elcyc
                 ;
 
@@ -259,17 +269,20 @@ code_block    ::= code_block instruction SEMI
                 | instruction SEMI
                 ;
 
-cycle_blocks  ::= cycle_blocks ON expr DO DOUBLEDOT code_block
-                | ON expr DO DOUBLEDOT code_block
+code_block_loop ::= code_block_loop instruction_loop SEMI
+                 | instruction_loop SEMI
+                 ;
+
+cycle_blocks  ::= cycle_blocks ON expr DO DOUBLEDOT code_block_loop
+                | ON expr DO DOUBLEDOT code_block_loop
                 ;
 
 s_asig      ::= IDENTIFIER:id s_asig_list expr:e                   {: RESULT = new ArrayList(); RESULT.add(new Asignation(id, e)); :};
 s_asig_list ::= COMMA IDENTIFIER s_asig_list expr COMMA
               | ASIG
               ;
+
 asig        ::= identifier asig_list expr;
-//asig          | type identifier asig_list expr;
-//asig          | VAR type identifier asig_list expr;
 
 asig_list   ::= COMMA identifier asig_list expr COMMA
               | ASIG
