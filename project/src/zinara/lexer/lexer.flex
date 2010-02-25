@@ -14,6 +14,7 @@ import zinara.parser.*;
 %public
 %unicode
 %cup
+%cupdebug
 %line
 %column
 
@@ -28,15 +29,15 @@ import zinara.parser.*;
 
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\n]
-WhiteSpace     = {LineTerminator} | [ \t\f]
-//EmptyLine      = ^\ *[\n]*$
+WhiteSpace     = [ \t\f]
+EmptyLine      = ( [\ ]* [\n] )
 Letter         = [a-zA-Z]
 Digit          = [0-9]
-Alphanumeric   = [a-zA-Z0-9_\']
+Alphanumeric   = [a-zA-Z0-9]
 
 Comment = {MultipleComment} | {SimpleComment}
 
-MultipleComment   = "/." [^.] ~"./" | "/." "."+ "./"
+MultipleComment   = "/\." [^\.] ~"\./" | "/\." "\."+ "\./"
 SimpleComment     = "//" {InputCharacter}* {LineTerminator}
 
 Identifier  = {Letter} {Alphanumeric}*
@@ -45,15 +46,15 @@ Number      = {Digit}+
 
 %%
 
- {Comment}                       {}
- {WhiteSpace}                    {}
-// {EmptyLine}                     {}
+// {Comment}                       {}
+{WhiteSpace}                    {}
+//{InputCharacter}
+^{EmptyLine}                     {}
 
+ "main" "\ "* "\n"               { return symbol(sym.MAIN); }
+ "endmain" "\ "* "\n"            { return symbol(sym.ENDMAIN); }
 
- "main"                          { return symbol(sym.MAIN); }
- "end"                           { return symbol(sym.END); }
  {LineTerminator}                { return symbol(sym.SEMI); }
-
 
  "("                             { return symbol(sym.LPAREN); }
  ")"                             { return symbol(sym.RPAREN); }
@@ -62,25 +63,23 @@ Number      = {Digit}+
  "{"                             { return symbol(sym.LBRACET);}
  "}"                             { return symbol(sym.RBRACET);}
 
-
- "int"                           { return symbol(sym.INTEGER); }
- "float"                         { return symbol(sym.FLOAT); }
- "char"                          { return symbol(sym.CHAR); }
- "string"                        { return symbol(sym.STRING); }
- "bool"                          { return symbol(sym.BOOL); }
+ "Int"                           { return symbol(sym.INTEGER); }
+ "Float"                         { return symbol(sym.FLOAT); }
+ "Char"                          { return symbol(sym.CHAR); }
+ "String"                        { return symbol(sym.STRING); }
+ "Bool"                          { return symbol(sym.BOOL); }
  "var"                           { return symbol(sym.VAR); }
  "def"                           { return symbol(sym.DEF); }
- ":"                             { return symbol(sym.DOUBLEDOT); }
+ ":" "\ "* "\n"                  { return symbol(sym.DOUBLEDOT); }
  "copy"                          { return symbol(sym.COPY); }
  ","                             { return symbol(sym.COMMA);}
- 
 
  "+"                             { return symbol(sym.PLUS);}
- "-"                             { return symbol(sym.UMINUS);}
+ "-"                             { return symbol(sym.MINUS);}
+ "*"                             { return symbol(sym.TIMES); }
  "/"                             { return symbol(sym.DIVIDE);}
  "%"                             { return symbol(sym.MOD);}
  "^"                             { return symbol(sym.PLUS);}
-
 
  ">"                             { return symbol(sym.GT);}
  "<"                             { return symbol(sym.LT);}
@@ -94,9 +93,12 @@ Number      = {Digit}+
  "|"                             { return symbol(sym.SOR);}
  "!"                             { return symbol(sym.NOEQ);}
 
-
  "for"                           { return symbol(sym.FOR);}
+ "in"                            { return symbol(sym.IN);}
  "endfor"                        { return symbol(sym.ENDFOR);}
+ "def"                           { return symbol(sym.DEF);}
+ "as"                            { return symbol(sym.AS); }
+ "enddef"                        { return symbol(sym.ENDDEF);}
  "while"                         { return symbol(sym.WHILE);}
  "endwhile"                      { return symbol(sym.ENDWHILE);}
  "cycle"                         { return symbol(sym.CYCLE);}
@@ -104,24 +106,26 @@ Number      = {Digit}+
  "do"                            { return symbol(sym.DO);}
  "endcycle"                      { return symbol(sym.ENDCYCLE);}
  "if"                            { return symbol(sym.IF);}
+ "elif"                          { return symbol(sym.ELIF);}
+ "else"                          { return symbol(sym.ELSE);}
  "endif"                         { return symbol(sym.ENDIF);}
-
+ "end"                           { return symbol(sym.END); }
 
  "<<"                            { return symbol(sym.LTLT);}
  ">>"                            { return symbol(sym.GTGT);}
  "++"                            { return symbol(sym.PLUSPLUS);}
  "="                             { return symbol(sym.ASIG);}
  "return"                        { return symbol(sym.RETURN);}
+ "returns"                       { return symbol(sym.RETURNS);}
  "print"                         { return symbol(sym.PRINT);}
  "read"                          { return symbol(sym.READ);}
-
 
  "true"                          { return symbol(sym.TRUE); }
  "false"                         { return symbol(sym.FALSE); }
  [0-9]+\.[0-9]*                  { return symbol(sym.FLOAT_V); }
  [0-9]*\.[0-9]+                  { return symbol(sym.FLOAT_V); }
  [0-9]+                          { return symbol(sym.INTEGER_V); }
- {Letter}{Alphanumeric}*         { return symbol(sym.IDENTIFIER); }
+ [A-Za-z] [a-zA-Z\'_0-9]*         { return symbol(sym.IDENTIFIER); }
 
 
- .*     { throw new Error("Illegal character <"+yytext()+">"); }
+// .*     { throw new Error("Illegal character <"+yytext()+">"); }

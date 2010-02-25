@@ -70,14 +70,14 @@ terminal Boolean TRUE,FALSE;
 terminal CHAR_V, STRING_V;
 terminal SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD, POW, UMINUS;
 terminal Main MAIN; 
-terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN; 
+terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF; 
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
 terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
 terminal COMMA, DOUBLEDOT, IDENTIFIER, RETURN, RETURNS;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ, IN; 
-terminal AND, SAND, OR, SOR, XOR, AS; 
-terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, FOR, DEF, ASIG; 
+terminal AND, SAND, OR, SOR, XOR; 
+terminal IF, WHILE, CYCLE, ON, DO, FOR, DEF, ASIG; 
 
 
 /* Non-terminals */
@@ -88,7 +88,7 @@ nonterminal dict_vals, dict_val, instruction, ctrl_struct;
 nonterminal code_block, s_asig, s_asig_list, asig, asig_list, conds;
 nonterminal fi, elihw, elcyc, rof, fed, print, number, identifier;
 nonterminal inst_list, cycle_blocks;
-nonterminal expr_list, expr_part, bool, elif_list;
+nonterminal expr_list, expr_part, bool;
 nonterminal expr;
 
 /* Precedences */
@@ -117,7 +117,7 @@ program   ::= main:m                       {: new Program(); :}
             | decl_list:d main:m           {: new Program(); :}
             ;
 
-main      ::= MAIN code_block:cb ENDMAIN       {: new Main(); :}
+main      ::= MAIN code_block:cb END       {: new Main(); :}
             ;
 
 /*
@@ -127,17 +127,30 @@ main      ::= MAIN code_block:cb ENDMAIN       {: new Main(); :}
 type         ::= INTEGER                    {: new String("Int"); :}
                | FLOAT                      {: new String("Float"); :}
                | CHAR                       {: new String("Char"); :}
+               | STRING                     {: new String("String"); :}
                | BOOL                       {: new String("Bool"); :}
+               | LBRACKET type RBRACKET     {: new String("List_"); :}
+               // [type]
+               | LPAREN type_list RPAREN    {: new String("Int"); :}
+               // (type0, type1, ..., typen)
+               | LBRACET dict_types RBRACET {: new String("Int"); :}
+               // {ident0:type0,ident1:type1...,identn:typen}
                ;
 
 type_list    ::= type_list COMMA type
                | type
                ;
 
-decl_list    ::= decl_list declaration SEMI  {: new Declaration(); :}
-               | decl_list def_decl SEMI     {: new Declaration(); :}
-               | declaration SEMI            {: new Declaration(); :}
-               | def_decl SEMI               {: new Declaration(); :}
+dict_types   ::= dict_types COMMA dict_type
+               | dict_type
+               ;
+
+dict_type    ::= IDENTIFIER DOUBLEDOT type;
+
+decl_list    ::= decl_list declaration  {: new Declaration(); :}
+               | decl_list def_decl     {: new Declaration(); :}
+               | declaration            {: new Declaration(); :}
+               | def_decl               {: new Declaration(); :}
                ;
 
 declaration  ::= VAR decl
@@ -147,14 +160,14 @@ decl         ::= type s_asig            {: new Declaration(); :}
                | type IDENTIFIER
                ;
 
-def_decl     ::= DEF IDENTIFIER LPAREN args_list RPAREN RETURNS LT type GT DOUBLEDOT code_block fed;
+def_decl     ::= DEF IDENTIFIER LPAREN args_list RETURNS LT type GT DOUBLEDOT code_block fed;
 
 args_list    ::= args_list COMMA arg
                | arg
                ;
 
-arg          ::= COPY IDENTIFIER AS type
-               | IDENTIFIER AS type
+arg          ::= COPY IDENTIFIER DOUBLEDOT type
+               | IDENTIFIER DOUBLEDOT type
                ;
 
 /*
@@ -166,19 +179,34 @@ expr_list ::= expr_list COMMA expr
 
 expr      ::= number
             | CHAR_V
+            | STRING_V
             | INTEGER_V
             | FLOAT_V
             | TRUE
             | FALSE
             | bool
             | identifier
-	    | LPAREN expr RPAREN
     /* ----- Basic types ----- */
             | expr arithmetic_op expr
             | expr relational_op expr
             | expr logical_op expr
-	    | MINUS expr
-	    | NOEQ expr
+	    | UMINUS expr
+//	    | LPAREN expr RPAREN //Se logra con la reduccion de tuplas
+    /* ----- Composed types ----- */
+            // literals
+            | LBRACKET RBRACKET
+            | LPAREN RPAREN
+            | LBRACET RBRACET
+            | LBRACKET expr_comma_list RBRACKET                 // list
+                                                                // comprehension list
+            | LPAREN expr_comma_list RPAREN                     // tuple,parentizacion
+            | LBRACET dict_vals RBRACET                         // dict
+            // operations
+            | IDENTIFIER LBRACKET expr RBRACKET                 // indexing
+            | IDENTIFIER LBRACKET expr DOUBLEDOT expr RBRACKET  // slicing
+            | expr PLUSPLUS expr                                // plosplos
+            | expr LTLT expr                                    // push
+            | expr GTGT expr                                    // pop
     /* ----- Functions calls ----- */
             | IDENTIFIER LPAREN expr_list RPAREN
     /* ----- Other expressions ----- */
@@ -231,25 +259,24 @@ inst_list     ::= inst_list instruction SEMI
 
 instruction   ::= asig
                 | print
-                | IDENTIFIER LPAREN expr_list RPAREN
                 | ctrl_struct
-                | RETURN expr
+                | RETURN
                 ;
 
-ctrl_struct   ::= IF expr DOUBLEDOT code_block elif_list fi
-                | WHILE expr DOUBLEDOT code_block elihw
+ctrl_struct   ::= IF conds DOUBLEDOT code_block fi
+                | WHILE conds DOUBLEDOT code_block elihw
                 | FOR IDENTIFIER IN expr DOUBLEDOT code_block rof
                 | CYCLE DOUBLEDOT code_block cycle_blocks elcyc
-                | CYCLE SEMI cycle_blocks elcyc
+                | CYCLE cycle_blocks elcyc
                 ;
 
-elif_list     ::= elif_list ELIF expr DOUBLEDOT code_block
-                | elif_list ELSE DOUBLEDOT code_block
-		|
-                ;
-
-code_block    ::= code_block instruction SEMI
+code_block    ::= code_block instruction SEMI //inst_list
+//                  code_block expr SEMI
+//                | code_block expr_list
+//                | expr_list SEMI
+//                | inst_list
                 | instruction SEMI
+//                | expr SEMI
                 ;
 
 cycle_blocks  ::= cycle_blocks ON expr DO DOUBLEDOT code_block
@@ -261,8 +288,6 @@ s_asig_list ::= COMMA IDENTIFIER s_asig_list expr COMMA
               | ASIG
               ;
 asig        ::= identifier asig_list expr;
-asig        ::= type identifier asig_list expr;
-asig        ::= VAR type identifier asig_list expr;
 asig_list   ::= COMMA identifier asig_list expr COMMA
               | ASIG
               ;
@@ -273,7 +298,7 @@ rof       ::= END | ENDFOR;
 elcyc     ::= END | ENDCYCLE;
 fed       ::= END | ENDDEF;
 
-print     ::= PRINT LPAREN expr RPAREN;
+print     ::= PRINT LPAREN STRING RPAREN;
 
 identifier   ::= IDENTIFIER
                | IDENTIFIER LBRACKET INTEGER_V RBRACKET
@@ -288,6 +313,12 @@ number       ::= INTEGER_V
                ;
 
 bool         ::= TRUE | FALSE;
+
+// as l-value
+identifier   ::= IDENTIFIER
+               | IDENTIFIER LBRACKET INTEGER_V RBRACKET
+               | IDENTIFIER LBRACKET IDENTIFIER RBRACKET
+               ;
 
 s_ident_list ::= s_ident_list IDENTIFIER
                | IDENTIFIER
