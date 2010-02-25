@@ -1,7 +1,7 @@
-#/usr/bin/bash
+#/bin/bash
 
-java_root=$1
+set -o xtrace
 
-export PATH=${java_root}/j2sdk1.4.2_19/bin/:$PATH
-export CLASSPATH=`pwd`/tools/cup/:$CLASSPATH
-export JAVACMD=${java_root}/j2sdk1.4.2_19/bin/java
+export PATH=${JAVA4_HOME}:${PATH}
+export CLASSPATH=`pwd`/tools/cup/:${CLASSPATH}
+export JAVACMD=${JAVA4_HOME}/java
