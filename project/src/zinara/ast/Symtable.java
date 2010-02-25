@@ -1,4 +1,5 @@
 package zinara.ast;
+
 import java.util.*;
 
 class Symtable{

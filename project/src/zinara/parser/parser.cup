@@ -85,14 +85,15 @@ terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, FOR, DEF, ASIG;
 /* Non-terminals */
 nonterminal Program program;
 nonterminal Main main;
-nonterminal ArrayList decl_list, declaration, decl;
+nonterminal ArrayList decl_list, declaration, decl; // arraylist of declarations
 nonterminal Declaration def_decl;
+nonterminal ArrayList asig, asig_list, s_asig, s_asig_list; // arraylist of assignations
 nonterminal Type type;
 nonterminal type_list, dict_types, dict_type;
 nonterminal args_list, arg;
 nonterminal arithmetic_op, relational_op, logical_op, expr_comma_list;
 nonterminal dict_vals, dict_val, instruction, instruction_loop, ctrl_struct;
-nonterminal code_block, code_block_loop, s_asig, s_asig_list, asig, asig_list, conds;
+nonterminal code_block, code_block_loop, conds;
 nonterminal fi, elihw, elcyc, rof, fed, print, number, identifier;
 nonterminal inst_list, cycle_blocks;
 nonterminal expr_list, expr_part, bool, elif_list;
@@ -277,15 +278,14 @@ cycle_blocks  ::= cycle_blocks ON expr DO DOUBLEDOT code_block_loop
                 | ON expr DO DOUBLEDOT code_block_loop
                 ;
 
-s_asig      ::= IDENTIFIER:id s_asig_list expr:e                   {: RESULT = new ArrayList(); RESULT.add(new Asignation(id, e)); :};
-s_asig_list ::= COMMA IDENTIFIER s_asig_list expr COMMA
-              | ASIG
+s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {: al.add(new Assignation(new String(id), e)); RESULT = al; :};
+s_asig_list ::= COMMA IDENTIFIER:id s_asig_list:al expr:e COMMA       {: al.add(new Assignation(new String(id), e)); RESULT = al; :}
+              | ASIG                                                  {: RESULT = new ArrayList(); :}
               ;
 
-asig        ::= identifier asig_list expr;
-
-asig_list   ::= COMMA identifier asig_list expr COMMA
-              | ASIG
+asig        ::= identifier asig_list expr                             {: al.add(new Assignation(id, e)); RESULT = al; :};
+asig_list   ::= COMMA identifier asig_list expr COMMA                 {: al.add(new Assignation(id, e)); RESULT = al; :}
+              | ASIG                                                  {: RESULT = new ArrayList(); :}
               ;
 
 fi        ::= END | ENDIF;

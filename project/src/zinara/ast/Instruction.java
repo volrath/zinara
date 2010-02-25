@@ -1,3 +1,5 @@
+package zinara.ast;
+
 abstract class Instruction{}
 
 class Asignation extends Instruction{

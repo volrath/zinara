@@ -10,10 +10,6 @@ public class Declaration {
 	this.type = t; this.identifier = id; this.value = v; this.variable = var;
     }
 
-    public void setType(Type t)
-	this.type = t;
-
-    public void setVariable(boolean var)
-	this.variable = var;
+    public void setType(Type t) { this.type = t; }
+    public void setVariable(boolean var) { this.variable = var; }
 }
-
