@@ -4,6 +4,8 @@ import zinara.ast.*;
 
 import java_cup.runtime.*;
 
+import java.util.ArrayList;
+
 /* Preliminaries to set up and use the scanner.  */
 
 /* Parser code to change the way the parser reports errors (include
@@ -81,8 +83,13 @@ terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, FOR, DEF, ASIG;
 
 
 /* Non-terminals */
-nonterminal program, main, type, type_list, dict_types, dict_type;
-nonterminal decl_list, declaration, decl, args_list, def_decl, arg;
+nonterminal Program program;
+nonterminal Main main;
+nonterminal ArrayList decl_list, declaration, decl;
+nonterminal Declaration def_decl;
+nonterminal Type type;
+nonterminal type_list, dict_types, dict_type;
+nonterminal args_list, arg;
 nonterminal arithmetic_op, relational_op, logical_op, expr_comma_list;
 nonterminal dict_vals, dict_val, instruction, ctrl_struct;
 nonterminal code_block, s_asig, s_asig_list, asig, asig_list, conds;
@@ -113,41 +120,41 @@ precedence left UMINUS;
 /*
       THE PROGRAM
  */
-program   ::= main:m                       {: new Program(); :}
-            | decl_list:d main:m           {: new Program(); :}
+program   ::= main:m                           {: RESULT = new Program(m); :}
+            | decl_list:ds main:m              {: RESULT = new Program(m, ds); :}
             ;
 
-main      ::= MAIN code_block:cb ENDMAIN       {: new Main(); :}
+main      ::= MAIN code_block:cb ENDMAIN       {: RESULT = new Main(); :}
             ;
 
 /*
       DECLARATIONS
  */
 // Types
-type         ::= INTEGER                    {: new String("Int"); :}
-               | FLOAT                      {: new String("Float"); :}
-               | CHAR                       {: new String("Char"); :}
-               | BOOL                       {: new String("Bool"); :}
+type         ::= INTEGER                    {: RESULT = new IntType(); :}
+               | FLOAT                      {: RESULT = new FloatType(); :}
+               | CHAR                       {: RESULT = new CharType(); :}
+               | BOOL                       {: RESULT = new BoolType(); :}
                ;
 
 type_list    ::= type_list COMMA type
                | type
                ;
 
-decl_list    ::= decl_list declaration SEMI  {: new Declaration(); :}
-               | decl_list def_decl SEMI     {: new Declaration(); :}
-               | declaration SEMI            {: new Declaration(); :}
-               | def_decl SEMI               {: new Declaration(); :}
+decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d); :}
+               | decl_list:ds def_decl:d SEMI     {: RESULT = ds; RESULT.add(d); :}
+               | declaration:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d); :}
+               | def_decl:d SEMI                  {: RESULT = new ArrayList(); RESULT.add(d); :}
                ;
 
-declaration  ::= VAR decl
-               | decl
+declaration  ::= VAR decl:d                       {: for (int i = 0; i < d.length; i++) d[i].setVariable(true); RESULT = d; :}
+               | decl:d                           {: RESULT = d; :}
                ;
-decl         ::= type s_asig            {: new Declaration(); :}
-               | type IDENTIFIER
+decl         ::= type:t s_asig:al                 {: RESULT = new ArrayList(); for (int i = 0; i < al.length; i++) RESULT.add(new Declaration(t, al[i].getId(), al[i].getValue(), false)); :}
+               | type:t IDENTIFIER:id             {: RESULT = new ArrayList(); RESULT.add(new Declaration(t, new String(id), null, false)); :}
                ;
 
-def_decl     ::= DEF IDENTIFIER LPAREN args_list RPAREN RETURNS LT type GT DOUBLEDOT code_block fed;
+def_decl     ::= DEF IDENTIFIER LPAREN args_list RPAREN RETURNS LT type GT DOUBLEDOT code_block fed  {: new Declaration(null,null,null,null); :};
 
 args_list    ::= args_list COMMA arg
                | arg
@@ -256,13 +263,14 @@ cycle_blocks  ::= cycle_blocks ON expr DO DOUBLEDOT code_block
                 | ON expr DO DOUBLEDOT code_block
                 ;
 
-s_asig      ::= IDENTIFIER s_asig_list expr;
+s_asig      ::= IDENTIFIER:id s_asig_list expr:e                   {: RESULT = new ArrayList(); RESULT.add(new Asignation(id, e)); :};
 s_asig_list ::= COMMA IDENTIFIER s_asig_list expr COMMA
               | ASIG
               ;
 asig        ::= identifier asig_list expr;
-asig        ::= type identifier asig_list expr;
-asig        ::= VAR type identifier asig_list expr;
+//asig          | type identifier asig_list expr;
+//asig          | VAR type identifier asig_list expr;
+
 asig_list   ::= COMMA identifier asig_list expr COMMA
               | ASIG
               ;
