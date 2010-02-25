@@ -157,14 +157,14 @@ decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d);
                | def_decl:d SEMI                  {: RESULT = new ArrayList(); RESULT.add(d); :}
                ;
 
-declaration  ::= VAR decl:d                       {: for (int i = 0; i < d.length; i++) d[i].setVariable(true); RESULT = d; :}
+declaration  ::= VAR decl:d                       {: for (int i = 0; i < d.size(); i++) d[i].setVariable(true); RESULT = d; :}
                | decl:d                           {: RESULT = d; :}
                ;
-decl         ::= type:t s_asig:al                 {: RESULT = new ArrayList(); for (int i = 0; i < al.length; i++) RESULT.add(new Declaration(t, al[i].getId(), al[i].getValue(), false)); :}
+decl         ::= type:t s_asig:al                 {: RESULT = new ArrayList(); for (int i = 0; i < al.size(); i++) RESULT.add(new Declaration(t, al[i].getId(), al[i].getValue(), false)); :}
                | type:t IDENTIFIER:id             {: RESULT = new ArrayList(); RESULT.add(new Declaration(t, new String(id), null, false)); :}
                ;
 
-def_decl     ::= DEF IDENTIFIER LPAREN args_list RPAREN RETURNS LT type GT DOUBLEDOT code_block fed  {: new Declaration(null,null,null,null); :};
+def_decl     ::= DEF IDENTIFIER LPAREN args_list RPAREN RETURNS LT type GT DOUBLEDOT code_block fed  {: new Declaration(null,null,null,false); :};
 
 args_list    ::= args_list COMMA arg
                | arg
@@ -195,7 +195,7 @@ expr      ::= CHAR_V:e                                 {: RESULT = new CharExp(e
             | MINUS:o expr:e        		       {: RESULT = UnaryExp(o, e); :}				
             | NOEQ:o expr:e                            {: RESULT = UnaryExp(o, e); :}
     /* ----- Functions calls ----- */
-            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = CallExp(new String(n), el); :}
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = CallExp(n, el); :}
     /* ----- Other expressions ----- */
             | READ                                     {: RESULT = new ReadExp(); :}
 	    ;
