@@ -1,6 +1,8 @@
 package zinara.parser;
 
 import zinara.ast.*;
+import zinara.ast.type.*;
+import zinara.ast.expression.*;
 
 import java_cup.runtime.*;
 
@@ -68,17 +70,20 @@ parser code {:
 /* Terminals (tokens returned by the scanner). */
 terminal Integer INTEGER_V;
 terminal Float FLOAT_V;
-terminal Boolean TRUE,FALSE;
-terminal CHAR_V, STRING_V;
-terminal SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD, POW, UMINUS;
-terminal Main MAIN; 
+terminal Boolean TRUE, FALSE;
+terminal String IDENTIFIER;
+terminal String PLUS, MINUS, TIMES, DIVIDE, MOD, POW;
+terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
+terminal String AND, SAND, OR, SOR, XOR;
+
+terminal CHAR_V, STRING_V, SEMI, UMINUS;
+terminal Main MAIN;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN; 
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
 terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
 terminal COMMA, DOUBLEDOT, IDENTIFIER, RETURN, RETURNS;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
-terminal LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ, IN; 
-terminal AND, SAND, OR, SOR, XOR, AS; 
+terminal AS, IN; 
 terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, FOR, DEF, ASIG; 
 
 
@@ -89,15 +94,17 @@ nonterminal ArrayList decl_list, declaration, decl; // arraylist of declarations
 nonterminal Declaration def_decl;
 nonterminal ArrayList asig, asig_list, s_asig, s_asig_list; // arraylist of assignations
 nonterminal Type type;
+nonterminal ArrayList expr_list;  // arraylist of expressions
+nonterminal Expression expr;
+nonterminal String arithmetic_op, relational_op, logical_op;
+
 nonterminal type_list, dict_types, dict_type;
 nonterminal args_list, arg;
-nonterminal arithmetic_op, relational_op, logical_op, expr_comma_list;
 nonterminal dict_vals, dict_val, instruction, instruction_loop, ctrl_struct;
 nonterminal code_block, code_block_loop, conds;
 nonterminal fi, elihw, elcyc, rof, fed, print, number, identifier;
 nonterminal inst_list, cycle_blocks;
-nonterminal expr_list, expr_part, bool, elif_list;
-nonterminal expr;
+nonterminal expr_part, elif_list;
 
 /* Precedences */
 precedence left SEMI;
@@ -168,61 +175,59 @@ arg          ::= COPY IDENTIFIER AS type
 /*
       EXPRESIONS
  */
-expr_list ::= expr_list COMMA expr
-            | expr
+expr_list ::= expr_list:el COMMA expr:e             {: RESULT = el; el.add(e); :}
+            | expr:e                                {: RESULT = new ArrayList(); RESULT.add(e); :}
             ;
 
-expr      ::= number
-            | CHAR_V
-            | INTEGER_V
-            | FLOAT_V
-            | TRUE
-            | FALSE
-            | bool
-            | identifier
-	    | LPAREN expr RPAREN
+expr      ::= CHAR_V:e
+            | INTEGER_V:e                              {: RESULT = new IntegerExp(new Integer(e.intValue())); :}
+            | FLOAT_V:e                                {: RESULT = new FloatExp(new Float(e.floatValue())); :}
+            | TRUE                                     {: RESULT = new TrueExp(); :}
+            | FALSE                                    {: RESULT = new FalseExp(); :}
+            | identifier:e                             {: RESULT = e :}
+            | LPAREN expr:e RPAREN                     {: RESULT = e :}
     /* ----- Basic types ----- */
-            | expr arithmetic_op expr
-            | expr relational_op expr
-            | expr logical_op expr
-	    | MINUS expr
-	    | NOEQ expr
+            | expr:e1 arithmetic_op:o expr:e2          {: RESULT = BinaryExp(o, e1, e2); :}
+	    | expr:e1 relational_op:o expr:e2	       {: RESULT = BinaryExp(o, e1, e2); :}
+	    | expr:e1 logical_op:o expr:e2	       {: RESULT = BinaryExp(o, e1, e2); :}
+            | MINUS:o expr:e        		       {: RESULT = UnaryExp(o, e); :}				
+            | NOEQ:o expr:e                            {: RESULT = UnaryExp(o, e); :}
     /* ----- Functions calls ----- */
-            | IDENTIFIER LPAREN expr_list RPAREN
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = CallExp(new String(n), el);
     /* ----- Other expressions ----- */
-            | READ
+            | READ                                     {: RESULT = new ReadExp(); :}
 	    ;
 
-arithmetic_op ::= PLUS
-                | MINUS
-                | TIMES
-                | DIVIDE
-                | MOD
-                | POW
+arithmetic_op ::= PLUS:o                            {: RESULT = new String(o); :}
+                | MINUS:o                           {: RESULT = new String(o); :}
+                | TIMES:o                           {: RESULT = new String(o); :}
+                | DIVIDE:o                          {: RESULT = new String(o); :}
+                | MOD:o                             {: RESULT = new String(o); :}
+                | POW:o                             {: RESULT = new String(o); :}
                 ;
 
-relational_op ::= LT
-                | GT
-                | LTE
-                | GTE
-                | SHEQ
-                | DEEQ
-                | NOEQ
+relational_op ::= LT:o                              {: RESULT = new String(o); :}
+                | GT:o                              {: RESULT = new String(o); :}
+                | LTE:o                             {: RESULT = new String(o); :}
+                | GTE:o                             {: RESULT = new String(o); :}
+                | SHEQ:o                            {: RESULT = new String(o); :}
+                | DEEQ:o                            {: RESULT = new String(o); :}
+                | NOEQ:o                            {: RESULT = new String(o); :}
                 ;
 
-logical_op    ::= AND
-                | SAND  // &
-                | OR
-                | SOR   // |
-                | XOR
+logical_op    ::= AND:o                             {: RESULT = new String(o); :}
+                | SAND:o                            {: RESULT = new String(o); :}  // &
+                | OR:o                              {: RESULT = new String(o); :}
+                | SOR:o                             {: RESULT = new String(o); :}  // |
+                | XOR:o                             {: RESULT = new String(o); :}
                 ;
 /*
 bitwise_op    ::= ???
 */
 
-expr_comma_list ::= expr_comma_list COMMA expr
-                  | expr
-                  ;
+// expr_comma_list ::= expr_comma_list COMMA expr
+//                   | expr
+//                   ;
 
 dict_vals       ::= dict_vals COMMA dict_val
                   | dict_val
