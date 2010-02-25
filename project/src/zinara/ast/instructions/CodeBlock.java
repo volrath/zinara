@@ -3,7 +3,7 @@ package zinara.ast.instructions;
 import java.util.ArrayList;
 
 public class CodeBlock extends Instruction{
-    private ArrayList block;
+    private ArrayList block;   // ArrayList of... ?
 
     public CodeBlock(ArrayList b){
 	this.block = b;

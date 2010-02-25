@@ -1,9 +1,9 @@
 package zinara.parser;
 
-import zinara.ast.*;
 import zinara.ast.type.*;
 import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
+import zinara.ast.*;
 
 import java_cup.runtime.*;
 
@@ -94,9 +94,11 @@ terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
 /* Non-terminals */
 nonterminal Program program;
 nonterminal Main main;
-nonterminal ArrayList decl_list, declaration, decl; // arraylist of declarations
-nonterminal Declaration def_decl;
-nonterminal ArrayList asig, asig_list, s_asig, s_asig_list; // arraylist of assignations
+nonterminal ArrayList decl_list;                      // arraylist of declarations (multiples or singles)
+nonterminal Declaration declaration, decl, def_decl;  // (just one declaration, multiple or single)
+nonterminal Assignation asig, s_asig;                 // (just one assignation, multiple or single)
+nonterminal ArrayList asig_list, s_asig_list;         // arraylist of singleAssignations
+//nonterminal ArrayList asig, asig_list, s_asig, s_asig_list; // arraylist of assignations
 nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_default, cycle_on, else, elif; // arraylist of assignations
 nonterminal Type type;
@@ -163,14 +165,29 @@ decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d);
                | def_decl:d SEMI                  {: RESULT = new ArrayList(); RESULT.add(d); :}
                ;
 
-declaration  ::= VAR decl:d                       {: for (int i = 0; i < d.size(); i++){((Const_Declaration)(d.get(i))).setVariable(true);}; RESULT = d; :}
+declaration  ::= VAR decl:d                       {:
+						   if (d.isSingle)
+						       ((SimpleDeclaration)d).setVariable(true);
+						   else {
+						       for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
+						   }
+						   RESULT = d;
+						   :}
                | decl:d                           {: RESULT = d; :}
                ;
-decl         ::= type:t s_asig:al                 {: RESULT = new ArrayList(); for (int i = 0; i < al.size(); i++) RESULT.add(new Const_Declaration(t, ((Assignation)al.get(i)).getId(), ((Assignation)al.get(i)).getExpression(), false)); :}
-               | type:t IDENTIFIER:id             {: RESULT = new ArrayList(); RESULT.add(new Const_Declaration(t, new String(id), null, false)); :}
+decl         ::= type:t s_asig:a                 {: 
+ 						  if (!(a.isSingle)) { // a Multiple
+						      ArrayList ds = new ArrayList();
+						      for (int i = 0; i < ((MultipleAssignation)a).assignations.size(); i++)
+							  ds.add(new SingleDeclaration(t, ((MultipleAssignation)a).get(i).getId(), ((MultipleAssignation)a).get(i).getExpression(), false));
+						      RESULT = new MultipleDeclaration(ds);
+						  } else
+						      RESULT = new SingleDeclaration(t, ((SingleAssignation)a).getId(), ((SingleAssignation)a).getExpression(), false);
+						  :} // Maybe a single or a multiple declaration
+               | type:t IDENTIFIER:id             {: RESULT = new SingleDeclaration(t, id, null, false); :} // A single declaration
                ;
 
-def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:st RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new Def_Declaration(t,id,null); :};
+def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:st RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(t,id,null,false); :};
 
 args_list    ::= args_list:al COMMA arg:a
                | arg:a
@@ -252,8 +269,8 @@ inst_list     ::= inst_list instruction SEMI
 
 instruction   ::= asig:a                                    {: RESULT = a; :}
                 | print expr:e                              {: RESULT = new Print(e); :}
-                | declaration:d                             {: RESULT = d; :}
-		| def_decl:dd                               {: RESULT = dd; :} 
+                | declaration:d                             {: RESULT = new DecInst(d); :}
+                | def_decl:dd                               {: RESULT = new DecInst(dd); :} 
                 | IDENTIFIER:n LPAREN expr_list:el RPAREN   {: RESULT = CallExp(n, el); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = new Return(e); :}
@@ -261,7 +278,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
 
 instruction_loop  ::= asig:a                                   {: RESULT = a; :}
                     | print expr:e                             {: RESULT = new Print(e); :}
-                    | declaration:d                            {: RESULT = d; :}
+                    | declaration:d                            {: RESULT = new DecInst(d); :}
                     | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = CallExp(n, el); :}
                     | ctrl_struct:cs                           {: RESULT = cs; :}
                     | RETURN expr:e                            {: RESULT = new Return(e); :}
@@ -299,15 +316,23 @@ code_block_loop ::= code_block_loop:cb instruction_loop:i SEMI  {: cb.addInst(i)
                   | instruction_loop:i SEMI                     {: RESULT = new CodeBlock(new ArrayList()); RESULT.addInst(i); :}
                   ;
 
-s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {: al.add(new Assignation(new String(id), e)); RESULT = al; :};
-s_asig_list ::= COMMA IDENTIFIER:id s_asig_list:al expr:e COMMA       {: al.add(new Assignation(new String(id), e)); RESULT = al; :}
+s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {: 
+								       if (al.size() == 0)
+									   RESULT = new SingleAssignation(new String(id), e);
+								       else {
+									   al.add(new SingleAssignation(new String(id), e));
+									   RESULT = new MultipleAssignation(al);
+								       }
+								       :};
+
+s_asig_list ::= COMMA IDENTIFIER:id s_asig_list:al expr:e COMMA       {: al.add(new SingleAssignation(new String(id), e)); RESULT = al; :}
               | ASIG                                                  {: RESULT = new ArrayList(); :}
               ;
 
-asig        ::= identifier:id asig_list:al expr:e                             {: al.add(new Assignation(id, e)); RESULT = al; :};
-asig_list   ::= COMMA identifier:id asig_list:al expr:e COMMA                 {: al.add(new Assignation(id, e)); RESULT = al; :}
-              | ASIG                                                          {: RESULT = new ArrayList(); :}
-              ;
+// asig        ::= identifier:id asig_list:al expr:e                             {: al.add(new Assignation(id, e)); RESULT = al; :};
+// asig_list   ::= COMMA identifier:id asig_list:al expr:e COMMA                 {: al.add(new Assignation(id, e)); RESULT = al; :}
+//               | ASIG                                                          {: RESULT = new ArrayList(); :}
+//               ;
 
 fi        ::= END | ENDIF;
 elihw     ::= END | ENDWHILE;

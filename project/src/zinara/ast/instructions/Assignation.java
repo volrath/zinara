@@ -2,20 +2,6 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 
-public class Assignation extends Instruction{
-    private String id;
-    private Expression expr;
-
-    public Assignation(String name, Expression ex){
-	this.id = name;
-	this.expr = ex;
-    }
-
-    public String getId(){
-	return this.id;
-    }
-
-    public Expression getExpression(){
-	return this.expr;
-    }
+public abstract class Assignation extends Instruction {
+    public boolean isSingle;
 }
