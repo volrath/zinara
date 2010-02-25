@@ -118,12 +118,13 @@ Number      = {Digit}+
  "print"                         { return symbol(sym.PRINT);}
  "read"                          { return symbol(sym.READ);}
 
- "true"                          { return symbol(sym.TRUE); }
- "false"                         { return symbol(sym.FALSE); }
- [0-9]+\.[0-9]*                  { return symbol(sym.FLOAT_V); }
- [0-9]*\.[0-9]+                  { return symbol(sym.FLOAT_V); }
- [0-9]+                          { return symbol(sym.INTEGER_V); }
- [A-Za-z] [a-zA-Z\'_0-9]*         { return symbol(sym.IDENTIFIER); }
+ "true"                          { return symbol(sym.TRUE,new Boolean(true)); }
+ "false"                         { return symbol(sym.FALSE,new Boolean(false)); }
+ [0-9]+\.[0-9]+                  { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
+ [0-9]+\.                        { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()+".0"))); }
+ .[0-9]+                         { return symbol(sym.FLOAT_V,new Float(Float.parseFloat("0."+yytext()))); }
+ [0-9]+                          { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
+ [A-Za-z] [a-zA-Z\'_0-9]*        { return symbol(sym.IDENTIFIER,yytext()); }
 
 
 // .*     { throw new Error("Illegal character <"+yytext()+">"); }
