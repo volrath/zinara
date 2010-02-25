@@ -1,12 +1,12 @@
 package zinara.ast.instructions;
 
-import zinara.ast.expression.ExpressionList;
+import java.util.ArrayList;
 
 public class FunctionCall extends Instruction{
-    private ExpressionList expr_list;
+    private ArrayList expr_list; // arraylist of expressions
     private String func_name;
 
-    public FunctionCall(String fn, ExpressionList exl){
+    public FunctionCall(String fn, ArrayList exl){
 	this.func_name = fn;
 	this.expr_list = exl;
     }
@@ -15,7 +15,7 @@ public class FunctionCall extends Instruction{
 	return this.func_name;
     }
 
-    public ExpressionList getExpressionList(){
+    public ArrayList getExpressionList(){
 	return this.expr_list;
     }
 }

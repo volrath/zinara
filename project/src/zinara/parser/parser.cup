@@ -167,7 +167,7 @@ decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d);
 
 declaration  ::= VAR decl:d                       {:
 						   if (d.isSingle)
-						       ((SimpleDeclaration)d).setVariable(true);
+						       ((SingleDeclaration)d).setVariable(true);
 						   else {
 						       for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
 						   }
@@ -212,13 +212,13 @@ expr      ::= CHAR_V:e                                 {: RESULT = new CharExp(e
             | identifier:n                             {: RESULT = new IdentifierExp(n); :}
             | LPAREN expr:e RPAREN                     {: RESULT = e; :}
     /* ----- Basic types ----- */
-            | expr:e1 arithmetic_op:o expr:e2          {: RESULT = BinaryExp(o, e1, e2); :}
-	    | expr:e1 relational_op:o expr:e2	       {: RESULT = BinaryExp(o, e1, e2); :}
-	    | expr:e1 logical_op:o expr:e2	       {: RESULT = BinaryExp(o, e1, e2); :}
-            | MINUS:o expr:e        		       {: RESULT = UnaryExp(o, e); :}				
-            | NOEQ:o expr:e                            {: RESULT = UnaryExp(o, e); :}
+            | expr:e1 arithmetic_op:o expr:e2          {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+	    | expr:e1 relational_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+	    | expr:e1 logical_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+            | MINUS:o expr:e        		       {: RESULT = new UnaryExp(sym.UMINUS, e); :}				
+            | NOEQ:o expr:e                            {: RESULT = new UnaryExp(sym.NOEQ, e); :}
     /* ----- Functions calls ----- */
-            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = CallExp(n, el); :}
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new CallExp(n, el); :}
     /* ----- Other expressions ----- */
             | READ                                     {: RESULT = new ReadExp(); :}
 	    ;
@@ -271,7 +271,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | print expr:e                              {: RESULT = new Print(e); :}
                 | declaration:d                             {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :} 
-                | IDENTIFIER:n LPAREN expr_list:el RPAREN   {: RESULT = CallExp(n, el); :}
+                | IDENTIFIER:n LPAREN expr_list:el RPAREN   {: RESULT = new FunctionCall(n, el); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = new Return(e); :}
                 ;
@@ -279,7 +279,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
 instruction_loop  ::= asig:a                                   {: RESULT = a; :}
                     | print expr:e                             {: RESULT = new Print(e); :}
                     | declaration:d                            {: RESULT = new DecInst(d); :}
-                    | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = CallExp(n, el); :}
+                    | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new FunctionCall(n, el); :}
                     | ctrl_struct:cs                           {: RESULT = cs; :}
                     | RETURN expr:e                            {: RESULT = new Return(e); :}
                     ;
