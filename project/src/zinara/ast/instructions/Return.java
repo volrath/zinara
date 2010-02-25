@@ -1,4 +1,4 @@
-package zinara.ast.instructions
+package zinara.ast.instructions;
 class Return extends Instruction{
     private Expression expr;
 

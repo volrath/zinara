@@ -1,4 +1,4 @@
-package zinara.ast.instructions
+package zinara.ast.instructions;
 class Print extends Instruction{
     private Expression expr;
 

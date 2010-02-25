@@ -1,9 +1,9 @@
-package zinara.ast.instructions
+package zinara.ast.instructions;
 class FunctionCall extends Instruction{
     private ExpressionList expr_list;
     private String func_name;
 
-    public While(String fn, ExpressionList exl){
+    public FunctionCall(String fn, ExpressionList exl){
 	this.func_name = fn;
 	this.expr_list = exl;
     }
