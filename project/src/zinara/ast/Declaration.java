@@ -1,5 +1,7 @@
 package zinara.ast;
 
+import zinara.type.Type;
+
 public class Declaration {
     private Type type;
     private String identifier;
