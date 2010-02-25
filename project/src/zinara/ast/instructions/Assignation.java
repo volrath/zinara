@@ -1,5 +1,7 @@
 package zinara.ast.instructions;
 
+import zinara.ast.expression.Expression;
+
 public class Assignation extends Instruction{
     private String id;
     private Expression expr;

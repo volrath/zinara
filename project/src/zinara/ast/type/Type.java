@@ -1,3 +1,3 @@
 package zinara.ast.type;
 
-abstract class Type {}
+public abstract class Type {}

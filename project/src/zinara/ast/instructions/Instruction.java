@@ -1,3 +1,3 @@
 package zinara.ast.instructions;
 
-abstract class Instruction{}
+public abstract class Instruction{}

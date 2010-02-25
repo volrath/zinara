@@ -1,6 +1,6 @@
 package zinara.ast;
 
-import zinara.type.Type;
+import zinara.ast.type.Type;
 
 public class Declaration {
     private Type type;

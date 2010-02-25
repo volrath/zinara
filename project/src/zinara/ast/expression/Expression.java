@@ -1,6 +1,6 @@
 package zinara.ast.expression;
 
-abstract class Expression {}
+public abstract class Expression {}
 
 
 // class ProjectionExp extends Expression {
