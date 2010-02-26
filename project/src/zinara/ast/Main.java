@@ -1,5 +1,7 @@
 package zinara.ast;
 
+import zinara.ast.instructions.CodeBlock;
+
 public class Main {
     CodeBlock code;
     
