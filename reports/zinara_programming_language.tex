@@ -345,7 +345,7 @@ interactuar con los tipos básicos definidos en la sección
 
 Todos los operadores asocian a la izquierda. Sus precedencias son:
 \begin{itemize}
-\item \texttt{and}, \texttt{\&}, \texttt{or}, \texttt{|}, \texttt{?}
+\item \texttt{and}, \texttt{\&}, \texttt{or}, \texttt{|}, \texttt{xor}
 \item \texttt{<} , \texttt{>} , \texttt{<=} , \texttt{>=} , \texttt{==} , \texttt{<=>} , \texttt{!}
 \item \texttt{\-} (Unario)
 \item \texttt{\^}\
@@ -354,6 +354,8 @@ Todos los operadores asocian a la izquierda. Sus precedencias son:
 \end{itemize}
 
 \subsubsection{Coherciones}
+\begin{itemize}
+\item
 \begin{tabular}{|c||cccc|}
 	\hline
 +      &  Int  & Float & Char  & Bool  \\
@@ -364,7 +366,8 @@ Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 	\hline
 \end{tabular}
-\\
+
+\item
 \begin{tabular}{|c||cccc|}
 	\hline
 -      &  Int  & Float & Char  & Bool  \\
@@ -375,28 +378,91 @@ Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 	\hline
 \end{tabular}
-\\
+
+\item
 \begin{tabular}{|c||cccc|}
 	\hline
 *      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & \emph{Error} & \emph{Error} \\
-Float  & Float &   X   & \emph{Error} & \emph{Error} \\
-Char   & \emph{Error} & \emph{Error} &   X   & \emph{Error} \\
-Bool   & \emph{Error} & \emph{Error} & \emph{Error} &   X   \\
+Int    &  Int  & Float & \emph{Error} & \emph{Error} \\
+Float  & Float & Float & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 	\hline
 \end{tabular}
-\\
+
+\item
 \begin{tabular}{|c||cccc|}
 	\hline
 /      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & \emph{Error} & \emph{Error} \\
-Float  & Float &   X   & \emph{Error} & \emph{Error} \\
-Char   & \emph{Error} & \emph{Error} &   X   & \emph{Error} \\
-Bool   & \emph{Error} & \emph{Error} & \emph{Error} &   X   \\
+Int    &  Int  & Float & \emph{Error} & \emph{Error} \\
+Float  & Float & Float & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 	\hline
 \end{tabular}
+
+\item
+\begin{tabular}{|c||cccc|}
+	\hline
+\%     &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &  Int  & Float & \emph{Error} & \emph{Error} \\
+Float  & Float & Float & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+	\hline
+\end{tabular}
+
+\item
+\begin{tabular}{|c||cccc|}
+	\hline
+\texttt{\^}\     &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &  Int  & Float & \emph{Error} & \emph{Error} \\
+Float  & Float & Float & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+	\hline
+\end{tabular}
+
+\item
+\begin{tabular}{|c||cccc|}
+	\hline
+<,>,<=,>=&  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int      &  Bool &  Bool & \emph{Error} & \emph{Error} \\
+Float    &  Bool &  Bool & \emph{Error} & \emph{Error} \\
+Char     & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool     & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+	\hline
+\end{tabular}
+
+\item
+\begin{tabular}{|c||cccc|}
+	    \hline
+AND,OR,\texttt{|},\& &  Int  & Float & Char  & Bool  \\ 
+	    \hline \hline
+Int         & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Float       & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Char        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool        & \emph{Error} & \emph{Error} & \emph{Error} & Bool \\
+	\hline
+\end{tabular}
+
+\item
+\begin{tabular}{|c||cccc|}
+ \hline
+!       &  Int  & Float & Char  & Bool  \\ 
+ \hline \hline
+Int     & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Float   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Char    & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool    & \emph{Error} & \emph{Error} & \emph{Error} & Bool \\
+	\hline
+\end{tabular}
+\end{itemize}
 
 \subsection{Expresiones}
 \label{sec:expr}
@@ -500,7 +566,7 @@ sido utilizadas en todo el desarrollo del lenguaje.
   dicha gramática en código \emph{Java}.\\
 
   Ambas herramientas están bien documentadas y ofrecen facilidades
-  para interactuar y comunicarse entre ellas, Lo cual tuvo un gran
+  para interactuar y comunicarse entre ellas, lo cual tuvo un gran
   peso en la decisión de elegirlas para el desarrollo de
   \emph{\textbf{Zinara}}.
 
@@ -698,7 +764,9 @@ correcto en su analizador lexicográfico y su analizador sintáctico. A
 parte de esto también construye el árbol sintáctico abstracto y la
 tabla de símbolos de un programa dado. Las límitaciones de ésto último
 se encuentran en el manejo de la tabla de símbolos para las funciones,
-el cual todavia no se encuentra completamente implementado.\\
+el cual todavia no se encuentra completamente implementado. Además,
+la tabla de símbolos no se comporta bien para los \texttt{for} del
+lenguaje, dado que no toma en cuenta la variable de iteración.\\
 
 El chequeo de tipos se encuentra inestable y hemos decidido no
 incluirlo en el código adjunto, sin embargo existen ya adelantos que

@@ -35,17 +35,29 @@ public void varDecl(Declaration d){
 
 public void notused(String id){
     if (CurrentTable.containsSymbol(id)){
-	//report_fatal_error("Simbolo"+((SingleDeclaration)d).getId()+" ya declarado",null);
 	System.out.println("Simbolo \'"+id+"\' ya declarado");
 	System.exit(1);
     }
+    
 }
 
 public void used(String id){
     if (! CurrentTable.containsSymbol(id)){
-	//report_fatal_error("Simbolo"+((SingleDeclaration)d).getId()+" ya declarado",null);
-	System.out.println("Simbolo \'"+id+"\' no existe");
-	System.exit(1);
+	if ((GlobalTable != CurrentTable) && (!GlobalTable.containsSymbol(id))){
+	    System.out.println("Simbolo \'"+id+"\' no existe");
+	    System.exit(1);
+	}
+    }
+}
+
+public void used_for_for(String id){
+    if (! CurrentTable.containsSymbol(id)){
+	if ((!GlobalTable.containsSymbol(id))){
+	    if ((!GlobalTable.containsSymbol(id))){
+		System.out.println("Simbolo \'"+id+"\' no existe");
+		System.exit(1);
+	    }
+	}
     }
 }
 
@@ -158,15 +170,14 @@ nonterminal expr_part, elif_list;
 precedence left SEMI;
 precedence right ASIG;
 
-precedence left AND, SAND, OR, SOR, XOR;
-precedence left SHEQ, DEEQ, NOEQ;
-precedence left LTLT, GTGT, PLUSPLUS;
-precedence left LT, LTE, GT, GTE;
-
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE, MOD;
 precedence left POW;
 precedence left UMINUS;
+
+precedence left LTLT, GTGT, PLUSPLUS;
+precedence left LT, LTE, GT, GTE, SHEQ, DEEQ, NOEQ;
+precedence left AND, SAND, OR, SOR, XOR;
 
 //precedence left INTEGER_V, FLOAT_V, CHAR_V, TRUE, FALSE;
 
@@ -175,11 +186,11 @@ precedence left UMINUS;
 /*
       THE PROGRAM
  */
-program   ::= main:m               {: RESULT = new Program(m); :}
-            | decl_list:ds main:m  {: RESULT = new Program(m, ds); :}
+program   ::= main:m               {: RESULT = new Program(m);   :}
+            | decl_list:ds main:m  {: RESULT = new Program(m,ds);:}
             ;
 
-main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN       {: RESULT = new Main(); :}
+main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
             ;
 
 /*
