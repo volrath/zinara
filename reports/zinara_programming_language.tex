@@ -5,10 +5,10 @@
 \usepackage{graphicx}
 
 \begin{document}
-\title{Universidad Simón BolÃ­var \\ Lenguajes de Programación II \\ Zinara}
+\title{Universidad Simón Bolívar \\ Lenguajes de Programación II \\ Zinara}
 \author{
   Daniel Barreto - \#04-36723 \texttt{<daniel.barreto.n@gmail.com>} \\
-  GermÃ¡n Jaber - \#06-39743 \texttt{<germy-boy@gmail.com>}
+  Germán Jaber - \#06-39743 \texttt{<german@ac.labf.usb.ve>}
 }
 \maketitle
 
@@ -74,10 +74,10 @@ diseño del lenguaje han sido:
 Para esta entrega sólo han sido desarrollados los tipos básicos de
 \emph{\textbf{Zinara}}, los cuales son descritos a continuación.
 
-\subsection{Tipos bÃ¡sicos}
+\subsection{Tipos básicos}
 \label{sec:tiposbasicos}
 
-Los tipos bÃ¡sicos del lenguaje son:
+Los tipos b\'asicos del lenguaje son:
 
 \begin{itemize}
 \item \textbf{Int}: Entero de 4 \emph{bytes}.
@@ -89,7 +89,7 @@ Los tipos bÃ¡sicos del lenguaje son:
 A partir de estos tipos básicos se construirán los tipos compuestos
 que se mostrarán en las siguientes entregas.
 
-\section{Sintaxis y SemÃ¡ntica}
+\section{Sintaxis y Sem\'antica}
 \label{sec:synsem}
 
 Como se mencionó anteriormente, \emph{\textbf{Zinara}} trata de ser un
@@ -139,6 +139,9 @@ establecen los siguientes lineamientos:
 
 \item Cualquier palabra o secuencia de palabras delimitadas entre
   \texttt{[} y \texttt{]} es opcional.
+
+\item Un conjunto de palabras separadas por \texttt{|} indica que una y
+  solo una de las palabras del conjunto puede aparecer en ese punto.
 \end{itemize}
 
 \subsection{Declaraciones}
@@ -171,6 +174,7 @@ el cual es explicado en la sección \ref{sec:func}.
 \subsection{Instrucciones}
 \label{sec:instr}
 
+
 Las instrucciones del lenguaje que se pueden realizar sobre los tipos
 básicos definidos en la sección \ref{sec:tiposbasicos} son las siguientes:
 
@@ -178,7 +182,7 @@ básicos definidos en la sección \ref{sec:tiposbasicos} son las siguientes:
 \item Secuenciación
 \item Asignación
 \item Return
-\item Estructuras de control (explicadas con detalle en la sección \ref{sec:ecntrl}
+\item Estructuras de control (explicadas con detalle en la sección \ref{sec:ecntrl})
 \item Impresi\'on
 \end{itemize}
 
@@ -186,32 +190,29 @@ Adicionalmente, las declaraciones de identificadores o funciones
 también cuentan como instrucciones del lenguaje.
 
 \subsubsection{Secuenciaci\'on}
-Sintaxis:
-\begin{verbatim}
-  insts     -> insts Â«INSTÂ» '\\n' 
-            -> 
-\end{verbatim}
-
 Se secuenci\'an varias instrucciones separandolas con saltos
 de l\'inea. No importa que la \'ultima instrucci\'on tenga
 tambi\'en un salto de l\'inea.
 
-\subsubsection{Asignación}
+\subsubsection{Asignaci\'on}
 Sintaxis:
+Las asignaciones se pueden realizar de dos formas:\\
+
+\textbf{Una a la vez}:
 \begin{verbatim}
-  asig      -> Â«idÂ» asig_list Â«exprÂ» 
-  asig_list -> ',' Â«idÂ» asig_list Â«exprÂ» ','
-            -> '='
+<identificador> [= <expresion>]
 \end{verbatim}
 
-De igual forma que la declaración, la asignación puede ser aplicada
-tanto a un único identificador como a una secuencia de
-identificadores.
+\textbf{O de forma múltiple}:
+\begin{verbatim}
+<id1>, <id2>, ..., <idN> [= <expr1>, <expr2>, ..., <exprN>]
+\end{verbatim}
 
 \subsubsection{Return}
+\label{sec:return}
 Sintaxis:
 \begin{verbatim}
-  ret  -> 'return' Â«exprÂ» 
+return <expr>
 \end{verbatim}
 
 Esta instrucci\'on solo puede ser usada dentro de una funci\'on. Lo
@@ -221,102 +222,88 @@ la expresión \texttt{<expr>}.
 \subsubsection{Impresi\'on}
 Sintaxis:
 \begin{verbatim}
-  print     -> 'print' '(' Â«exprÂ» ')' 
+print ( <expr> )
 \end{verbatim}
 
-Imprime la expresion \texttt{<expr>} a la salida est\'andar.
+Imprime la expresion entre par\'entesis a la salida est\'andar. \texttt{expr}
+puede tener cualquier tipo del lenguaje, pero no un tipo definido por el usuario.
 
 \subsection{Estructuras de control}
 \label{sec:ecntrl}
-Tenemos 4 estructuras de control
+\emph{\textbf{Zinara}} tiene 4 estructuras de control
 \begin{itemize}
 \item If: para ramificar el flujo del programa
 \item While: para ciclos gen\'ericos
-\item Cycle: para ciclos gen\'ericos tambi\'en
+\item Cycle: tambi\'en para ciclos gen\'ericos
 \item For: para iterar sobre listas y tuplas
 \end{itemize}
 
-Revisemos ahora su sintaxis. Note que en este caso, no estaremos
-definiendo la sintaxis en forma de gramÃ¡tica, si no de manera mÃ¡s natural.
+A continuación se revisará su sintaxis. Note que en este caso, no
+definiremos la sintaxis en forma de gram\'atica, si no de manera m\'as
+natural.
 
 \subsubsection{If}
 Sintaxis:
 \begin{verbatim}
-   if Â«exprÂ» :
-       Â«codeÂ»
-   elif Â«exprÂ» :
-       Â«codeÂ»
+   if <expr> :
+       <code_block1>
+  [elif <expr> :
+       <code_block2>]
    .
    .
    .
-   else :
-       Â«codeÂ»
-   end
+  [else :
+       <code_blockn>]
+   end|endif
 \end{verbatim}
-Los 'elif' y el 'else' no son obligatorios, pero el 'end' si lo es.//
-Note que se puede cerrar el bloque 'end' o 'endif'
 
 \subsubsection{While}
 Sintaxis:
 \begin{verbatim}
-   while Â«exprÂ» :
-       Â«codeÂ»
-   end
+   while <expr> :
+       <code_block1>
+   end|endwhile
 \end{verbatim}
-
-Esta el la estructura para crear ciclos mÃ¡s simple de todo el lenguaje.//
-Note que se puede cerrar el bloque 'end' o 'endwhile'
 
 \subsubsection{Cycle}
 Sintaxis:
 \begin{verbatim}
-   cycle
-      on Â«exprÂ» :
-          Â«codeÂ»
-      on Â«exprÂ» :
-          Â«codeÂ»
+   cycle[:
+     code_block]
+     [on <expr1> :
+          <code_block1>]
+     [on <expr2> :
+          <code_block2>]
       .
       .
       .
-      default :
-          Â«codeÂ»
-   end
-\end{verbatim}
-TambiÃ©n es vÃ¡lido:
-\begin{verbatim}
-   cycle:
-      Â«codeÂ»
-      on Â«exprÂ» :
-          Â«codeÂ»
-      on Â«exprÂ» :
-          Â«codeÂ»
-      .
-      .
-      .
-      default :
-          Â«codeÂ»
-   end
+      default :         | on <exprn> :
+          <code_blockn> |     <code_blockn>
+   end|endcycle
 \end{verbatim}
 Esta estructura de control iterativa recorrera cada una de las clausulas
-'on' probando el valor de la expresión, tomarÃ¡ la primera que sea cierta
-y cuando termine su ejecución volverÃ¡ a recorrer las clausulas. La
-estructura para cuando ninguna clausula se cumple. La clausula default no es obligatoria.\\
-Note que se puede cerrar el bloque 'end' o 'endcycle'
+\texttt{on} probando el valor de la expresi\'on, tomar\'a la primera que sea cierta
+y cuando termine su ejecuci\'on volver\'a a recorrer las clausulas. La
+estructura para cuando ninguna clausula se cumple.
+
 
 \subsubsection{For}
 Sintaxis:
 \begin{verbatim}
-   for Â«idÂ» in Â«exprÂ» :
-       Â«codeÂ»
+   for <id> in <expr> :
+       <code>
    end
 \end{verbatim}
 
-Esta estructura esta diseñada para recorrer listas y tuplas del
-lenguaje, por lo que Â«exprÂ» sólo puede ser una tupla o lista. El
-elemento actual de la iteración solo se puede accesar a travÃ©s del
-identificador Â«idÂ» dentro del ciclo. Ni el elemento iterado (Â«exprÂ») ni
-el Ã­ndice (Â«idÂ») pueden ser modificados dentro de la estructura de control.\\
-Note que se puede cerrar el bloque 'end' o 'endfor'.
+Esta estructura esta dise\~nada para recorrer listas\footnote{Las
+  listas son tipos de datos compuestos que serán explicadas en una
+  siguiente entrega} del lenguaje, por lo que el valor de
+\texttt{expr} s\'olo puede ser una lista. El elemento actual de la
+iteraci\'on solo se puede accesar a trav\'es del identificador
+\texttt{id} dentro del ciclo. Ni el elemento iterado \texttt{expr} ni
+el \'indice \texttt{id} pueden ser modificados dentro de esta estructura
+de control.\\
+
 
 \subsection{Operadores}
 \label{sec:ops}
@@ -371,10 +358,10 @@ Todos los operadores asocian a la izquierda. Sus precedencias son:
 	\hline
 +      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    & Int   & Float & Error & Error \\
-Float  & Float & Float & Error & Error \\
-Char   & Error & Error & Error & Error \\
-Bool   & Error & Error & Error & Error \\
+Int    & Int   & Float & \emph{Error} & \emph{Error} \\
+Float  & Float & Float & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 	\hline
 \end{tabular}
 \\
@@ -382,10 +369,10 @@ Bool   & Error & Error & Error & Error \\
 	\hline
 -      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    & Int   & Float & Error & Error \\
-Float  & Float & Float & Error & Error \\
-Char   & Error & Error & Error & Error \\
-Bool   & Error & Error & Error & Error \\
+Int    & Int   & Float & \emph{Error} & \emph{Error} \\
+Float  & Float & Float & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
 	\hline
 \end{tabular}
 \\
@@ -393,10 +380,10 @@ Bool   & Error & Error & Error & Error \\
 	\hline
 *      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & Error & Error \\
-Float  & Float &   X   & Error & Error \\
-Char   & Error & Error &   X   & Error \\
-Bool   & Error & Error & Error &   X   \\
+Int    &   X   & Float & \emph{Error} & \emph{Error} \\
+Float  & Float &   X   & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} &   X   & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} &   X   \\
 	\hline
 \end{tabular}
 \\
@@ -404,10 +391,10 @@ Bool   & Error & Error & Error &   X   \\
 	\hline
 /      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & Error & Error \\
-Float  & Float &   X   & Error & Error \\
-Char   & Error & Error &   X   & Error \\
-Bool   & Error & Error & Error &   X   \\
+Int    &   X   & Float & \emph{Error} & \emph{Error} \\
+Float  & Float &   X   & \emph{Error} & \emph{Error} \\
+Char   & \emph{Error} & \emph{Error} &   X   & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} &   X   \\
 	\hline
 \end{tabular}
 
@@ -426,13 +413,13 @@ a continuación:
 \item \textbf{Expresión Binaria:} Es una expresion que está
   determinada por dos expresiones cualquiera y un operador que las
   relaciona. El operador puede ser cualquiera de los operadores
-  binarios detallados en la sección \ref{sec:operadores}.
+  binarios detallados en la sección \ref{sec:ops}.
 
 \item \textbf{Expresión Unaria:} Es una expresión que se encuentra
   formada por algúna otra expresión cualquiera y un operador que actúa
   sobre ella. Análogamente que con las expresiones binarias, el
   operador puede ser cualquiera de los operadores unarios detallados
-  en la sección \ref{sec:operadores}.
+  en la sección \ref{sec:ops}.
 
 \item Cualquier literal de los tipos básicos del lenguaje es una
   expresión. Por ejemplo \texttt{42} en el caso de los enteros,
@@ -459,7 +446,7 @@ Las funciones en \emph{\textbf{Zinara}} son declaradas de la siguiente
 forma:
 
 \begin{verbatim}
-def <identificador>(<lista\_de\_argumentos>) return <<tipoR>>:
+def <identificador>(<lista_de_argumentos>) return <<tipoR>>:
 [codigo de la funcion]
 end[def]
 \end{verbatim}
@@ -510,9 +497,9 @@ sido utilizadas en todo el desarrollo del lenguaje.
   \emph{JavaCUP}\cite{javacup}, un generador de \emph{parsers} LALR(1)
   que recibe una especificación de gramática con sintaxis similar al
   conocido \emph{YACC} y genera el autómata encargado en reconocer
-  dicha gramática en código \emph{Java}.
+  dicha gramática en código \emph{Java}.\\
 
-\item Ambas herramientas están bien documentadas y ofrecen facilidades
+  Ambas herramientas están bien documentadas y ofrecen facilidades
   para interactuar y comunicarse entre ellas, Lo cual tuvo un gran
   peso en la decisión de elegirlas para el desarrollo de
   \emph{\textbf{Zinara}}.
@@ -578,7 +565,7 @@ adecuadamente sobre el contenido del archivo recibido. Actualmente
 ésta clase principal no realiza ningún tipo de chequeo extra a parte
 de los mencionados.
 
-\subsection{Árbol sintÃ¡ctico abstracto}
+\subsection{Árbol sintáctico abstracto}
 \label{sec:ast}
 
 El árbol sintáctico abstracto se encuentra implementado como una
@@ -590,14 +577,14 @@ conjuntos principales: \emph{expressions} para las expresiones,
 \emph{instructions} para las instrucciones y \emph{types} para los
 tipos. Dentro de cada una de las dos primeras divisiones se encuentran
 clases que representan sintácticamente las estructuras explicadas en
-las secciones \ref{sec:expr} y \ref{sec:inst} respectivamente.\\
+las secciones \ref{sec:expr} y \ref{sec:instr} respectivamente.\\
 
 En el conjunto \emph{types} se encuentran clases que representan los 4
 tipos básicos mencionados en la sección \ref{sec:tiposbasicos}, y una
 clase para representar el tipo de una función que es compuesto entre
 los tipos de sus argumentos y su tipo de retorno.
 
-\subsection{Tabla de sÃ­mbolos}
+\subsection{Tabla de s\'imbolos}
 \label{sec:st}
 
 Las clases que manejan la tabla de s\'imbolos estan en los archivos
@@ -706,6 +693,16 @@ las herramientas que estan siendo utilizadas para el desarrollo de
 \chapter{Estado actual del lenguaje}
 \label{chap:estado}
 
+Actualmente \emph{\textbf{Zinara}} cuenta con un funcionamiento
+correcto en su analizador lexicográfico y su analizador sintáctico. A
+parte de esto también construye el árbol sintáctico abstracto y la
+tabla de símbolos de un programa dado. Las límitaciones de ésto último
+se encuentran en el manejo de la tabla de símbolos para las funciones,
+el cual todavia no se encuentra completamente implementado.\\
+
+El chequeo de tipos se encuentra inestable y hemos decidido no
+incluirlo en el código adjunto, sin embargo existen ya adelantos que
+pueden ser observados en \cite{github}.
 
 \bibliographystyle{plain}
 \bibliography{bibliography}
