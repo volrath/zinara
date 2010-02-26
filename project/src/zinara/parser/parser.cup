@@ -130,16 +130,6 @@ precedence left TIMES, DIVIDE, MOD;
 precedence left POW;
 precedence left UMINUS;
 
-precedence right COMMA; 
-/*Sin esto no sabe si esta leyendo
-  Int x,y,z
-o
-  Int x,y,z=1,2,3
-
-Esto resuelve en favor del shift
-*/
-
-
 //precedence left INTEGER_V, FLOAT_V, CHAR_V, TRUE, FALSE;
 
 /* The grammar */
@@ -194,10 +184,10 @@ decl         ::= type:t s_asig:a                 {:
 						  } else
 						      RESULT = new SingleDeclaration(t, ((SingleAssignation)a).getId(), ((SingleAssignation)a).getExpression(), false);
 						  :} // Maybe a single or a multiple declaration
-//               | type:t IDENTIFIER:id             {: RESULT = new SingleDeclaration(t, id, null, false); :} // A single declaration
-//               ;
 
-
+               | type:t IDENTIFIER:id             {: RESULT = new SingleDeclaration(t, id, null, false); :} // A single declaration
+               ;
+/*
                | type:t ident_list:ids             {: if (ids.size()==1){
                                                         // A single declaration
       	                                                RESULT = (SingleDeclaration)ids.get(0);
@@ -213,13 +203,13 @@ decl         ::= type:t s_asig:a                 {:
                    	                                RESULT = new MultipleDeclaration(ids);
                                                       };
                                                    :}
-
                ;
+
 
 ident_list ::= ident_list:il COMMA IDENTIFIER:id   {: il.add(id); RESULT = il;:}
              | IDENTIFIER:id                       {: RESULT = new ArrayList(); RESULT.add(new SingleDeclaration(null,id,null,false));:}
              ;
-
+*/
 
 def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:st RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(t,id,null,false); :};
 
