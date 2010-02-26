@@ -1,7 +1,5 @@
 #/bin/bash
 
-set -o xtrace
-
 export PATH=${JAVA4_HOME}:${PATH}
 export CLASSPATH=`pwd`/tools/cup/:${CLASSPATH}
 export JAVACMD=${JAVA4_HOME}/java

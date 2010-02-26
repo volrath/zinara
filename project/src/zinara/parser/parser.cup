@@ -35,17 +35,29 @@ public void varDecl(Declaration d){
 
 public void notused(String id){
     if (CurrentTable.containsSymbol(id)){
-	//report_fatal_error("Simbolo"+((SingleDeclaration)d).getId()+" ya declarado",null);
 	System.out.println("Simbolo \'"+id+"\' ya declarado");
 	System.exit(1);
     }
+    
 }
 
 public void used(String id){
     if (! CurrentTable.containsSymbol(id)){
-	//report_fatal_error("Simbolo"+((SingleDeclaration)d).getId()+" ya declarado",null);
-	System.out.println("Simbolo \'"+id+"\' no existe");
-	System.exit(1);
+	if ((GlobalTable != CurrentTable) && (!GlobalTable.containsSymbol(id))){
+	    System.out.println("Simbolo \'"+id+"\' no existe");
+	    System.exit(1);
+	}
+    }
+}
+
+public void used_for_for(String id){
+    if (! CurrentTable.containsSymbol(id)){
+	if ((!GlobalTable.containsSymbol(id))){
+	    if ((!GlobalTable.containsSymbol(id))){
+		System.out.println("Simbolo \'"+id+"\' no existe");
+		System.exit(1);
+	    }
+	}
     }
 }
 
@@ -144,9 +156,10 @@ nonterminal Expression expr;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal String identifier;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
+nonterminal ArrayList args_list; // arraylist of types
+nonterminal Type arg;
 
 nonterminal type_list, dict_types, dict_type;
-nonterminal args_list, arg;
 nonterminal dict_vals, dict_val;
 nonterminal conds;
 nonterminal fi, elihw, elcyc, rof, fed, print;
@@ -173,11 +186,11 @@ precedence left AND, SAND, OR, SOR, XOR;
 /*
       THE PROGRAM
  */
-program   ::= main:m               {: RESULT = new Program(m); :}
-            | decl_list:ds main:m  {: RESULT = new Program(m, ds); :}
+program   ::= main:m               {: RESULT = new Program(m);   :}
+            | decl_list:ds main:m  {: RESULT = new Program(m,ds);:}
             ;
 
-main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN       {: RESULT = new Main(); :}
+main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
             ;
 
 /*
@@ -243,14 +256,14 @@ ident_list ::= ident_list:il COMMA IDENTIFIER:id   {: il.add(id); RESULT = il;:}
              ;
 */
 
-def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:st RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(t,id,null,false); :};
+def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(new FunctionType(al,t),id,null,false); :};
 
-args_list    ::= args_list:al COMMA arg:a
-               | arg:a
+args_list    ::= args_list:al COMMA arg:a           {: al.add(a); RESULT = al; :}
+               | arg:a                              {: RESULT = new ArrayList(); RESULT.add(a); :}
                ;
 
-arg          ::= COPY IDENTIFIER AS type
-               | IDENTIFIER AS type
+arg          ::= COPY IDENTIFIER AS type:t          {: RESULT = t; :}
+               | IDENTIFIER AS type:t               {: RESULT = t; :}
                ;
 
 /*
