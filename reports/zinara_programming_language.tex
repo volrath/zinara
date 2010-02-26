@@ -5,10 +5,10 @@
 \usepackage{graphicx}
 
 \begin{document}
-\title{Universidad Sim�n Bol�var \\ Lenguajes de Programaci�n II \\ Zinara}
+\title{Universidad Simón Bolívar \\ Lenguajes de Programación II \\ Zinara}
 \author{
   Daniel Barreto - \#04-36723 \texttt{<daniel.barreto.n@gmail.com>} \\
-  Germ�n Jaber - \#06-39743 \texttt{<germy-boy@gmail.com>}
+  Germán Jaber - \#06-39743 \texttt{<germy-boy@gmail.com>}
 }
 \maketitle
 
@@ -16,28 +16,38 @@
 
 \newpage
 
-\chapter{Introducci�n}
+\chapter{Introducción}
 \label{chap:intr}
 
 
 
-\chapter{Dise�o del Lenguaje}
+\chapter{Diseño del Lenguaje}
 \label{chap:diseno}
 
 
-\section{Filosof�a y paradigma de programaci�n}
+\section{Filosofía y paradigma de programación}
 \label{sec:filpar}
 
 
-\section{Dise�o de Tipos}
-
+\section{Diseño de Tipos}
 \label{sec:tipos}
 
-\subsection{Tipos b�sicos}
+\subsection{Tipos básicos}
 \label{sec:tiposbasicos}
+Los tipos básicos del lenguaje son:
+\begin{itemize}
+Entero   (Int)
+Flotante (Float)
+Booleano (Bool)
+Char     (Char)
+\end{itemize}
+Nos pareció que estos eran los únicos tipos básicos necesarios
+para que el lenguaje fuera útil e interesante.%
+Aunque sean tipos básicos, estos se manejarán por referencia,
+tal como el resto de los tipos del lenguaje. Esto para mantener
+el lenguaje lo más consistente posible.
 
-
-\section{Sintaxis y Sem�ntica}
+\section{Sintaxis y Semántica}
 \label{sec:synsem}
 
 \subsection{Declaraciones}
@@ -45,18 +55,265 @@
 
 \subsection{Instrucciones}
 \label{sec:instr}
+Las instrucciones del lenguaje que no estan exclusivamente
+ligadas a algún tipo compuesto son:
+\begin{itemize}
+Secuenciación
+Asignación
+Declaraci\'on de constantes
+Declaraci\'on de variables
+Declaraci\'on de funci\'on
+Return
+Invocación de funci\'on
+Impresi\'on
+\end{itemize}
+
+\subsubsection{Secuenciaci\'on}
+Sintaxis:
+  insts     -> insts «INST» `\n` 
+            -> 
+
+Se secuenci\'an varias instrucciones separandolas con saltos
+de l\'inea. No importa que la \'ultima instrucci\'on tenga
+tambi\'en un salto de l\'inea.
+
+\subsubsection{Asignación}
+Sintaxis:
+  asig      -> «id» asig_list «expr» 
+  asig_list -> `,` «id» asig_list «expr» `,`
+            -> `=`
+
+La asignación puede ser aplicada a varios identificadores a la
+vez y siempre es superficial.
+
+\subsubsection{Declaraci\'on de constantes}
+Sintaxis:
+  decl_cns -> «type» list_id 
+           -> «type» asig
+
+  list_id  -> list_id `,` «id»
+           -> «id»
+
+Toda declaración se interpreta la declaración de una constante a
+menos que se indique explícitamente lo contrario.% 
+Las constantes se pueden declarar en conjunto sin ser inizializadas
+explícitamente o bien pueden recibir valores iniciales del
+programador. Todas las variables de una declaración comparten el
+mismo tipo.
+
+\subsubsection{Declaraci\'on de variables}
+Sintaxis:
+  decl_var -> `var` «type» list_id 
+           -> `var` «type» asig
+
+  list_id  -> list_id `,` «id»
+           -> «id»
+
+Análogo a la declaración de constantes. Solo cambia por el uso de
+la palabra clave `var` para indicar explícitamente que se está
+declarando una variable.
+
+\subsubsection{Declaraci\'on de funci\'on}
+Sintaxis:
+  decl_def -> `def` «id» `(`args`)` `returns` `<`«type»`>` «code» end
+
+  end      -> `end`|`enddef`
+
+  args     -> args `,` copy «id» `as` «type»
+           -> 
+   
+  copy     -> `copy`
+           ->
+
+Las funciones pasan todo por referencia a menos que se indique
+explícitamente que el pasaje debe hacerse por valor con la palabra
+reservada `copy`. Las funciones son elemente de primera clase, por lo
+que pueden declararce funciones dentro de funciones y dentro del main,
+pasarse a funciones y devolverse como parámetros. Adem\'as, puede cerrarce el bloque de una funci\'on tanto con la palabra `end` como con `enddef`.
+
+\subsubsection{Return}
+Sintaxis:
+  ret  -> `return` «expr» 
+
+Esta instrucci\'on solo puede ser usada dentro de una funci\'on. Lo que
+hace es detener el flujo de la funci\'on y hacer que esta devuelva «expr».
+
+\subsubsection{Invocación de función}
+Sintaxis:
+  func_call  -> «id» `(` expr_list `)`
+  
+  expr_list  -> expr_list `,` «expr»
+
+Las invocaciones a funciones pueden ser tanto instrucciones como
+expresiones.
+
+\subsubsection{Impresi\'on}
+Sintaxis:
+  print     -> `print` `(` «expr» `)` 
+
+Imprime la expresion entre par\'entesis a la salida est\'andar. «expr»
+puede tener cualquier tipo del lenguaje, pero no un tipo definido por el usuario.
+
+\subsection{Operadores}
+\label{sec:ops}
+
+\subsubsection{Operadores Aritm\'eticos}
+\begin{itemize}
+\item Suma     (+)
+\item Resta    (-)
+\item Producto (*)
+\item Divisi\'on  (/)
+\item M\'odulo (\%)
+\item Potencia (^)
+\item Menos unario (-)
+\end{itemize}
+
+\subsubsection{Operadores Relacionales}
+\begin{itemize}
+\item Mayor         (>)
+\item Menor         (<)
+\item Mayor o igual (>=)
+\item Menor o igual (<=)
+\item Igual (superficial) (==)
+\item Igual (profundo)    (<=>)
+\item Negaci\'on      (!)
+\end{itemize}
+
+\subsubsection{Operadores L\'ogicos}
+\begin{itemize}
+\item And con corto-circuito (AND)
+\item And sin corto-circuito (&)
+\item Or con corto-circuito  (OR)
+\item Or sin corto-circuito  (|)
+\item Diferente              (?)
+\end{itemize}
+\end{section}
+
+Todos los operadores asocian a la izquierda. Sus precedencias son:
+\begin{itemize}
+\item AND ,\& , OR , | , ?
+\item < , > , <= , >= , == , <=> , !
+\item - (Unario)
+\item ^
+\item * , / , \%
+\item + , - (Binario)
+\end{itemize}
+
 
 \subsection{Expresiones}
 \label{sec:expr}
+
+\subsection{Estructuras de control}
+\label{sec:ecntrl}
+Tenemos 4 estructuras de control
+\begin{itemize}
+\item If: para ramificar el flujo del programa
+\item While: para ciclos gen\'ericos
+\item Cycle: para ciclos gen\'ericos tambi\'en
+\item For: para iterar sobre listas y tuplas
+\end{itemize}
+
+Revisemos ahora su sintaxis. Note que en este caso, no estaremos
+definiendo la sintaxis en forma de gramática, si no de manera más natural.
+
+\subsubsection{If}
+Sintaxis:
+
+   if «expr» :
+       «code»
+   elif «expr» :
+       «code»
+   .
+   .
+   .
+   else :
+       «code»
+   end
+
+Los 'elif' y el 'else' no son obligatorios, pero el 'end' si lo es.%
+Note que se puede cerrar el bloque `end` o `endif`
+
+\subsubsection{While}
+Sintaxis:
+
+   while «expr» :
+       «code»
+   end
+
+Esta el la estructura para crear ciclos más simple de todo el lenguaje.%
+Note que se puede cerrar el bloque `end` o `endwhile`
+
+\subsubsection{Cycle}
+Sintaxis:
+
+   cycle
+      on «expr» :
+          «code»
+      on «expr» :
+          «code»
+      .
+      .
+      .
+      default :
+          «code»
+   end
+
+También es válido:
+
+   cycle:
+      «code»
+      on «expr» :
+          «code»
+      on «expr» :
+          «code»
+      .
+      .
+      .
+      default :
+          «code»
+   end
+
+Esta estructura de control iterativa recorrera cada una de las clausulas
+`on` probando el valor de la expresión, tomará la primera que sea cierta
+y cuando termine su ejecución volverá a recorrer las clausulas. La
+estructura para cuando ninguna clausula se cumple. La clausula default no es obligatoria.%
+Note que se puede cerrar el bloque `end` o `endcycle`
+
+\subsubsection{For}
+Sintaxis:
+
+   for «id» in «expr» :
+       «code»
+   end
+
+Esta estructura esta diseñada para recorrer listas y tuplas del
+lenguaje, por lo que «expr» sólo puede ser una tupla o lista. El
+elemento actual de la iteración solo se puede accesar a través del
+identificador «id» dentro del ciclo. Ni el elemento iterado («expr») ni
+el índice («id») pueden ser modificados dentro de la estructura de control.%
+Note que se puede cerrar el bloque `end` o `endfor`.
 
 \subsection{Funciones y Procedimientos}
 \label{sec:func}
 
 
-
-\chapter{Implementaci�n}
+\chapter{Implementación}
 \label{chap:impl}
-
+Utilizamos herramientas de generación de código para crear el lexer y
+el parser. Elegimos usar un parser LALR(1) debido a que reconoce más
+lenguajes que un parser LL(1) y a que el manejo de precedencias y
+asociatividades es mucho mas simple.%
+Creamos el árbol sintactico abstracto a medida que se reconoce el
+código. Para guardar el AST usamos hicimos una jerarquía
+de clases que representan los nodos de interés en el árbol. Cada clase
+tiene como atributos a otras clases de la jerarquía, que representan los
+elementos de los cuales esta compuesto ese elemento del lenguaje. Así,
+la clase If, por ejemplo, tiene como atributos un objeto ArrayList que
+contiene objetos IfCase, un IfCase tiene como atributos un objeto
+Expresion y un objeto CodeBlock.%
+Para guardar las tablas de símbolos se usa una tabla de hash que
+guardamos dentro de una clase Symtable y le dimos a esta clase una interfaz
+semánticamente mas coherente con el manejo de símbolos.
 
 \section{Herramientas utilizadas}
 \label{sec:herramientas}
@@ -66,16 +323,16 @@
 \label{sec:requ}
 
 
-\section{El c�digo}
+\section{El código}
 \label{sec:codigo}
 
 \subsection{Paquetes}
 \label{sec:paquetes}
 
-\subsection{�rbol sint�ctico abstracto}
+\subsection{Árbol sintáctico abstracto}
 \label{sec:ast}
 
-\subsection{Tabla de s�mbolos}
+\subsection{Tabla de símbolos}
 \label{sec:st}
 
 
