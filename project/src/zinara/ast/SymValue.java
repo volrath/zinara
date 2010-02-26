@@ -1,10 +1,14 @@
 package zinara.ast;
 
-class SymValue{
-    private Object value;
-    private String type;
+import zinara.ast.type.*;
 
-    public SymValue(Object v, String t) {
+public class SymValue{
+    private boolean variable;
+    private Object value;
+    private Type type;
+
+    public SymValue(Object v, Type t, boolean var) {
+	this.variable = var;
         this.value = v;
         this.type = t;
     }
@@ -13,7 +17,11 @@ class SymValue{
         return this.value;
     }
 
-    public String getType() {
+    public Type getType() {
         return this.type;
+    }
+
+    public boolean isCons() {
+        return ! this.variable;
     }
 }

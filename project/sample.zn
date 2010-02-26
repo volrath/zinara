@@ -1,3 +1,5 @@
+Int x,y,i = 6,7,8
+Int a
 main
-x = 4
+Int x = 4
 endmain
