@@ -18,15 +18,54 @@
 
 \chapter{Introducción}
 \label{chap:intr}
-
+El presente trabajo explica el desarrollo e implementación de un
+lenguaje de programación titulado
+\emph{\textbf{Zinara}}\footnote{\emph{Zinara Is Not A Recursive
+    Acronym...}} el cual se realiza como parte de un proyecto
+academico de lenguajes, blah
 
 
 \chapter{Diseño del Lenguaje}
 \label{chap:diseno}
 
+Este capítulo describe cuales han sido las ideas principales que han
+sido tomadas en cuenta para realizar el diseño general de
+\emph{\textbf{Zinara}} y posteriormente se detalla como han sido
+tomadas estas ideas para ser plasmadas en la sintaxis y semántica del
+lenguaje.
+
 
 \section{Filosofía y paradigma de programación}
 \label{sec:filpar}
+
+\textbf{\emph{Zinara}} esta orientado a ser un lenguaje simple y
+sencillo de leer y aprender, cuyo paradigma de programación será
+únicamente imperativo.\\
+
+Los principales lineamientos tomados a la hora de desarrollar el
+diseño del lenguaje han sido:
+
+\begin{itemize}
+\item \emph{Lo explicito es mejor que lo implicito:}\\
+  \emph{\textbf{Zinara}} es un lenguaje fuertemente y estáticamente
+  tipeado, lo que le permite al programador establecer explícitamente
+  todos los tipos de las variables de un programa, y asi poder
+  realizar a tiempo de compilación gran parte del chequeo del
+  funcionamiento del mismo.
+
+\item \emph{Lo simple es mejor que lo complicado:}\\
+  
+\item \emph{La legibilidad es importante:}\\
+  La sintaxis del lenguaje intentará ser lo mas simple y minimalista
+  posible, sin perder poder de expresividad.
+
+\item \emph{\textbf{Zinara} debe ayudar al programador a sentirse
+    cómodo:}\\
+  El diseño de las estructuras y herramientas que ofrece
+  \emph{\textbf{Zinara}} estará orientado a brindar flexibilidad y
+  poder de expresión al usuario, sacrificando para esto parte del
+  rendimiento de los programas escritos en el lenguaje.
+\end{itemize}
 
 
 \section{Diseño de Tipos}
@@ -40,8 +79,81 @@
 \section{Sintaxis y Semántica}
 \label{sec:synsem}
 
+Como se mencionó anteriormente, \emph{\textbf{Zinara}} trata de ser un
+lenguaje que sea facilmente leíble, por lo tanto su sintaxis está
+pensada para ser simple y minimalista, buscando tener la menor
+cantidad de adornos posibles, a diferencia de los lenguajes de
+programación tradicionales\footnote{C/C++, Java, Pascal, entre otros}
+que cuentan con una gran cantidad de signos de puntuación como
+delimitadores de instrucciones o declaraciones.\\
+
+Para conseguir este objetivo se tomaron las siguientes decisiones en
+cuanto a la sintaxis del lenguaje:
+
+\begin{itemize}
+\item Las instrucciones de un programa estarán delimitadas por un
+  salto de línea, sin algún tipo de signo de puntuación divisorio.
+
+\item Los bloques de código (que serán detallados más adelante)
+  estarán delimitados únicamente por una palabra clave que represente
+  dicho bloque, condiciones extras si son requeridas, y la palabra
+  clave de finalización de bloque de código: ``end''.
+
+\item Cuando sea posible y tenga sentido hacerlo, se dará preferencia
+  a usar palabras del idioma inglés como palabras clave en donde los
+  lenguajes de programación tradicionales utilizan signos de
+  puntuación.
+\end{itemize}
+
+A continuación se describe como estan diseñadas las partes principales
+de la sintaxis del lenguaje. Para facilitar la explicación se
+establecen los siguientes lineamientos:
+
+\begin{itemize}
+\item \texttt{<tipo>} representa un tipo cualquiera del lenguaje, entre ellos
+  los tipos básicos explicados anteriormente en la sección
+  \ref{sec:tiposbasicos}.
+
+\item \texttt{<identificador>}, \texttt{id1}, \texttt{id2},
+  \texttt{idN} representan identificadores del lenguaje, cualquier
+  palabra que empiece on una letra minúscula o mayúscula de la ``a'' a
+  la ``z'', seguido por cualquier cantidad de letras, números o
+  comillas simples \'.
+
+\item \texttt{<expresion>}, \texttt{expr1}, \texttt{expr2},
+  \texttt{exprN} representan expresiones cualquiera del lenguaje, como
+  son explicadas en la sección \ref{sec:expr}.
+
+\item Cualquier palabra o secuencia de palabras delimitadas entre
+  \texttt{[} y \texttt{]} es opcional.
+\end{itemize}
+
 \subsection{Declaraciones}
 \label{sec:decl}
+
+Las declaraciones se pueden realizar de dos formas:\\
+
+\textbf{Una a la vez}:
+\begin{verbatim}
+[var] <tipo> <identificador> [= <expresion>]
+\end{verbatim}
+
+\textbf{o de forma múltiple}:
+\begin{verbatim}
+[var] <tipo> <id1>, <id2>, ..., <idN> [= <expr1>, <expr2>, ..., <exprN>]
+\end{verbatim}
+
+La palabra clave \texttt{var} denota si el identificador, o los
+indentificadores, que estan siendo declarados se comportarán como
+variables en el lenguaje de programación. Si \texttt{var} se omite, el
+identificador (o identificadores) será declarado como constante, y una
+vez que le sea asignado un valor de una expresión, éste será
+inmutable.
+
+% PORQUE?!
+
+Existe un tercer tipo de declaración: \emph{Declaración de funciones},
+el cual es explicado en la sección \ref{sec:func}.
 
 \subsection{Instrucciones}
 \label{sec:instr}
@@ -49,40 +161,240 @@
 \subsection{Expresiones}
 \label{sec:expr}
 
-\subsection{Funciones y Procedimientos}
+Las expresiones tienen un valor y un tipo asociado. tanto el valor
+como el tipo de una expresión pueden ser determinados en función de
+los elementos que formen parte de la misma.
+
+Para esta entrega sólo se especificarán las expresiones que se pueden
+realizar con los tipos básicos de \emph{\textbf{Zinara}}. Se detallan
+a continuación:
+
+\begin{itemize}
+\item \textbf{Expresión Binaria:} Es una expresion que está
+  determinada por dos expresiones cualquiera y un operador que las
+  relaciona. El operador puede ser cualquiera de los operadores
+  binarios detallados en la sección \ref{sec:operadores}.
+
+\item \textbf{Expresión Unaria:} Es una expresión que se encuentra
+  formada por algúna otra expresión cualquiera y un operador que actúa
+  sobre ella. Análogamente que con las expresiones binarias, el
+  operador puede ser cualquiera de los operadores unarios detallados
+  en la sección \ref{sec:operadores}.
+
+\item Cualquier literal de los tipos básicos del lenguaje es una
+  expresión. Por ejemplo \texttt{42} en el caso de los enteros,
+  \texttt{3.5} en el caso de los flotantes, \texttt{'a'} en el caso de
+  los caracteres y \texttt{True} en el caso de los booleanos.
+
+\item Cualquier identificador ya declarado de un programa puede ser
+  usado como una expresión que tiene el mismo tipo de la declaración
+  del identificador y su valor es el valor que almacene dicho
+  identificador. Si al identificador no se le ha sido asignado ningún
+  valor antes del momento en el que es usado como una expresión, se
+  reportará un error a tiempo de compilación.
+
+\item Cualquier llamada a una función ya declarada es una expresión
+  que tiene como valor resultante el valor devuelto por la función, y
+  su tipo es el tipo de retorno de la función.
+%CHEQUEARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+\end{itemize}
+
+\subsection{Operadores}
+\label{sec:operadores}
+
+\subsection{Funciones}
 \label{sec:func}
 
+Las funciones en \emph{\textbf{Zinara}} son declaradas de la siguiente
+forma:
 
+\begin{verbatim}
+def <identificador>(<arg1> as <tipo1>, ..., <argN> as <tipoN>) return <<tipoR>>:
+[codigo de la funcion]
+end[def]
+\end{verbatim}
+
+Dónde \texttt{<tipoR>} es el tipo de retorno, y cada uno de los
+argumentos \texttt{<argI>} tienen un tipo asignado \texttt{<tipoI>}.
+
+Las funciónes tambien pueden ser usadas como expresiones, llamándolas
+de la siguiente forma:
+
+\begin{verbatim}
+<identificador>(<expr1>, ..., <exprN>)
+\end{verbatim}
 
 \chapter{Implementación}
 \label{chap:impl}
 
+Este capítulo describe brevemente las herramientas que fueron
+utilizadas para la realización del analizador sintáctico
+(\emph{parser}) y el analizador lexicográfico (\emph{lexer}) de
+\emph{\textbf{Zinara}}, así como el resto de las herramientas que han
+sido utilizadas en todo el desarrollo del lenguaje.
 
 \section{Herramientas utilizadas}
 \label{sec:herramientas}
 
 
-\section{Requerimientos para compilar}
+\section{Requerimientos}
 \label{sec:requ}
 
 
-\section{El código}
+\section{Detalles de implementación}
 \label{sec:codigo}
 
-\subsection{Paquetes}
-\label{sec:paquetes}
+Para la realización del proyecto se organizó el código fuente en un
+paquete de java llamado \texttt{zinara} el cual esta estructurado de
+la siguiente manera:
+
+\begin{itemize}
+\item \texttt{zinara.ast}: Paquete dónde se encuentran las clases
+  necesarias para representar el árbol sintáctico abstracto y la tabla
+  de símbolos. Estas clases son explicadas con más detalle a
+  continuación en las secciones \ref{sec:ast} y \ref{sec:st}.
+
+\item \texttt{zinara.lexer}: Paquete dónde se encuentra el archivo
+  \texttt{lexer.flex}, que representa la descripción lexicográfica de
+  los \emph{tokens} de \emph{\textbf{Zinara}}. En este paquete se
+  guarda un archivo llamado \texttt{Scanner.java} que contiene el
+  código generado por la herramienta \emph{JFlex} al ser aplicada
+  sobre el archivo \texttt{lexer.flex}.
+
+\item \texttt{zinara.parser}: Paquete que contiene el archivo
+  \texttt{parser.cup} que describe la gramática de
+  \emph{\textbf{Zinara}}. Análogamente al paquete
+  \texttt{zinara.lexer}, en \texttt{zinara.parser} se guardan los
+  archivos \texttt{parser.java} y \texttt{sym.java} que son generados
+  por la aplicación de la herramienta \emph{JavaCUP} sobre el archivo
+  \texttt{parser.cup}.
+\end{itemize}
+
+La clase principal de ejecución del proyecto se encuentra en
+\texttt{zinara.Main}, la cual espera recibir como parámetro de entrada
+un archivo de texto que contenga código escrito para
+\emph{\textbf{Zinara}}. Esta clase se encarga de invocar tanto al
+analizador lexicográfico como al analizador sintáctico y ejecutarlos
+adecuadamente sobre el contenido del archivo recibido. Actualmente
+ésta clase principal no realiza ningún tipo de chequeo extra a parte
+de los mencionados.
 
 \subsection{Árbol sintáctico abstracto}
 \label{sec:ast}
+
+El árbol sintáctico abstracto se encuentra implementado como una
+secuencia de clases que establecen la representación sintáctica de
+cada uno de los elementos del lenguaje.\\
+
+Las clases del árbol sintáctico abstracto están dividas en tres
+conjuntos principales: \emph{expressions} para las expresiones,
+\emph{instructions} para las instrucciones y \emph{types} para los
+tipos. Dentro de cada una de las dos primeras divisiones se encuentran
+clases que representan sintácticamente las estructuras explicadas en
+las secciones \ref{sec:expr} y \ref{sec:inst} respectivamente.\\
+
+En el conjunto \emph{types} se encuentran clases que representan los 4
+tipos básicos mencionados en la sección \ref{sec:tiposbasicos}, y una
+clase para representar el tipo de una función que es compuesto entre
+los tipos de sus argumentos y su tipo de retorno.
 
 \subsection{Tabla de símbolos}
 \label{sec:st}
 
 
 
+\section{Código adjunto del proyecto}
+\label{sec:correr}
+
+Este proyecto tiene adjunto un archivo comprimido llamado\\
+
+\texttt{zinara-barreto-jaber-entrega1.tar.gz}\\
+
+y dentro de éste archivo se encuentra una única carpeta llamada
+\textbf{Zinara-Barreto-Jaber/}. Una vez descomprimido el archivo se
+encontrará la siguiente estructura de directorios:
+
+\begin{itemize}
+\item \textbf{labs/}: Directorio donde se guardan los laboratorios
+  asignados en clases.
+\item \textbf{project/}: Directorio principal del proyecto, donde se
+  encuentra el codigo fuente y los binarios para la ejecución.
+  \begin{itemize}
+  \item \textbf{project/bin/}: Directorio donde se guardan los
+    archivos ejecutables para correr el proyecto.
+  \item \textbf{project/classes/}: Directorio donde en encuentran los
+    archivos \texttt{.class} del proyecto.
+  \item \textbf{project/lib/}: Directorio donde se guardan las
+    librerias externas usadas en el desarrollo del proyecto. Para esta
+    entrega no se a agregado ninguna.
+  \item \textbf{project/src/}: Directorio donde se encuentra el código
+    fuente del proyecto.
+  \end{itemize}
+\item \textbf{reports/}: Directorio donde se guarda el código fuente
+  del presente informe, así como su versión en \emph{pdf}.
+\end{itemize}
+
+\subsection{Ejecución}
+\label{sec:zejecucion}
+Los pasos para ejecutar el proyecto en una consola UNIX son los
+siguientes:
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/bin/
+$> java -jar zinara.jar archivo_de_prueba.zn
+\end{verbatim}
+
+Opcionalmente se puede ejecutar el proyecto desde el directorio
+\texttt{project/classes/}, realizando los siguientes pasos:
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/classes/
+$> java zinara.Main archivo_de_prueba.zn
+\end{verbatim}
+
+Es importante recordar que para la ejecución del proyecto, dada la
+elección de cualquiera de los dos métodos de ejecución explicados
+anteriormente, es necesario tener bien establecidas las variables de
+ambiente requeridas por las herramientas utilizadas. Ir a
+\cite{javacup} y \cite{jflex} para más información.
+
+\subsection{Compilación}
+\label{sec:zcompilacion}
+Para compilar \emph{\textbf{Zinara}}, una vez que haya sido editado
+algún archivo del código fuente, se ejecutan las siguientes líneas de
+comando en una consola UNIX.
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/
+$> ant dist
+\end{verbatim}
+
+Esto se encargará de compilar y empaquetar adecuadamente el proyecto,
+y un ejecutable \texttt{.jar} será colocado dentro de la carpeta
+\texttt{bin/}.\\
+
+Es importante destacar que si se editan alguno de los archivos
+\texttt{parser.cup} o \texttt{lexer.flex}, es necesario ejecutar sobre
+ellos la herramienta \emph{JavaCUP} o la herramienta \emph{JFlex}
+según sea el caso, para poder generar los archivos \texttt{.java}
+correspondientes.\\
+
+La ejecución de las herramientas \emph{JavaCUP} y \emph{JFlex} no será
+documentada en este informe pués existen formas diversas de hacerlo, y
+varían según el sistema operativo donde se ejecute y la instalación
+que se haya realizado de ellas en cada computadora. Para más
+información referirse a \cite{javacup} y \cite{jflex}.\\
+
+En \cite{github} se encuentra un repositorio con el mismo código
+fuente adjunto (posiblemente más actualizado) y el código fuente de
+las herramientas que estan siendo utilizadas para el desarrollo de
+\emph{\textbf{Zinara}}.
+
 \chapter{Estado actual del lenguaje}
 \label{chap:estado}
 
 
+\bibliographystyle{plain}
+\bibliography{bibliography}
 
 \end{document}
