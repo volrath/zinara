@@ -175,6 +175,7 @@ declaration  ::= VAR decl:d                       {:
 						   :}
                | decl:d                           {: RESULT = d; :}
                ;
+
 decl         ::= type:t s_asig:a                 {: 
  						  if (!(a.isSingle)) { // a Multiple
 						      ArrayList ds = new ArrayList();
@@ -184,8 +185,26 @@ decl         ::= type:t s_asig:a                 {:
 						  } else
 						      RESULT = new SingleDeclaration(t, ((SingleAssignation)a).getId(), ((SingleAssignation)a).getExpression(), false);
 						  :} // Maybe a single or a multiple declaration
-               | type:t IDENTIFIER:id             {: RESULT = new SingleDeclaration(t, id, null, false); :} // A single declaration
+//               | type:t IDENTIFIER:id             {: RESULT = new SingleDeclaration(t, id, null, false); :} // A single declaration
+//               ;
+
+
+               | type:t ident_list:ids             {: if (ids.size()==1)
+                                                        // A single declaration
+     			                                RESULT = ids.get(0);
+                                                        RESULT.setType(t);
+						      else
+						        for (int i = 0; i < ids.size(); i++)
+							   ids.set(i,ids.get(i).setType(y));
+                   	                                RESULT = new MultipleDeclaration(ids);
+                                                   :}
+
                ;
+
+ident_list ::= ident_list:il COMMA IDENTIFIER:id   {: il.add(id); RESULT = il:}
+             | IDENTIFIER:id                       {: RESULT = new ArrayList(); RESULT.add(new SingleDeclaration(null,id,null,false));:}
+             ;
+
 
 def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:st RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(t,id,null,false); :};
 
