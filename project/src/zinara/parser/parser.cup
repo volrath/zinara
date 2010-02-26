@@ -301,7 +301,7 @@ inst_list     ::= inst_list instruction SEMI
                 | instruction SEMI
                 ;
 
-instruction   ::= asig:a                                    {: RESULT = a; :}
+instruction   ::= s_asig:a                                  {: RESULT = a; :}
                 | print expr:e                              {: RESULT = new Print(e); :}
                 | declaration:d                             {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :} 
@@ -310,7 +310,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | RETURN expr:e                             {: RESULT = new Return(e); :}
                 ;
 
-instruction_loop  ::= asig:a                                   {: RESULT = a; :}
+instruction_loop  ::= s_asig:a                                 {: RESULT = a; :}
                     | print expr:e                             {: RESULT = new Print(e); :}
                     | declaration:d                            {: RESULT = new DecInst(d); :}
                     | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new FunctionCall(n, el); :}

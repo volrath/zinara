@@ -120,9 +120,9 @@ Number      = {Digit}+
 
  "true"                          { return symbol(sym.TRUE); }
  "false"                         { return symbol(sym.FALSE); }
- [0-9]+\.[0-9]+                  { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
- [0-9]+\.                        { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()+".0"))); }
- \.[0-9]+                        { return symbol(sym.FLOAT_V,new Float(Float.parseFloat("0."+yytext()))); }
+ [0-9]+"."[0-9]+                  { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
+ [0-9]+"."                        { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()+".0"))); }
+ "."[0-9]+                        { return symbol(sym.FLOAT_V,new Float(Float.parseFloat("0."+yytext()))); }
  [0-9]+                          { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
  \'.\'                           { return symbol(sym.CHAR,new Character(yytext().charAt(1))); }
  [A-Za-z] [a-zA-Z\'_0-9]*        { return symbol(sym.IDENTIFIER,yytext()); }
