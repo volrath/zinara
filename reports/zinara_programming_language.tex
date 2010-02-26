@@ -5,10 +5,10 @@
 \usepackage{graphicx}
 
 \begin{document}
-\title{Universidad Simón Bolívar \\ Lenguajes de Programación II \\ Zinara}
+\title{Universidad Simón Bolívar \\ Lenguajes de Programaci\'on II \\ Zinara}
 \author{
   Daniel Barreto - \#04-36723 \texttt{<daniel.barreto.n@gmail.com>} \\
-  Germán Jaber - \#06-39743 \texttt{<germy-boy@gmail.com>}
+  Germán Jaber - \#06-39743 \texttt{<german@ac.labf.usb.ve>}
 }
 \maketitle
 
@@ -16,38 +16,38 @@
 
 \newpage
 
-\chapter{Introducción}
+\chapter{Introducci\'on}
 \label{chap:intr}
 
 
 
-\chapter{Diseño del Lenguaje}
+\chapter{Dise\~no del Lenguaje}
 \label{chap:diseno}
 
 
-\section{Filosofía y paradigma de programación}
+\section{Filosofía y paradigma de programaci\'on}
 \label{sec:filpar}
 
 
-\section{Diseño de Tipos}
+\section{Dise\~no de Tipos}
 \label{sec:tipos}
 
-\subsection{Tipos básicos}
+\subsection{Tipos b\'asicos}
 \label{sec:tiposbasicos}
-Los tipos básicos del lenguaje son:
+Los tipos b\'asicos del lenguaje son:
 \begin{itemize}
 \item Entero   (Int)
 \item Flotante (Float)
 \item Booleano (Bool)
 \item Char     (Char)
 \end{itemize}
-Nos pareció que estos eran los únicos tipos básicos necesarios
-para que el lenguaje fuera útil e interesante.//
-Aunque sean tipos básicos, estos se manejarán por referencia,
+Nos pareci\'o que estos eran los \'unicos tipos b\'asicos necesarios
+para que el lenguaje fuera \'util e interesante.//
+Aunque sean tipos b\'asicos, estos se manejar\'an por referencia,
 tal como el resto de los tipos del lenguaje. Esto para mantener
-el lenguaje lo más consistente posible.
+el lenguaje lo m\'as consistente posible.
 
-\section{Sintaxis y Semántica}
+\section{Sintaxis y Sem\'antica}
 \label{sec:synsem}
 
 \subsection{Declaraciones}
@@ -55,107 +55,155 @@ el lenguaje lo más consistente posible.
 
 \subsection{Instrucciones}
 \label{sec:instr}
-Las instrucciones del lenguaje que no estan exclusivamente
-ligadas a algún tipo compuesto son:
+
+\section{Sintaxis y Sem\'antica}
+\label{sec:synsem}
+
+Como se mencion\'o anteriormente, \emph{\textbf{Zinara}} trata de ser un
+lenguaje que sea facilmente le\'ible, por lo tanto su sintaxis est\'a
+pensada para ser simple y minimalista, buscando tener la menor
+cantidad de adornos posibles, a diferencia de los lenguajes de
+programaci\'on tradicionales\footnote{C/C++, Java, Pascal, entre otros}
+que cuentan con una gran cantidad de signos de puntuaci\'on como
+delimitadores de instrucciones o declaraciones.\\
+
+Para conseguir este objetivo se tomaron las siguientes decisiones en
+cuanto a la sintaxis del lenguaje:
+
 \begin{itemize}
-\item Secuenciación
-\item Asignación
+\item Las instrucciones de un programa estar\'an delimitadas por un
+ salto de l\'inea, sin alg\'un tipo de signo de puntuaci\'on divisorio.
+
+\item Los bloques de c\'odigo (que ser\'an detallados m\'as adelante)
+ estar\'an delimitados \'unicamente por una palabra clave que represente
+ dicho bloque, condiciones extras si son requeridas, y la palabra
+ clave de finalizaci\'on de bloque de c\'odigo: ``end''.
+
+\item Cuando sea posible y tenga sentido hacerlo, se dar\'a preferencia
+ a usar palabras del idioma ingl\'es como palabras clave en donde los
+ lenguajes de programaci\'on tradicionales utilizan signos de
+ puntuaci\'on.
+\end{itemize}
+
+A continuaci\'on se describe como estan dise\~nadas las partes principales
+de la sintaxis del lenguaje. Para facilitar la explicaci\'on se
+establecen los siguientes lineamientos:
+
+\begin{itemize}
+\item \texttt{<tipo>} representa un tipo cualquiera del lenguaje, entre ellos
+ los tipos b\'asicos explicados anteriormente en la secci\'on
+ \ref{sec:tiposbasicos}.
+
+\item \texttt{<identificador>}, \texttt{id1}, \texttt{id2},
+ \texttt{idN} representan identificadores del lenguaje, cualquier
+ palabra que empiece on una letra min\'uscula o may\'uscula de la ``a'' a
+ la ``z'', seguido por cualquier cantidad de letras, n\'umeros o
+ comillas simples \'.
+
+\item \texttt{<expresion>}, \texttt{expr1}, \texttt{expr2},
+ \texttt{exprN} representan expresiones cualquiera del lenguaje, como
+ son explicadas en la secci\'on \ref{sec:expr}.
+
+\item \texttt{<code_block>}, \texttt{<code_block1>}, \texttt{<code_block2>},
+      \texttt{<code_blockn>} representan secuencias de instrucciones y
+      estructuras de control del lenguaje.
+
+\item Cualquier palabra o secuencia de palabras delimitadas entre
+ \texttt{[} y \texttt{]} es opcional.
+
+\item Un conjunto de palabras separadas por \texttt{|} idica que una y
+solo una de las palabras del conjunto puede aparecer en ese punto.
+\end{itemize}
+
+\subsection{Instrucciones}
+Las instrucciones del lenguaje que no estan exclusivamente
+ligadas a alg\'un tipo compuesto son:
+\begin{itemize}
+\item Secuenciaci\'on
+\item Asignaci\'on
 \item Declaraci\'on de constantes
 \item Declaraci\'on de variables
 \item Declaraci\'on de funci\'on
 \item Return
-\item Invocación de funci\'on
+\item Invocaci\'on de funci\'on
 \item Impresi\'on
 \end{itemize}
 
 \subsubsection{Secuenciaci\'on}
-Sintaxis:
-\begin{verbatim}
-  insts     -> insts «INST» '\\n' 
-            -> 
-\end{verbatim}
-
 Se secuenci\'an varias instrucciones separandolas con saltos
 de l\'inea. No importa que la \'ultima instrucci\'on tenga
 tambi\'en un salto de l\'inea.
 
-\subsubsection{Asignación}
+\subsubsection{Asignaci\'on}
 Sintaxis:
-\begin{verbatim}
-  asig      -> «id» asig_list «expr» 
-  asig_list -> ',' «id» asig_list «expr» ','
-            -> '='
+Las asignaciones se pueden realizar de dos formas:\\
 
-La asignación puede ser aplicada a varios identificadores a la
-vez y siempre es superficial.
+\textbf{Una a la vez}:
+\begin{verbatim}
+<identificador> [= <expresion>]
 \end{verbatim}
 
-\subsubsection{Declaraci\'on de constantes}
-Sintaxis:
 \begin{verbatim}
-  decl_cns -> «type» list_id 
-           -> «type» asig
-
-  list_id  -> list_id ',' «id»
-           -> «id»
+<id1>, <id2>, ..., <idN> [= <expr1>, <expr2>, ..., <exprN>]
 \end{verbatim}
 
-Toda declaración se interpreta la declaración de una constante a
-menos que se indique explícitamente lo contrario.// 
-Las constantes se pueden declarar en conjunto sin ser inizializadas
-explícitamente o bien pueden recibir valores iniciales del
-programador. Todas las variables de una declaración comparten el
-mismo tipo.
-
-\subsubsection{Declaraci\'on de variables}
+\subsection{Declaraciones}
+\label{sec:decl}
 Sintaxis:
-\begin{verbatim}
-  decl_var -> 'var' «type» list_id 
-           -> 'var' «type» asig
+Las declaraciones se pueden realizar de dos formas:\\
 
-  list_id  -> list_id ',' «id»
-           -> «id»
+\textbf{Una a la vez}:
+\begin{verbatim}
+[var] <tipo> <identificador> [= <expresion>]
 \end{verbatim}
 
-Análogo a la declaración de constantes. Solo cambia por el uso de
-la palabra clave 'var' para indicar explícitamente que se está
-declarando una variable.
+\textbf{o de forma m\'ultiple}:
+\begin{verbatim}
+[var] <tipo> <id1>, <id2>, ..., <idN> [= <expr1>, <expr2>, ..., <exprN>]
+\end{verbatim}
+
+La palabra clave \texttt{var} denota si el identificador, o los
+indentificadores, que estan siendo declarados se comportar\'an como
+variables en el lenguaje de programaci\'on. Si \texttt{var} se omite, el
+identificador (o identificadores) ser\'a declarado como constante, y una
+vez que le sea asignado un valor de una expresi\'on, \'este ser\'a
+inmutable.
+
+Existe un tercer tipo de declaraci\'on: \emph{Declaraci\'on de funcion},
+el cual es explicado en la secci\'on \ref{sec:func}.
 
 \subsubsection{Declaraci\'on de funci\'on}
-Sintaxis:
+\label{sec:func}
+Sintaxis:\\
 \begin{verbatim}
-  decl_def -> 'def' «id» '('args')' 'returns' '<'«type»'>' «code» end
-
-  end      -> 'end'|'enddef'
-
-  args     -> args ',' copy «id» 'as' «type»
-           -> 
-   
-  copy     -> 'copy'
-           ->
+<id> ([copy] <id1> as <type> , [copy] <id2> as <type> , ... , [copy] <idn> as <type>) returns <type> :
+   <code_block>
+end|enddef
 \end{verbatim}
 
+\texttt{copy} es el nombre que tendra la funci\'on,
+\texttt{id1}, \texttt{id2} ... \texttt{idn} son los nombre de los
+par\'ametros formales.
+
 Las funciones pasan todo por referencia a menos que se indique
-explícitamente que el pasaje debe hacerse por valor con la palabra
-reservada 'copy'. Las funciones son elemente de primera clase, por lo
-que pueden declararce funciones dentro de funciones y dentro del main,
-pasarse a funciones y devolverse como parámetros. Adem\'as, puede cerrarce el bloque de una funci\'on tanto con la palabra 'end' como con 'enddef'.
+expl\'icitamente que el pasaje debe hacerse por valor con la palabra
+reservada \texttt{copy}.
 
 \subsubsection{Return}
-Sintaxis:
+\label{sec:return}
+Sintaxis:\\
 \begin{verbatim}
-  ret  -> 'return' «expr» 
+return <expr>
 \end{verbatim}
 
 Esta instrucci\'on solo puede ser usada dentro de una funci\'on. Lo que
-hace es detener el flujo de la funci\'on y hacer que esta devuelva «expr».
+hace es detener el flujo de la funci\'on y hacer que esta devuelva \texttt{expr}.
 
-\subsubsection{Invocación de función}
-Sintaxis:
+\subsubsection{Invocaci\'on de funci\'on}
+\label{sec:inv}
+Sintaxis:\\
 \begin{verbatim}
-  func_call  -> «id» '(' expr_list ')'
-  
-  expr_list  -> expr_list ',' «expr»
+<id> (<expr1> , <expr2> , ... , <exprn>)
 \end{verbatim}
 
 Las invocaciones a funciones pueden ser tanto instrucciones como
@@ -164,10 +212,10 @@ expresiones.
 \subsubsection{Impresi\'on}
 Sintaxis:
 \begin{verbatim}
-  print     -> 'print' '(' «expr» ')' 
+print ( <expr> )
 \end{verbatim}
 
-Imprime la expresion entre par\'entesis a la salida est\'andar. «expr»
+Imprime la expresion entre par\'entesis a la salida est\'andar. \texttt{expr}
 puede tener cualquier tipo del lenguaje, pero no un tipo definido por el usuario.
 
 \subsection{Operadores}
@@ -215,6 +263,7 @@ Todos los operadores asocian a la izquierda. Sus precedencias son:
 \end{itemize}
 
 \subsubsection{Coherciones}
+\\
 \begin{tabular}{|c||cccc|}
 	\hline
 +      &  Int  & Float & Char  & Bool  \\
@@ -269,113 +318,91 @@ Tenemos 4 estructuras de control
 \begin{itemize}
 \item If: para ramificar el flujo del programa
 \item While: para ciclos gen\'ericos
-\item Cycle: para ciclos gen\'ericos tambi\'en
+\item Cycle: tambi\'en para ciclos gen\'ericos
 \item For: para iterar sobre listas y tuplas
 \end{itemize}
 
 Revisemos ahora su sintaxis. Note que en este caso, no estaremos
-definiendo la sintaxis en forma de gramática, si no de manera más natural.
+definiendo la sintaxis en forma de gram\'atica, si no de manera m\'as natural.
 
 \subsubsection{If}
 Sintaxis:
 \begin{verbatim}
-   if «expr» :
-       «code»
-   elif «expr» :
-       «code»
+   if <expr> :
+       <code_block1>
+  [elif <expr> :
+       <code_block2>]
    .
    .
    .
-   else :
-       «code»
-   end
+  [else :
+       <code_blockn>]
+   end|endif
 \end{verbatim}
-Los 'elif' y el 'else' no son obligatorios, pero el 'end' si lo es.//
-Note que se puede cerrar el bloque 'end' o 'endif'
 
 \subsubsection{While}
 Sintaxis:
 \begin{verbatim}
-   while «expr» :
-       «code»
-   end
+   while <expr> :
+       <code_block1>
+   end|endwhile
 \end{verbatim}
-
-Esta el la estructura para crear ciclos más simple de todo el lenguaje.//
-Note que se puede cerrar el bloque 'end' o 'endwhile'
 
 \subsubsection{Cycle}
 Sintaxis:
 \begin{verbatim}
-   cycle
-      on «expr» :
-          «code»
-      on «expr» :
-          «code»
+   cycle[:
+     code_block]
+     [on <expr1> :
+          <code_block1>]
+     [on <expr2> :
+          <code_block2>]
       .
       .
       .
-      default :
-          «code»
-   end
-\end{verbatim}
-También es válido:
-\begin{verbatim}
-   cycle:
-      «code»
-      on «expr» :
-          «code»
-      on «expr» :
-          «code»
-      .
-      .
-      .
-      default :
-          «code»
-   end
+      default :         | on <exprn> :
+          <code_blockn> |     <code_blockn>
+   end|endcycle
 \end{verbatim}
 Esta estructura de control iterativa recorrera cada una de las clausulas
-'on' probando el valor de la expresión, tomará la primera que sea cierta
-y cuando termine su ejecución volverá a recorrer las clausulas. La
-estructura para cuando ninguna clausula se cumple. La clausula default no es obligatoria.\\
-Note que se puede cerrar el bloque 'end' o 'endcycle'
+\texttt{on} probando el valor de la expresi\'on, tomar\'a la primera que sea cierta
+y cuando termine su ejecuci\'on volver\'a a recorrer las clausulas. La
+estructura para cuando ninguna clausula se cumple.
 
 \subsubsection{For}
 Sintaxis:
 \begin{verbatim}
-   for «id» in «expr» :
-       «code»
+   for <id> in <expr> :
+       <code>
    end
 \end{verbatim}
 
-Esta estructura esta diseñada para recorrer listas y tuplas del
-lenguaje, por lo que «expr» sólo puede ser una tupla o lista. El
-elemento actual de la iteración solo se puede accesar a través del
-identificador «id» dentro del ciclo. Ni el elemento iterado («expr») ni
-el índice («id») pueden ser modificados dentro de la estructura de control.\\
-Note que se puede cerrar el bloque 'end' o 'endfor'.
+Esta estructura esta dise\~nada para recorrer listas y tuplas del
+lenguaje, por lo que \texttt{expr} s\'olo puede ser una tupla o lista. El
+elemento actual de la iteraci\'on solo se puede accesar a trav\'es del
+identificador \texttt{id} dentro del ciclo. Ni el elemento iterado \texttt{expr} ni
+el \'indice \texttt{id} pueden ser modificados dentro de la estructura de control.\\
 
 \subsection{Funciones y Procedimientos}
 \label{sec:func}
 
-
-\chapter{Implementación}
+\chapter{Implementaci\'on}
 \label{chap:impl}
-Utilizamos herramientas de generación de código para crear el lexer y
-el parser. Elegimos usar un parser LALR(1) debido a que reconoce más
+Utilizamos herramientas de generaci\'on de c\'odigo para crear el lexer y
+el parser. Elegimos usar un parser LALR(1) debido a que reconoce m\'as
 lenguajes que un parser LL(1) y a que el manejo de precedencias y
 asociatividades es mucho mas simple.\\
-Creamos el árbol sintactico abstracto a medida que se reconoce el
-código. Para guardar el AST usamos hicimos una jerarquía
-de clases que representan los nodos de interés en el árbol. Cada clase
-tiene como atributos a otras clases de la jerarquía, que representan los
-elementos de los cuales esta compuesto ese elemento del lenguaje. Así,
+Creamos el \'arbol sintactico abstracto a medida que se reconoce el
+c\'odigo. Para guardar el AST usamos hicimos una jerarqu\'ia
+de clases que representan los nodos de inter\'es en el \'arbol. Cada clase
+tiene como atributos a otras clases de la jerarqu\'ia, que representan los
+elementos de los cuales esta compuesto ese elemento del lenguaje. As\'i,
 la clase If, por ejemplo, tiene como atributos un objeto ArrayList que
 contiene objetos IfCase, un IfCase tiene como atributos un objeto
 Expresion y un objeto CodeBlock.\\
-Para guardar las tablas de símbolos se usa una tabla de hash que
+Para guardar las tablas de s\'imbolos se usa una tabla de hash que
 guardamos dentro de una clase Symtable y le dimos a esta clase una interfaz
-semánticamente más coherente con el manejo de símbolos.
+sem\'anticamente m\'as coherente con el manejo de s\'imbolos.
 Existen solamente dos tablas de s\'imbolos, sin incluir las tablas de
 cada funci\'on. Una tabla es para s\'imbolos globales y otra para
 s\'imbolos del programa principal. Fue una decisi\'on de
@@ -385,29 +412,29 @@ consideramos que es propenso a errores.
 \section{Herramientas utilizadas}
 \label{sec:herramientas}
 Para generar el lexer usamos Jflex, un generador de lexers que genera
-código Java.\\
+c\'odigo Java.\\
 El parser lo generamos con CUP, un generador de parsers LALR(1) que
-también genera código Java.\\
+tambi\'en genera c\'odigo Java.\\
 Ambas herramientas ofrecen muchas funcionalidades para conectarse y
-comunicarse entre ellas, esta es la pricipal razón por la cual elegimos
+comunicarse entre ellas, esta es la pricipal raz\'on por la cual elegimos
 estas dos herramientas en particular.\\
-Para simplificar el proceso de compilación utilizamos ant, una
-herramienta de compilación para Java para compilación dirigida.\\
+Para simplificar el proceso de compilaci\'on utilizamos ant, una
+herramienta de compilaci\'on para Java para compilaci\'on dirigida.\\
 Utilizamos git, un manejador de versiones, para ayudarnos en el proceso
 colaborativo y para mantener un control consiso de lo que se hiba
 haciendo.
 
 \section{Requerimientos para compilar}
 \label{sec:requ}
-Para compilar es necesario tener la máquina virtual y el compilador de
-Java 1.4. También es necesario tener instalado ant.\\
-El código del lenguaje viene con Jflex y CUP, estas son las versiones
-que se bajan directamente de las páginas web de estos proyectos. Se
+Para compilar es necesario tener la m\'aquina virtual y el compilador de
+Java 1.4. Tambi\'en es necesario tener instalado ant.\\
+El c\'odigo del lenguaje viene con Jflex y CUP, estas son las versiones
+que se bajan directamente de las p\'aginas web de estos proyectos. Se
 recomienda que se compile el lenguaje con estas herramientas y se
-asegura que funcionará adecuadamente si de hecho se compila de esta
+asegura que funcionar\'a adecuadamente si de hecho se compila de esta
 forma. En caso de no poder o no querer utilizar alguna o ambas
-herramientas que vienen con el código, se necesita tener CUP y/o Jflex
-instalado en la máquina donde se correra el parser.\\
+herramientas que vienen con el c\'odigo, se necesita tener CUP y/o Jflex
+instalado en la m\'aquina donde se correra el parser.\\
 
 \subsection{Pasos para compilar ZINARA}
 \label{sec:compilacion}
@@ -456,16 +483,16 @@ ant
 \end{verbatim}
 \end{itemize}
 
-\section{El código}
+\section{El c\'odigo}
 \label{sec:codigo}
 
 \subsection{Paquetes}
 \label{sec:paquetes}
 
-\subsection{Árbol sintáctico abstracto}
+\subsection{\'Arbol sint\'actico abstracto}
 \label{sec:ast}
 
-\subsection{Tabla de símbolos}
+\subsection{Tabla de s\'imbolos}
 \label{sec:st}
 Las clases que manejan la tabla de s\'imbolos se encuentran en,
 partiendo de la carpeta donde esta guardado el c\'odigo del lenguaje:
