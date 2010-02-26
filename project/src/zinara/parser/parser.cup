@@ -13,9 +13,45 @@ import java.util.ArrayList;
 
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
-parser code {:
+action code{:
+Symtable GlobalTable = new Symtable();
+Symtable MainTable = new Symtable();
+Symtable CurrentTable = GlobalTable;
 
-    public Symtable ST;
+public void varDecl(Declaration d){
+    if (d.isSingle()){
+	notused(((SingleDeclaration)d).getId());
+	CurrentTable.addSymbol(((SingleDeclaration)d).getId(),new SymValue(((SingleDeclaration)d).getValue(),((SingleDeclaration)d).getType(),((SingleDeclaration)d).isVariable()));
+    }
+    else{
+	SingleDeclaration current_decl;
+	for (int i=0;i<((MultipleDeclaration)d).size();++i){
+	    current_decl=((MultipleDeclaration)d).get(i);
+	    notused(((SingleDeclaration)current_decl).getId());
+	    CurrentTable.addSymbol(current_decl.getId(),new SymValue(current_decl.getValue(),current_decl.getType(),current_decl.isVariable()));
+	}
+    }
+}
+
+public void notused(String id){
+    if (CurrentTable.containsSymbol(id)){
+	//report_fatal_error("Simbolo"+((SingleDeclaration)d).getId()+" ya declarado",null);
+	System.out.println("Simbolo \'"+id+"\' ya declarado");
+	System.exit(1);
+    }
+}
+
+public void used(String id){
+    if (! CurrentTable.containsSymbol(id)){
+	//report_fatal_error("Simbolo"+((SingleDeclaration)d).getId()+" ya declarado",null);
+	System.out.println("Simbolo \'"+id+"\' no existe");
+	System.exit(1);
+    }
+}
+
+:}
+
+parser code {:    
     
     /* Change the method report_error so it will display the line and
        column of where the error occurred in the input as well as the
@@ -139,11 +175,11 @@ precedence left UMINUS;
 /*
       THE PROGRAM
  */
-program   ::= main:m                           {: RESULT = new Program(m); :}
-            | decl_list:ds main:m              {: RESULT = new Program(m, ds); :}
+program   ::= main:m               {: RESULT = new Program(m); :}
+            | decl_list:ds main:m  {: RESULT = new Program(m, ds); :}
             ;
 
-main      ::= MAIN code_block:cb ENDMAIN       {: RESULT = new Main(); :}
+main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN       {: RESULT = new Main(); :}
             ;
 
 /*
@@ -160,25 +196,27 @@ type_list    ::= type_list COMMA type
                | type
                ;
 
-decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d); :}
-               | decl_list:ds def_decl:d SEMI     {: RESULT = ds; RESULT.add(d); :}
-               | declaration:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d); :}
-               | def_decl:d SEMI                  {: RESULT = new ArrayList(); RESULT.add(d); :}
+decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d);:}
+               | decl_list:ds def_decl:d SEMI     {: RESULT = ds; RESULT.add(d);:}
+               | declaration:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d);:}
+               | def_decl:d SEMI                  {: RESULT = new ArrayList(); RESULT.add(d);:}
                ;
 
 declaration  ::= VAR decl:d                       {:
-						   if (d.isSingle)
+						   if (d.isSingle())
 						       ((SingleDeclaration)d).setVariable(true);
 						   else {
 						       for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
 						   }
 						   RESULT = d;
+						   varDecl(RESULT);
 						   :}
-               | decl:d                           {: RESULT = d; :}
+               | decl:d                           {: RESULT = d; varDecl(RESULT);:}
                ;
 
 decl         ::= type:t s_asig:a                 {: 
- 						  if (!(a.isSingle)) { // a Multiple
+ 						  if (!(a.isSingle())) { // a Multiple
+						      //System.out.println(a.isSingle);
 						      ArrayList ds = new ArrayList();
 						      for (int i = 0; i < ((MultipleAssignation)a).assignations.size(); i++)
 							  ds.add(new SingleDeclaration(t, ((MultipleAssignation)a).get(i).getId(), ((MultipleAssignation)a).get(i).getExpression(), false));
@@ -229,7 +267,7 @@ expr      ::= CHAR_V:e                                 {: RESULT = new CharExp(e
             | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
             | TRUE                                     {: RESULT = new TrueExp(); :}
             | FALSE                                    {: RESULT = new FalseExp(); :}
-            | identifier:n                             {: RESULT = new IdentifierExp(n); :}
+            | identifier:n                             {: used(n); RESULT = new IdentifierExp(n); :}
             | LPAREN expr:e RPAREN                     {: RESULT = e; :}
     /* ----- Basic types ----- */
             | expr:e1 arithmetic_op:o expr:e2          {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
@@ -337,8 +375,9 @@ code_block_loop ::= code_block_loop:cb instruction_loop:i SEMI  {: cb.addInst(i)
                   ;
 
 s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {: 
-								       if (al.size() == 0)
+								       if (al.size() == 0){
 									   RESULT = new SingleAssignation(new String(id), e);
+								       }
 								       else {
 									   al.add(new SingleAssignation(new String(id), e));
 									   RESULT = new MultipleAssignation(al);

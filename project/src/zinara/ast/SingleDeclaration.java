@@ -7,11 +7,30 @@ public class SingleDeclaration extends Declaration {
     private String identifier;
     private Object value;
     private boolean variable;
-    public boolean isSingle = true;
     
     public SingleDeclaration(Type t, String id, Object v, boolean var) {
 	this.type = t;
 	this.identifier = id; this.value = v; this.variable = var;
+    }
+
+    public boolean isSingle(){
+	return true;
+    }
+
+    public Type getType(){
+	return this.type;
+    }
+
+    public String getId(){
+	return this.identifier;
+    }
+
+    public Object getValue(){
+	return this.value;
+    }    
+
+    public boolean isVariable(){
+	return this.variable;
     }
 
     public void setType(Type t) { this.type = t; }
