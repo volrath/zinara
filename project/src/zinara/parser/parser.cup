@@ -157,15 +157,14 @@ nonterminal expr_part, elif_list;
 precedence left SEMI;
 precedence right ASIG;
 
-precedence left AND, SAND, OR, SOR, XOR;
-precedence left SHEQ, DEEQ, NOEQ;
-precedence left LTLT, GTGT, PLUSPLUS;
-precedence left LT, LTE, GT, GTE;
-
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE, MOD;
 precedence left POW;
 precedence left UMINUS;
+
+precedence left LTLT, GTGT, PLUSPLUS;
+precedence left LT, LTE, GT, GTE, SHEQ, DEEQ, NOEQ;
+precedence left AND, SAND, OR, SOR, XOR;
 
 //precedence left INTEGER_V, FLOAT_V, CHAR_V, TRUE, FALSE;
 

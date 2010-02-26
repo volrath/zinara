@@ -268,10 +268,10 @@ Todos los operadores asocian a la izquierda. Sus precedencias son:
 	\hline
 +      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & Clash & Clash \\
-Float  & Float &   X   & Clash & Clash \\
-Char   & Clash & Clash &   X   & Clash \\
-Bool   & Clash & Clash & Clash &   X   \\
+Int    &  Int  & Float & Clash & Clash \\
+Float  & Float & Float & Clash & Clash \\
+Char   & Clash & Clash & Clash & Clash \\
+Bool   & Clash & Clash & Clash & Clash \\
 	\hline
 \end{tabular}
 \\
@@ -279,10 +279,10 @@ Bool   & Clash & Clash & Clash &   X   \\
 	\hline
 -      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & Clash & Clash \\
-Float  & Float &   X   & Clash & Clash \\
-Char   & Clash & Clash &   X   & Clash \\
-Bool   & Clash & Clash & Clash &   X   \\
+Int    &  Int  & Float & Clash & Clash \\
+Float  & Float & Float & Clash & Clash \\
+Char   & Clash & Clash & Clash & Clash \\
+Bool   & Clash & Clash & Clash & Clash \\
 	\hline
 \end{tabular}
 \\
@@ -290,10 +290,10 @@ Bool   & Clash & Clash & Clash &   X   \\
 	\hline
 *      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & Clash & Clash \\
-Float  & Float &   X   & Clash & Clash \\
-Char   & Clash & Clash &   X   & Clash \\
-Bool   & Clash & Clash & Clash &   X   \\
+Int    &  Int  & Float & Clash & Clash \\
+Float  & Float & Float & Clash & Clash \\
+Char   & Clash & Clash & Clash & Clash \\
+Bool   & Clash & Clash & Clash & Clash \\
 	\hline
 \end{tabular}
 \\
@@ -301,10 +301,54 @@ Bool   & Clash & Clash & Clash &   X   \\
 	\hline
 /      &  Int  & Float & Char  & Bool  \\
 	\hline \hline
-Int    &   X   & Float & Clash & Clash \\
-Float  & Float &   X   & Clash & Clash \\
-Char   & Clash & Clash &   X   & Clash \\
-Bool   & Clash & Clash & Clash &   X   \\
+Int    &  Int  & Float & Clash & Clash \\
+Float  & Float & Float & Clash & Clash \\
+Char   & Clash & Clash & Clash & Clash \\
+Bool   & Clash & Clash & Clash & Clash \\
+	\hline
+\end{tabular}
+\\
+\begin{tabular}{|c||cccc|}
+	\hline
+\%     &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &  Int  & Float & Clash & Clash \\
+Float  & Float & Float & Clash & Clash \\
+Char   & Clash & Clash & Clash & Clash \\
+Bool   & Clash & Clash & Clash & Clash \\
+	\hline
+\end{tabular}
+\\
+\begin{tabular}{|c||cccc|}
+	\hline
+\^     &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &  Int  & Float & Clash & Clash \\
+Float  & Float & Float & Clash & Clash \\
+Char   & Clash & Clash & Clash & Clash \\
+Bool   & Clash & Clash & Clash & Clash \\
+	\hline
+\end{tabular}
+\\
+\begin{tabular}{|c||cccc|}
+	\hline
+<,>,<=,>=&  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int      &  Bool &  Bool & Clash & Clash \\
+Float    &  Bool &  Bool & Clash & Clash \\
+Char     & Clash & Clash & Clash & Clash \\
+Bool     & Clash & Clash & Clash & Clash \\
+	\hline
+\end{tabular}
+\\
+\begin{tabular}{|c||cccc|}
+	    \hline
+AND,OR,|,\& &  Int  & Float & Char  & Bool  \\ 
+	    \hline \hline
+Int         & Clash & Clash & Clash & Clash \\
+Float       & Clash & Clash & Clash & Clash \\
+Char        & Clash & Clash & Clash & Clash \\
+Bool        & Clash & Clash & Clash & Bool \\
 	\hline
 \end{tabular}
 
