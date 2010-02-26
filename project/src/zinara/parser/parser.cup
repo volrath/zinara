@@ -108,9 +108,10 @@ nonterminal Expression expr;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal String identifier;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
+nonterminal ArrayList args_list; // arraylist of types
+nonterminal Type arg;
 
 nonterminal type_list, dict_types, dict_type;
-nonterminal args_list, arg;
 nonterminal dict_vals, dict_val;
 nonterminal conds;
 nonterminal fi, elihw, elcyc, rof, fed, print;
@@ -206,14 +207,14 @@ ident_list ::= ident_list:il COMMA IDENTIFIER:id   {: il.add(id); RESULT = il;:}
              ;
 */
 
-def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:st RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(t,id,null,false); :};
+def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(new FunctionType(al,t),id,null,false); :};
 
-args_list    ::= args_list:al COMMA arg:a
-               | arg:a
+args_list    ::= args_list:al COMMA arg:a           {: al.add(a); RESULT = al; :}
+               | arg:a                              {: RESULT = new ArrayList(); RESULT.add(a); :}
                ;
 
-arg          ::= COPY IDENTIFIER AS type
-               | IDENTIFIER AS type
+arg          ::= COPY IDENTIFIER AS type:t          {: RESULT = t; :}
+               | IDENTIFIER AS type:t               {: RESULT = t; :}
                ;
 
 /*
