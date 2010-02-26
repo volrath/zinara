@@ -1,6 +1,6 @@
 \documentclass[12pt, spanish]{report}
-\usepackage[spanish, activeacute]{babel}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
 \renewcommand{\baselinestretch}{1.3}
 \usepackage{graphicx}
 
@@ -36,13 +36,13 @@
 \label{sec:tiposbasicos}
 Los tipos básicos del lenguaje son:
 \begin{itemize}
-Entero   (Int)
-Flotante (Float)
-Booleano (Bool)
-Char     (Char)
+\item Entero   (Int)
+\item Flotante (Float)
+\item Booleano (Bool)
+\item Char     (Char)
 \end{itemize}
 Nos pareció que estos eran los únicos tipos básicos necesarios
-para que el lenguaje fuera útil e interesante.%
+para que el lenguaje fuera útil e interesante.//
 Aunque sean tipos básicos, estos se manejarán por referencia,
 tal como el resto de los tipos del lenguaje. Esto para mantener
 el lenguaje lo más consistente posible.
@@ -58,20 +58,22 @@ el lenguaje lo más consistente posible.
 Las instrucciones del lenguaje que no estan exclusivamente
 ligadas a algún tipo compuesto son:
 \begin{itemize}
-Secuenciación
-Asignación
-Declaraci\'on de constantes
-Declaraci\'on de variables
-Declaraci\'on de funci\'on
-Return
-Invocación de funci\'on
-Impresi\'on
+\item Secuenciación
+\item Asignación
+\item Declaraci\'on de constantes
+\item Declaraci\'on de variables
+\item Declaraci\'on de funci\'on
+\item Return
+\item Invocación de funci\'on
+\item Impresi\'on
 \end{itemize}
 
 \subsubsection{Secuenciaci\'on}
 Sintaxis:
-  insts     -> insts «INST» `\n` 
+\begin{verbatim}
+  insts     -> insts «INST» '\\n' 
             -> 
+\end{verbatim}
 
 Se secuenci\'an varias instrucciones separandolas con saltos
 de l\'inea. No importa que la \'ultima instrucci\'on tenga
@@ -79,23 +81,27 @@ tambi\'en un salto de l\'inea.
 
 \subsubsection{Asignación}
 Sintaxis:
+\begin{verbatim}
   asig      -> «id» asig_list «expr» 
-  asig_list -> `,` «id» asig_list «expr» `,`
-            -> `=`
+  asig_list -> ',' «id» asig_list «expr» ','
+            -> '='
 
 La asignación puede ser aplicada a varios identificadores a la
 vez y siempre es superficial.
+\end{verbatim}
 
 \subsubsection{Declaraci\'on de constantes}
 Sintaxis:
+\begin{verbatim}
   decl_cns -> «type» list_id 
            -> «type» asig
 
-  list_id  -> list_id `,` «id»
+  list_id  -> list_id ',' «id»
            -> «id»
+\end{verbatim}
 
 Toda declaración se interpreta la declaración de una constante a
-menos que se indique explícitamente lo contrario.% 
+menos que se indique explícitamente lo contrario.// 
 Las constantes se pueden declarar en conjunto sin ser inizializadas
 explícitamente o bien pueden recibir valores iniciales del
 programador. Todas las variables de una declaración comparten el
@@ -103,53 +109,63 @@ mismo tipo.
 
 \subsubsection{Declaraci\'on de variables}
 Sintaxis:
-  decl_var -> `var` «type» list_id 
-           -> `var` «type» asig
+\begin{verbatim}
+  decl_var -> 'var' «type» list_id 
+           -> 'var' «type» asig
 
-  list_id  -> list_id `,` «id»
+  list_id  -> list_id ',' «id»
            -> «id»
+\end{verbatim}
 
 Análogo a la declaración de constantes. Solo cambia por el uso de
-la palabra clave `var` para indicar explícitamente que se está
+la palabra clave 'var' para indicar explícitamente que se está
 declarando una variable.
 
 \subsubsection{Declaraci\'on de funci\'on}
 Sintaxis:
-  decl_def -> `def` «id» `(`args`)` `returns` `<`«type»`>` «code» end
+\begin{verbatim}
+  decl_def -> 'def' «id» '('args')' 'returns' '<'«type»'>' «code» end
 
-  end      -> `end`|`enddef`
+  end      -> 'end'|'enddef'
 
-  args     -> args `,` copy «id» `as` «type»
+  args     -> args ',' copy «id» 'as' «type»
            -> 
    
-  copy     -> `copy`
+  copy     -> 'copy'
            ->
+\end{verbatim}
 
 Las funciones pasan todo por referencia a menos que se indique
 explícitamente que el pasaje debe hacerse por valor con la palabra
-reservada `copy`. Las funciones son elemente de primera clase, por lo
+reservada 'copy'. Las funciones son elemente de primera clase, por lo
 que pueden declararce funciones dentro de funciones y dentro del main,
-pasarse a funciones y devolverse como parámetros. Adem\'as, puede cerrarce el bloque de una funci\'on tanto con la palabra `end` como con `enddef`.
+pasarse a funciones y devolverse como parámetros. Adem\'as, puede cerrarce el bloque de una funci\'on tanto con la palabra 'end' como con 'enddef'.
 
 \subsubsection{Return}
 Sintaxis:
-  ret  -> `return` «expr» 
+\begin{verbatim}
+  ret  -> 'return' «expr» 
+\end{verbatim}
 
 Esta instrucci\'on solo puede ser usada dentro de una funci\'on. Lo que
 hace es detener el flujo de la funci\'on y hacer que esta devuelva «expr».
 
 \subsubsection{Invocación de función}
 Sintaxis:
-  func_call  -> «id» `(` expr_list `)`
+\begin{verbatim}
+  func_call  -> «id» '(' expr_list ')'
   
-  expr_list  -> expr_list `,` «expr»
+  expr_list  -> expr_list ',' «expr»
+\end{verbatim}
 
 Las invocaciones a funciones pueden ser tanto instrucciones como
 expresiones.
 
 \subsubsection{Impresi\'on}
 Sintaxis:
-  print     -> `print` `(` «expr» `)` 
+\begin{verbatim}
+  print     -> 'print' '(' «expr» ')' 
+\end{verbatim}
 
 Imprime la expresion entre par\'entesis a la salida est\'andar. «expr»
 puede tener cualquier tipo del lenguaje, pero no un tipo definido por el usuario.
@@ -164,7 +180,7 @@ puede tener cualquier tipo del lenguaje, pero no un tipo definido por el usuario
 \item Producto (*)
 \item Divisi\'on  (/)
 \item M\'odulo (\%)
-\item Potencia (^)
+\item Potencia (\^)
 \item Menos unario (-)
 \end{itemize}
 
@@ -182,22 +198,66 @@ puede tener cualquier tipo del lenguaje, pero no un tipo definido por el usuario
 \subsubsection{Operadores L\'ogicos}
 \begin{itemize}
 \item And con corto-circuito (AND)
-\item And sin corto-circuito (&)
+\item And sin corto-circuito (\&)
 \item Or con corto-circuito  (OR)
 \item Or sin corto-circuito  (|)
 \item Diferente              (?)
 \end{itemize}
-\end{section}
 
 Todos los operadores asocian a la izquierda. Sus precedencias son:
 \begin{itemize}
 \item AND ,\& , OR , | , ?
 \item < , > , <= , >= , == , <=> , !
-\item - (Unario)
-\item ^
+\item \- (Unario)
+\item \^
 \item * , / , \%
 \item + , - (Binario)
 \end{itemize}
+
+\subsubsection{Coherciones}
+\begin{tabular}{|c||cccc|}
+	\hline
++      &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &   X   & Float & Clash & Clash \\
+Float  & Float &   X   & Clash & Clash \\
+Char   & Clash & Clash &   X   & Clash \\
+Bool   & Clash & Clash & Clash &   X   \\
+	\hline
+\end{tabular}
+\\
+\begin{tabular}{|c||cccc|}
+	\hline
+-      &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &   X   & Float & Clash & Clash \\
+Float  & Float &   X   & Clash & Clash \\
+Char   & Clash & Clash &   X   & Clash \\
+Bool   & Clash & Clash & Clash &   X   \\
+	\hline
+\end{tabular}
+\\
+\begin{tabular}{|c||cccc|}
+	\hline
+*      &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &   X   & Float & Clash & Clash \\
+Float  & Float &   X   & Clash & Clash \\
+Char   & Clash & Clash &   X   & Clash \\
+Bool   & Clash & Clash & Clash &   X   \\
+	\hline
+\end{tabular}
+\\
+\begin{tabular}{|c||cccc|}
+	\hline
+/      &  Int  & Float & Char  & Bool  \\
+	\hline \hline
+Int    &   X   & Float & Clash & Clash \\
+Float  & Float &   X   & Clash & Clash \\
+Char   & Clash & Clash &   X   & Clash \\
+Bool   & Clash & Clash & Clash &   X   \\
+	\hline
+\end{tabular}
 
 
 \subsection{Expresiones}
@@ -218,7 +278,7 @@ definiendo la sintaxis en forma de gramática, si no de manera más natural.
 
 \subsubsection{If}
 Sintaxis:
-
+\begin{verbatim}
    if «expr» :
        «code»
    elif «expr» :
@@ -229,23 +289,24 @@ Sintaxis:
    else :
        «code»
    end
-
-Los 'elif' y el 'else' no son obligatorios, pero el 'end' si lo es.%
-Note que se puede cerrar el bloque `end` o `endif`
+\end{verbatim}
+Los 'elif' y el 'else' no son obligatorios, pero el 'end' si lo es.//
+Note que se puede cerrar el bloque 'end' o 'endif'
 
 \subsubsection{While}
 Sintaxis:
-
+\begin{verbatim}
    while «expr» :
        «code»
    end
+\end{verbatim}
 
-Esta el la estructura para crear ciclos más simple de todo el lenguaje.%
-Note que se puede cerrar el bloque `end` o `endwhile`
+Esta el la estructura para crear ciclos más simple de todo el lenguaje.//
+Note que se puede cerrar el bloque 'end' o 'endwhile'
 
 \subsubsection{Cycle}
 Sintaxis:
-
+\begin{verbatim}
    cycle
       on «expr» :
           «code»
@@ -257,9 +318,9 @@ Sintaxis:
       default :
           «code»
    end
-
+\end{verbatim}
 También es válido:
-
+\begin{verbatim}
    cycle:
       «code»
       on «expr» :
@@ -272,26 +333,27 @@ También es válido:
       default :
           «code»
    end
-
+\end{verbatim}
 Esta estructura de control iterativa recorrera cada una de las clausulas
-`on` probando el valor de la expresión, tomará la primera que sea cierta
+'on' probando el valor de la expresión, tomará la primera que sea cierta
 y cuando termine su ejecución volverá a recorrer las clausulas. La
-estructura para cuando ninguna clausula se cumple. La clausula default no es obligatoria.%
-Note que se puede cerrar el bloque `end` o `endcycle`
+estructura para cuando ninguna clausula se cumple. La clausula default no es obligatoria.\\
+Note que se puede cerrar el bloque 'end' o 'endcycle'
 
 \subsubsection{For}
 Sintaxis:
-
+\begin{verbatim}
    for «id» in «expr» :
        «code»
    end
+\end{verbatim}
 
 Esta estructura esta diseñada para recorrer listas y tuplas del
 lenguaje, por lo que «expr» sólo puede ser una tupla o lista. El
 elemento actual de la iteración solo se puede accesar a través del
 identificador «id» dentro del ciclo. Ni el elemento iterado («expr») ni
-el índice («id») pueden ser modificados dentro de la estructura de control.%
-Note que se puede cerrar el bloque `end` o `endfor`.
+el índice («id») pueden ser modificados dentro de la estructura de control.\\
+Note que se puede cerrar el bloque 'end' o 'endfor'.
 
 \subsection{Funciones y Procedimientos}
 \label{sec:func}
@@ -302,7 +364,7 @@ Note que se puede cerrar el bloque `end` o `endfor`.
 Utilizamos herramientas de generación de código para crear el lexer y
 el parser. Elegimos usar un parser LALR(1) debido a que reconoce más
 lenguajes que un parser LL(1) y a que el manejo de precedencias y
-asociatividades es mucho mas simple.%
+asociatividades es mucho mas simple.\\
 Creamos el árbol sintactico abstracto a medida que se reconoce el
 código. Para guardar el AST usamos hicimos una jerarquía
 de clases que representan los nodos de interés en el árbol. Cada clase
@@ -310,18 +372,89 @@ tiene como atributos a otras clases de la jerarquía, que representan los
 elementos de los cuales esta compuesto ese elemento del lenguaje. Así,
 la clase If, por ejemplo, tiene como atributos un objeto ArrayList que
 contiene objetos IfCase, un IfCase tiene como atributos un objeto
-Expresion y un objeto CodeBlock.%
+Expresion y un objeto CodeBlock.\\
 Para guardar las tablas de símbolos se usa una tabla de hash que
 guardamos dentro de una clase Symtable y le dimos a esta clase una interfaz
-semánticamente mas coherente con el manejo de símbolos.
+semánticamente más coherente con el manejo de símbolos.
+Existen solamente dos tablas de s\'imbolos, sin incluir las tablas de
+cada funci\'on. Una tabla es para s\'imbolos globales y otra para
+s\'imbolos del programa principal. Fue una decisi\'on de
+dise\~no no permitir que los bloques tuvieran sus propias tablas, ya que
+consideramos que es propenso a errores.
 
 \section{Herramientas utilizadas}
 \label{sec:herramientas}
-
+Para generar el lexer usamos Jflex, un generador de lexers que genera
+código Java.\\
+El parser lo generamos con CUP, un generador de parsers LALR(1) que
+también genera código Java.\\
+Ambas herramientas ofrecen muchas funcionalidades para conectarse y
+comunicarse entre ellas, esta es la pricipal razón por la cual elegimos
+estas dos herramientas en particular.\\
+Para simplificar el proceso de compilación utilizamos ant, una
+herramienta de compilación para Java para compilación dirigida.\\
+Utilizamos git, un manejador de versiones, para ayudarnos en el proceso
+colaborativo y para mantener un control consiso de lo que se hiba
+haciendo.
 
 \section{Requerimientos para compilar}
 \label{sec:requ}
+Para compilar es necesario tener la máquina virtual y el compilador de
+Java 1.4. También es necesario tener instalado ant.\\
+El código del lenguaje viene con Jflex y CUP, estas son las versiones
+que se bajan directamente de las páginas web de estos proyectos. Se
+recomienda que se compile el lenguaje con estas herramientas y se
+asegura que funcionará adecuadamente si de hecho se compila de esta
+forma. En caso de no poder o no querer utilizar alguna o ambas
+herramientas que vienen con el código, se necesita tener CUP y/o Jflex
+instalado en la máquina donde se correra el parser.\\
 
+\subsection{Pasos para compilar ZINARA}
+\label{sec:compilacion}
+Para compilar debe generar el parser, generar el lexer y compilar el
+c\'odigo con ant. De aqu\'i en adelante asumiremos que <root> representa
+la ruta hasta la carpeta donde se encuentra el c\'odigo, incluyendo la
+carpeta con el proyecto:
+
+\begin{itemize}
+\item Variables de ambiente:\\
+\indent Debe incluir en su variable de ambiente CLASSPATH el directorio
+\begin{verbatim}
+<root>/tools/cup/
+\end{verbatim}
+
+\item Generar el parser:\\
+\indent El parser se encuentra en:\\
+\begin{verbatim}
+<root>/project/src/zinara/parser/parser.cup
+\end{verbatim}
+para generar el parser con el CUP que viene con el proyecto, bajo un ambiente Unix, debe hacer :\\
+\begin{verbatim}
+java java_cup.Main <root>/project/src/zinara/parser/parser.cup
+\end{verbatim}
+
+\item Generar el Lexer:\\
+\indent El lexer se encuentra en:\\
+\begin{verbatim}
+<root>/project/src/zinara/lexer/lexer.flex
+\end{verbatim}
+para generar el parser con el Jflex que viene con el proyecto, bajo un ambiente Unix, debe hacer :\\
+\begin{verbatim}
+<root>/tools/jflex/bin/jflex <root>/project/src/zinara/lexer/lexer.jflex
+\end{verbatim}
+
+\item Compilaci\'on:\\
+\indent Para compilar el proyecto, bajo un ambiente Unix, debe hacer desde <root>/project/:\\
+\begin{verbatim}
+ant
+\end{verbatim}
+
+\item Ejecuci\'on:\\
+\indent Para probar un programa, bajo un ambiente Unix, debe hacer desde <root>/project/:\\
+\begin{verbatim}
+./run.sh Main <path_to_source>
+\end{verbatim}
+\end{itemize}
 
 \section{El código}
 \label{sec:codigo}
@@ -334,8 +467,20 @@ semánticamente mas coherente con el manejo de símbolos.
 
 \subsection{Tabla de símbolos}
 \label{sec:st}
-
-
+Las clases que manejan la tabla de s\'imbolos se encuentran en,
+partiendo de la carpeta donde esta guardado el c\'odigo del lenguaje:
+\begin{verbatim}
+project/src/zinara/ast/Symtable.java\\
+project/src/zinara/ast/SymValue.java
+\end{verbatim}
+\indent Symtable.java es un wrapper para HashTable. Simplemente da
+nombres semanticamente mas coherentes con el manejo de s\'imbolos que
+los de HashTable. Los pares key/value guardados en la tabla de hash con
+del tipo String/SymValue.\\
+\indent SymValue.java es un contenedor que guarda un Object, un Type y
+un boolean. El Object es el valor del s\'imbolo, el Type simplemente
+indica el tipo del objeto y el boolean indica si el s\'imbolo es
+variable o no. 
 
 \chapter{Estado actual del lenguaje}
 \label{chap:estado}
