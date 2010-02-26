@@ -102,7 +102,8 @@ nonterminal ArrayList asig_list, s_asig_list;         // arraylist of singleAssi
 nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_default, cycle_on, else, elif; // arraylist of assignations
 nonterminal Type type;
-nonterminal ArrayList expr_list, ident_list;  // arraylist of expressions and identifiers
+nonterminal ArrayList expr_list;  // arraylist of expressions
+nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
 nonterminal Expression expr;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal String identifier;
@@ -188,26 +189,20 @@ decl         ::= type:t s_asig:a                 {:
                | type:t IDENTIFIER:id             {: RESULT = new SingleDeclaration(t, id, null, false); :} // A single declaration
                ;
 /*
-               | type:t ident_list:ids             {: if (ids.size()==1){
-                                                        // A single declaration
-      	                                                RESULT = (SingleDeclaration)ids.get(0);
-                                                        ((SingleDeclaration)RESULT).setType(t);
-                                                      }
-                                                      else{
-							SingleDeclaration current_decl;
-						        for (int i = 0; i < ids.size(); i++){
-							  current_decl=(SingleDeclaration)ids.get(i);
-							  current_decl.setType(t);
-							  ids.set(i,current_decl);
-							}
-                   	                                RESULT = new MultipleDeclaration(ids);
-                                                      };
-                                                   :}
+               | type:t ident_list:ids           {:
+		                                  if (ids.size()==1) // A single declaration
+						      RESULT = new SingleDeclaration(t, (String)(ids.get(0)), null, false);
+						  else {
+						      ArrayList ds = new ArrayList();
+						      for (int i = 0; i < ids.size(); i++)
+							  ds.add(new SingleDeclaration(t, (String)(ids.get(i)), null, false));
+						      RESULT = new MultipleDeclaration(ds);
+						  }
+						  :}
                ;
 
-
 ident_list ::= ident_list:il COMMA IDENTIFIER:id   {: il.add(id); RESULT = il;:}
-             | IDENTIFIER:id                       {: RESULT = new ArrayList(); RESULT.add(new SingleDeclaration(null,id,null,false));:}
+             | IDENTIFIER:id                       {: RESULT = new ArrayList(); RESULT.add(id); :}
              ;
 */
 
