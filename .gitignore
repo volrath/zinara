@@ -4,6 +4,8 @@
 *.out
 *.toc
 *.url
+*.bbl
+*.blg
 
 tools/jflex/doc
 tools/jflex/examples
