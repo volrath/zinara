@@ -16,11 +16,11 @@ public class Main {
 	    System.out.println(program.getMain());
 	} 
 	catch (ClassCastException e) {
-	    System.out.println("oops... shit, classcastE: "+e.toString());
+	    System.out.println("oops..., classcastE: "+e.toString());
 	    e.printStackTrace();
 	}
 	catch (Exception e) {
-	    System.out.println("oops... shit");
+	    System.out.println("oops...");
 	    e.printStackTrace();
 	}
     }
