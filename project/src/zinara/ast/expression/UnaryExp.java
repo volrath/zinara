@@ -1,7 +1,8 @@
 package zinara.ast.expression;
 
 public class UnaryExp extends Expression {
-   public String operator;
+   public int operator;
    public Expression operand;
-   public UnaryExp ( String o, Expression e ) { operator=o; operand=e; }
+
+   public UnaryExp ( int o, Expression e ) { operator=o; operand=e; }
 }

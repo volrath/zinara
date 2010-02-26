@@ -2,7 +2,7 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 
-public class IfCase{
+public class IfCase extends Instruction {
     private Expression expr;
     private CodeBlock code;
 
