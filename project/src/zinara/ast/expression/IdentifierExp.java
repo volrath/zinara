@@ -2,13 +2,14 @@ package zinara.ast.expression;
 
 import zinara.ast.Symtable;
 import zinara.ast.type.*;
+import zinara.semantic.basicTypes;
 
 public class IdentifierExp extends Expression {
     public String value;
 
     public IdentifierExp (String n) { value=n; }
-    public int getType() { return 0; }
-    public int getType(Type t) {
+    public Integer getType() { return new Integer(0); }
+    public Integer getType(Type t) {
 	if (t instanceof IntType)
 	    return basicTypes.Int;
 	else if (t instanceof FloatType)
@@ -18,6 +19,6 @@ public class IdentifierExp extends Expression {
 	else if (t instanceof BoolType)
 	    return basicTypes.Bool;
 	else
-	    return 0;
+	    return new Integer(0);
     }
 }

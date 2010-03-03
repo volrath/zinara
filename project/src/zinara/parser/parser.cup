@@ -4,6 +4,7 @@ import zinara.ast.type.*;
 import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
 import zinara.ast.*;
+import zinara.semantic.Operators;
 
 import java_cup.runtime.*;
 
@@ -11,9 +12,8 @@ import java.util.ArrayList;
 
 /* Preliminaries to set up and use the scanner.  */
 
-/* Parser code to change the way the parser reports errors (include
-   line and column number of the error). */
 action code{:
+
 Symtable GlobalTable = new Symtable();
 Symtable MainTable = new Symtable();
 Symtable CurrentTable = GlobalTable;
@@ -51,7 +51,9 @@ public void used(String id){
 
 :}
 
-parser code {:    
+/* Parser code to change the way the parser reports errors (include
+   line and column number of the error). */
+parser code {:
     
     /* Change the method report_error so it will display the line and
        column of where the error occurred in the input as well as the
@@ -103,6 +105,8 @@ parser code {:
         report_error(message, info);
         System.exit(1);
     }
+
+public static final Operators operators = new Operators();
 :};
 
 

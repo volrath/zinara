@@ -77,7 +77,7 @@ Number      = {Digit}+
  "*"                             { return symbol(sym.TIMES); }
  "/"                             { return symbol(sym.DIVIDE);}
  "%"                             { return symbol(sym.MOD);}
- "^"                             { return symbol(sym.PLUS);}
+ "**"                            { return symbol(sym.POW);}
 
  ">"                             { return symbol(sym.GT);}
  "<"                             { return symbol(sym.LT);}
