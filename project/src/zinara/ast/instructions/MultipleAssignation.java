@@ -11,5 +11,10 @@ public class MultipleAssignation extends Assignation {
 
     public MultipleAssignation(ArrayList as) { this.assignations = as; }
     public boolean add(SingleAssignation a) { return this.assignations.add(a); }
+
     public SingleAssignation get(int i) { return (SingleAssignation)this.assignations.get(i); }
+
+    public int size(){
+	return this.assignations.size();
+    }
 }

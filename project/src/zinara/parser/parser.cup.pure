@@ -1,0 +1,306 @@
+package zinara.parser;
+
+import zinara.ast.type.*;
+import zinara.ast.expression.*;
+import zinara.ast.instructions.*;
+import zinara.ast.*;
+
+import java_cup.runtime.*;
+
+import java.util.ArrayList;
+
+/* Preliminaries to set up and use the scanner.  */
+
+/* Parser code to change the way the parser reports errors (include
+   line and column number of the error). */
+action code
+
+/* Terminals (tokens returned by the scanner). */
+terminal Integer INTEGER_V;
+terminal Float FLOAT_V;
+terminal TRUE, FALSE;
+terminal String IDENTIFIER;
+terminal String PLUS, MINUS, UMINUS, TIMES, DIVIDE, MOD, POW;
+terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
+terminal String AND, SAND, OR, SOR, XOR;
+
+terminal Character CHAR_V;
+terminal Main MAIN;
+terminal SEMI;
+terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
+terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
+terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
+terminal COMMA, DOUBLEDOT, RETURN, RETURNS;
+terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
+terminal AS, IN;
+terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
+
+
+/* Non-terminals */
+nonterminal Program program;
+nonterminal Main main;
+nonterminal ArrayList decl_list;                      // arraylist of declarations (multiples or singles)
+nonterminal Declaration const_decl, decl, def_decl;  // (just one declaration, multiple or single)
+nonterminal Assignation asig;                 // (just one assignation, multiple or single)
+nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
+nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignations
+nonterminal Type type;
+nonterminal ArrayList expr_list;  // arraylist of expressions
+nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
+nonterminal Expression expr;
+nonterminal Integer arithmetic_op, relational_op, logical_op;
+nonterminal Instruction ctrl_struct, instruction, instruction_loop;
+nonterminal ArrayList args_list; // arraylist of types
+nonterminal Type arg;
+
+nonterminal type_list, dict_types, dict_type;
+nonterminal dict_vals, dict_val;
+nonterminal fi, elihw, elcyc, rof, fed;
+
+/* Precedences */
+precedence left SEMI;
+
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE, MOD;
+precedence left POW;
+
+precedence left LTLT, GTGT, PLUSPLUS;
+precedence left LT, LTE, GT, GTE, SHEQ, DEEQ, NOEQ;
+precedence left AND, SAND, OR, SOR, XOR;
+
+precedence right RPAREN;
+//precedence left INTEGER_V, FLOAT_V, CHAR_V, TRUE, FALSE;
+
+/* The grammar */
+
+/*
+      THE PROGRAM
+ */
+program   ::= main:m               
+            | decl_list:ds main:m  
+            ;
+
+main      ::= MAIN  code_block:cb ENDMAIN    
+            ;
+
+/*
+      DECLARATIONS
+ */
+
+/* --- Basic structure --- */
+decl_list    ::= decl_list:ds const_decl:d SEMI  
+               | decl_list:ds def_decl:d SEMI    
+               | const_decl:d SEMI               
+               | def_decl:d SEMI                 
+               ;
+
+/* --- Functions declarations --- */
+def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT code_block:cb fed;
+
+args_list    ::= args_list:al COMMA arg:a        
+               | arg:a                           
+               ;
+
+arg          ::= COPY IDENTIFIER:id AS type:t    
+               | IDENTIFIER:id AS type:t         
+               ;
+
+/* --- Variables and constants declarations --- */
+const_decl   ::= VAR decl:d                   
+               | decl:d                       
+               ;
+
+decl         ::= type:t asig:a                        
+
+               | type:t ident_list:ids       
+               ;
+
+ident_list ::= ident_list:il COMMA IDENTIFIER:id  
+             | IDENTIFIER:id                      
+             ;
+
+// Types
+type         ::=
+    /* ----- Basic types ----- */
+                 INTEGER                    
+               | FLOAT                      
+               | CHAR                       
+               | BOOL                       
+
+    /* ----- Composite types ----- */
+               | STRING                     
+               | LBRACKET type RBRACKET     // list - [type]
+               | LPAREN type_list RPAREN    // tuple - (type0, type1, ..., typen)
+               | LBRACET dict_types RBRACET // dictionary - {ident0:type0,ident1:type1...,identn:typen}
+               ;
+
+type_list    ::= type_list COMMA type
+               | type
+               ;
+
+dict_types   ::= dict_types COMMA dict_type
+               | dict_type
+               ;
+
+dict_type    ::= IDENTIFIER DOUBLEDOT type;
+
+
+/* --- Code blocks --- */
+code_block    ::= code_block:cb instruction:i SEMI
+                | instruction:i SEMI
+                ;
+
+instruction   ::= asig:a                                    
+                | PRINT LPAREN expr:e RPAREN                
+                | const_decl:d                              
+                | def_decl:dd                               
+                | IDENTIFIER:id LPAREN expr_list:el RPAREN  
+                | ctrl_struct:cs                            
+                | RETURN expr:e                             
+                ;
+
+//Codeblocks special for loops because loops can't have function declarations
+code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI
+                    | instruction_loop:i SEMI
+                    ;
+
+instruction_loop  ::= asig:a                                   
+                    | PRINT LPAREN expr:e RPAREN               
+                    | const_decl:d                             
+                    | IDENTIFIER:id LPAREN expr_list:el RPAREN 
+                    | ctrl_struct:cs                           
+                    | RETURN expr:e                            
+                    ;
+
+/* --- Control structures --- */
+ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  
+                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  
+                | CYCLE DOUBLEDOT code_block_loop:cb cycle_body:cd elcyc        
+                | CYCLE SEMI cycle_body:cd elcyc                                
+                ;
+
+// If else/elif clause
+else          ::= elif:el ELSE DOUBLEDOT code_block:cb   
+                | elif:el                                
+                ;
+
+elif          ::= elif:el ELIF expr:e DOUBLEDOT code_block:cb   
+                |                                               
+                ;
+
+// Cycle body
+cycle_body  ::= DEFAULT DOUBLEDOT code_block_loop:cb               
+              | cycle_on:co DEFAULT DOUBLEDOT code_block_loop:cb   
+              | cycle_on:co                                        
+              ;
+
+cycle_on    ::= cycle_on:co ON expr:e DO DOUBLEDOT code_block_loop:cb 
+              | ON expr:e DO DOUBLEDOT code_block_loop:cb             
+              ;
+
+// Asignation
+asig      ::= ident_list:il ASIG expr_list:el  ;
+// No, it doesn't generate valid asignations only,
+// that's checked while building the AST.
+
+// Control structures terminators
+fi        ::= END | ENDIF;
+elihw     ::= END | ENDWHILE;
+rof       ::= END | ENDFOR;
+elcyc     ::= END | ENDCYCLE;
+fed       ::= END | ENDDEF;
+
+
+/*
+      EXPRESIONS
+ */
+expr_list ::= expr_list:el COMMA expr:e  
+            | expr:e                     
+            ;
+
+expr      ::=
+    /* ----- Basic types ----- */
+              CHAR_V:e                                 
+            | INTEGER_V:e                              
+            | FLOAT_V:e                                
+            | TRUE                                     
+            | FALSE                                    
+            | IDENTIFIER:n                             
+//            | LPAREN expr:e RPAREN
+            | LPAREN expr_list:e RPAREN // tuples and parentitation
+
+    /* --- Arithmetic, relational and logical operations --- */
+            | expr:e1 arithmetic_op:o expr:e2          
+	    | expr:e1 relational_op:o expr:e2	       
+	    | expr:e1 logical_op:o expr:e2	       
+            | MINUS:o expr:e        		       				
+            | NOEQ:o expr:e                            
+
+    /* ----- Functions calls ----- */
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  
+
+    /* ----- Composite types ----- */
+            //Tuples are at basic types because, for example, (6) it's just 6
+            | STRING:e
+            | LBRACKET RBRACKET               // [] empty list
+            | LPAREN RPAREN                   // () empty tuple
+            | LBRACET RBRACET                 // {} empty dictionary
+            | LBRACKET expr_list RBRACKET     // list
+            | LBRACET dict_vals RBRACET       // dictionary
+    /* ----- Composite types operations ----- */
+            | IDENTIFIER LBRACKET expr RBRACKET                 // indexing
+            | IDENTIFIER LBRACKET expr DOUBLEDOT expr RBRACKET  // slicing
+            | expr PLUSPLUS expr                                // plosplos
+            | expr LTLT expr                                    // push
+            | expr GTGT expr                                    // pop
+
+    /* ----- Other expressions ----- */
+            | READ                                     
+	    ;
+
+//Dictionary values
+dict_vals       ::= dict_vals COMMA dict_val
+                  | dict_val
+                  ;
+dict_val        ::= IDENTIFIER DOUBLEDOT expr;
+
+arithmetic_op ::= PLUS:o                            
+                | MINUS:o                           
+                | TIMES:o                           
+                | DIVIDE:o                          
+                | MOD:o                             
+                | POW:o                             
+                ;
+
+relational_op ::= LT:o                              
+                | GT:o                              
+                | LTE:o                             
+                | GTE:o                             
+                | SHEQ:o                            
+                | DEEQ:o                            
+                | NOEQ:o                            
+                ;
+
+logical_op    ::= AND:o                             
+                | SAND:o /* & -- no short-circuit*/   // &
+                | OR:o                              
+                | SOR:o  /* | -- no short-circuit*/   // |
+                | XOR:o                             
+                ;
+
+/*
+      USELESS STUFF
+
+number       ::= INTEGER_V
+               | FLOAT_V
+               ;
+
+// Useless comentary. It really feels like it belongs here ... :) ... GJ
+
+bool         ::= TRUE | FALSE;
+
+s_ident_list ::= s_ident_list IDENTIFIER
+               | IDENTIFIER
+               ;
+*/

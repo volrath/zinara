@@ -1,0 +1,439 @@
+package zinara.parser;
+
+import zinara.ast.type.*;
+import zinara.ast.expression.*;
+import zinara.ast.instructions.*;
+import zinara.ast.*;
+
+import java_cup.runtime.*;
+
+import java.util.ArrayList;
+
+/* Preliminaries to set up and use the scanner.  */
+
+/* Parser code to change the way the parser reports errors (include
+   line and column number of the error). */
+action code{:
+Symtable GlobalTable = new Symtable(null);
+Symtable MainTable = new Symtable(GlobalTable);
+Symtable CurrentTable = GlobalTable;
+
+public void pushToSymt(Declaration d){
+    if (d.isSingle()){
+	notused(((SingleDeclaration)d).getId());
+	CurrentTable.addSymbol(((SingleDeclaration)d).getId(),new SymValue(((SingleDeclaration)d).getValue(),((SingleDeclaration)d).getType(),((SingleDeclaration)d).isVariable()));
+    }
+    else{
+	SingleDeclaration current_decl;
+	for (int i=0;i<((MultipleDeclaration)d).size();++i){
+	    current_decl=((MultipleDeclaration)d).get(i);
+	    notused(((SingleDeclaration)current_decl).getId());
+	    CurrentTable.addSymbol(current_decl.getId(),new SymValue(current_decl.getValue(),current_decl.getType(),current_decl.isVariable()));
+	}
+    }
+}
+
+public void notused(String id){
+    if (CurrentTable.containsSymbol(id)){
+	System.out.println("Simbolo \'"+id+"\' ya declarado");
+	System.exit(1);
+    }
+    
+}
+
+public void used(String id,Symtable symt){
+    if (! symt.containsSymbol(id)){
+	if (symt.getFather() == null){
+	    System.out.println("Simbolo \'"+id+"\' no existe");
+	    System.exit(1);
+	}
+	else
+	    used(id,symt.getFather());
+/*        if ((GlobalTable != CurrentTable) && (!GlobalTable.containsSymbol(id))){
+	    System.out.println("Simbolo \'"+id+"\' no existe");
+	    System.exit(1);
+        }*/
+    }
+}
+
+/*public void used_for_for(String id){
+    if (! CurrentTable.containsSymbol(id)){
+	if ((!MainTable.containsSymbol(id))){
+	    if ((!GlobalTable.containsSymbol(id))){
+		System.out.println("Simbolo \'"+id+"\' no existe");
+		System.exit(1);
+	    }
+	}
+    }
+    }*/
+
+:}
+
+parser code {:    
+    
+    /* Change the method report_error so it will display the line and
+       column of where the error occurred in the input as well as the
+       reason for the error which is passed into the method in the
+       String 'message'. */
+    public void report_error(String message, Object info) {
+   
+        /* Create a StringBuffer called 'm' with the string 'Error' in it. */
+        StringBuffer m = new StringBuffer("Error");
+   
+        /* Check if the information passed to the method is the same
+           type as the type java_cup.runtime.Symbol. */
+        if (info instanceof java_cup.runtime.Symbol) {
+            /* Declare a java_cup.runtime.Symbol object 's' with the
+               information in the object info that is being typecasted
+               as a java_cup.runtime.Symbol object. */
+            java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) info);
+   
+            /* Check if the line number in the input is greater or
+               equal to zero. */
+            if (s.left >= 0) {                
+                /* Add to the end of the StringBuffer error message
+                   the line number of the error in the input. */
+                m.append(" in line "+(s.left+1));   
+                /* Check if the column number in the input is greater
+                   or equal to zero. */
+                if (s.right >= 0)                    
+                    /* Add to the end of the StringBuffer error message
+                       the column number of the error in the input. */
+                    m.append(", column "+(s.right+1));
+            }
+        }
+   
+        /* Add to the end of the StringBuffer error message created in
+           this method the message that was passed into this method. */
+        m.append(" : "+message);
+   
+        /* Print the contents of the StringBuffer 'm', which contains
+           an error message, out on a line. */
+        System.err.println(m);
+    }
+   
+    /* Change the method report_fatal_error so when it reports a fatal
+       error it will display the line and column number of where the
+       fatal error occurred in the input as well as the reason for the
+       fatal error which is passed into the method in the object
+       'message' and then exit.*/
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+:};
+
+
+/* Terminals (tokens returned by the scanner). */
+terminal Integer INTEGER_V;
+terminal Float FLOAT_V;
+terminal Boolean TRUE, FALSE;
+terminal String IDENTIFIER;
+terminal String PLUS, MINUS, TIMES, DIVIDE, MOD, POW;
+terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
+terminal String AND, SAND, OR, SOR, XOR;
+
+terminal Character CHAR_V;
+terminal STRING_V, SEMI, UMINUS;
+terminal Main MAIN;
+terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN; 
+terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
+terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
+terminal COMMA, DOUBLEDOT, RETURN, RETURNS;
+terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
+terminal AS, IN; 
+terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG; 
+
+
+/* Non-terminals */
+nonterminal Program program;
+nonterminal Main main;
+nonterminal ArrayList decl_list;                      // arraylist of declarations (multiples or singles)
+nonterminal Declaration declaration, decl, def_decl;  // (just one declaration, multiple or single)
+nonterminal Assignation asig, s_asig;                 // (just one assignation, multiple or single)
+nonterminal ArrayList asig_list, s_asig_list;         // arraylist of singleAssignations
+//nonterminal ArrayList asig, asig_list, s_asig, s_asig_list; // arraylist of assignations
+nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
+nonterminal ArrayList cycle_default, cycle_on, else, elif; // arraylist of assignations
+nonterminal Type type;
+nonterminal ArrayList expr_list;  // arraylist of expressions
+nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
+nonterminal Expression expr;
+nonterminal Integer arithmetic_op, relational_op, logical_op;
+nonterminal String identifier;
+nonterminal Instruction ctrl_struct, instruction, instruction_loop;
+nonterminal ArrayList args_list; // arraylist of types
+nonterminal Type arg;
+
+nonterminal type_list, dict_types, dict_type;
+nonterminal dict_vals, dict_val;
+nonterminal conds;
+nonterminal fi, elihw, elcyc, rof, fed, print;
+nonterminal inst_list;
+nonterminal expr_part, elif_list;
+
+/* Precedences */
+precedence left SEMI;
+precedence right ASIG;
+
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE, MOD;
+precedence left POW;
+precedence left UMINUS;
+
+precedence left LTLT, GTGT, PLUSPLUS;
+precedence left LT, LTE, GT, GTE, SHEQ, DEEQ, NOEQ;
+precedence left AND, SAND, OR, SOR, XOR;
+
+//precedence left INTEGER_V, FLOAT_V, CHAR_V, TRUE, FALSE;
+
+/* The grammar */
+
+/*
+      THE PROGRAM
+ */
+program   ::= main:m               {: RESULT = new Program(m);   :}
+            | decl_list:ds main:m  {: RESULT = new Program(m,ds);:}
+            ;
+
+main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
+            ;
+
+/*
+      DECLARATIONS
+ */
+// Types
+type         ::= INTEGER                    {: RESULT = new IntType(); :}
+               | FLOAT                      {: RESULT = new FloatType(); :}
+               | CHAR                       {: RESULT = new CharType(); :}
+               | BOOL                       {: RESULT = new BoolType(); :}
+               ;
+
+type_list    ::= type_list COMMA type
+               | type
+               ;
+
+decl_list    ::= decl_list:ds declaration:d SEMI  {: RESULT = ds; RESULT.add(d);:}
+               | decl_list:ds def_decl:d SEMI     {: RESULT = ds; RESULT.add(d);:}
+               | declaration:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d);:}
+               | def_decl:d SEMI                  {: RESULT = new ArrayList(); RESULT.add(d);:}
+               ;
+
+declaration  ::= VAR decl:d                       {:
+						   if (d.isSingle())
+						       ((SingleDeclaration)d).setVariable(true);
+						   else {
+						       for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
+						   }
+						   RESULT = d;
+						   pushToSymt(RESULT);
+						   :}
+               | decl:d                           {: RESULT = d; pushToSymt(RESULT);:}
+               ;
+
+decl         ::= type:t s_asig:a                 {: 
+ 						  if (!(a.isSingle())) { // a Multiple
+						      //System.out.println(a.isSingle);
+						      ArrayList ds = new ArrayList();
+						      for (int i = 0; i < ((MultipleAssignation)a).assignations.size(); i++)
+							  ds.add(new SingleDeclaration(t, ((MultipleAssignation)a).get(i).getId(), ((MultipleAssignation)a).get(i).getExpression(), false));
+						      RESULT = new MultipleDeclaration(ds);
+						  } else
+						      RESULT = new SingleDeclaration(t, ((SingleAssignation)a).getId(), ((SingleAssignation)a).getExpression(), false);
+						  :} // Maybe a single or a multiple declaration
+
+               | type:t IDENTIFIER:id             {: RESULT = new SingleDeclaration(t, id, null, false); :} // A single declaration
+               ;
+/*
+               | type:t ident_list:ids           {:
+		                                  if (ids.size()==1) // A single declaration
+						      RESULT = new SingleDeclaration(t, (String)(ids.get(0)), null, false);
+						  else {
+						      ArrayList ds = new ArrayList();
+						      for (int i = 0; i < ids.size(); i++)
+							  ds.add(new SingleDeclaration(t, (String)(ids.get(i)), null, false));
+						      RESULT = new MultipleDeclaration(ds);
+						  }
+						  :}
+               ;
+
+ident_list ::= ident_list:il COMMA IDENTIFIER:id   {: il.add(id); RESULT = il;:}
+             | IDENTIFIER:id                       {: RESULT = new ArrayList(); RESULT.add(id); :}
+             ;
+*/
+
+def_decl     ::= DEF IDENTIFIER:id LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT code_block fed  {: RESULT = new SingleDeclaration(new FunctionType(al,t),id,null,false); :};
+
+args_list    ::= args_list:al COMMA arg:a           {: al.add(a); RESULT = al; :}
+               | arg:a                              {: RESULT = new ArrayList(); RESULT.add(a); :}
+               ;
+
+arg          ::= COPY IDENTIFIER AS type:t          {: RESULT = t; :}
+               | IDENTIFIER AS type:t               {: RESULT = t; :}
+               ;
+
+/*
+      EXPRESIONS
+ */
+expr_list ::= expr_list:el COMMA expr:e             {: RESULT = el; el.add(e); :}
+            | expr:e                                {: RESULT = new ArrayList(); RESULT.add(e); :}
+            ;
+
+expr      ::= CHAR_V:e                                 {: RESULT = new CharExp(e.charValue()); :}
+            | INTEGER_V:e                              {: RESULT = new IntegerExp(e.intValue()); :}
+            | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
+            | TRUE                                     {: RESULT = new TrueExp(); :}
+            | FALSE                                    {: RESULT = new FalseExp(); :}
+            | identifier:n                             {: used(n); RESULT = new IdentifierExp(n); :}
+            | LPAREN expr:e RPAREN                     {: RESULT = e; :}
+    /* ----- Basic types ----- */
+            | expr:e1 arithmetic_op:o expr:e2          {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+	    | expr:e1 relational_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+	    | expr:e1 logical_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+            | MINUS:o expr:e        		       {: RESULT = new UnaryExp(sym.UMINUS, e); :}				
+            | NOEQ:o expr:e                            {: RESULT = new UnaryExp(sym.NOEQ, e); :}
+    /* ----- Functions calls ----- */
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new CallExp(n, el); :}
+    /* ----- Other expressions ----- */
+            | READ                                     {: RESULT = new ReadExp(); :}
+	    ;
+
+arithmetic_op ::= PLUS:o                            {: RESULT = new Integer(sym.PLUS); :}
+                | MINUS:o                           {: RESULT = new Integer(sym.MINUS); :}
+                | TIMES:o                           {: RESULT = new Integer(sym.TIMES); :}
+                | DIVIDE:o                          {: RESULT = new Integer(sym.DIVIDE); :}
+                | MOD:o                             {: RESULT = new Integer(sym.MOD); :}
+                | POW:o                             {: RESULT = new Integer(sym.POW); :}
+                ;
+
+relational_op ::= LT:o                              {: RESULT = new Integer(sym.LT); :}
+                | GT:o                              {: RESULT = new Integer(sym.GT); :}
+                | LTE:o                             {: RESULT = new Integer(sym.LTE); :}
+                | GTE:o                             {: RESULT = new Integer(sym.GTE); :}
+                | SHEQ:o                            {: RESULT = new Integer(sym.SHEQ); :}
+                | DEEQ:o                            {: RESULT = new Integer(sym.DEEQ); :}
+                | NOEQ:o                            {: RESULT = new Integer(sym.NOEQ); :}
+                ;
+
+logical_op    ::= AND:o                             {: RESULT = new Integer(sym.AND); :}
+                | SAND:o                            {: RESULT = new Integer(sym.SAND); :}  // &
+                | OR:o                              {: RESULT = new Integer(sym.OR); :}
+                | SOR:o                             {: RESULT = new Integer(sym.SOR); :}  // |
+                | XOR:o                             {: RESULT = new Integer(sym.XOR); :}
+                ;
+/*
+bitwise_op    ::= ???
+*/
+
+// expr_comma_list ::= expr_comma_list COMMA expr
+//                   | expr
+//                   ;
+
+dict_vals       ::= dict_vals COMMA dict_val
+                  | dict_val
+                  ;
+dict_val        ::= IDENTIFIER DOUBLEDOT expr;
+
+
+/*
+      INSTRUCTIONS
+ */
+inst_list     ::= inst_list instruction SEMI
+                | instruction SEMI
+                ;
+
+instruction   ::= s_asig:a                                  {: RESULT = a; :}
+                | print expr:e                              {: RESULT = new Print(e); :}
+                | declaration:d                             {: RESULT = new DecInst(d); :}
+                | def_decl:dd                               {: RESULT = new DecInst(dd); :} 
+                | IDENTIFIER:n LPAREN expr_list:el RPAREN   {: RESULT = new FunctionCall(n, el); :}
+                | ctrl_struct:cs                            {: RESULT = cs; :}
+                | RETURN expr:e                             {: RESULT = new Return(e); :}
+                ;
+
+instruction_loop  ::= s_asig:a                                 {: RESULT = a; :}
+                    | print expr:e                             {: RESULT = new Print(e); :}
+                    | declaration:d                            {: RESULT = new DecInst(d); :}
+                    | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new FunctionCall(n, el); :}
+                    | ctrl_struct:cs                           {: RESULT = cs; :}
+                    | RETURN expr:e                            {: RESULT = new Return(e); :}
+                    ;
+
+ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
+                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:}
+                | FOR IDENTIFIER:id IN expr:e {: RESULT = new For(id,cb,e,CurrentTable,new IntType());:} DOUBLEDOT code_block_loop:cb rof
+                | CYCLE DOUBLEDOT code_block_loop:cb cycle_default:cd elcyc     {: RESULT = new Cycle(cd,cb);:}
+                | CYCLE SEMI cycle_default:cd elcyc                             {: RESULT = new Cycle(cd,null);:}
+                ;
+
+else          ::= elif:el ELSE DOUBLEDOT code_block:cb   {: el.add(new IfCase(cb,new TrueExp())); RESULT = el; :}
+                | elif:el                                {: RESULT = el; :}
+                ;
+
+elif          ::= elif:el ELIF expr:e DOUBLEDOT code_block:cb   {: el.add(new IfCase(cb,e)); RESULT=el;:}
+                |                                               {: RESULT = new ArrayList(); :}
+                ;
+
+cycle_default  ::= DEFAULT DOUBLEDOT code_block_loop:cb               {: RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp())); :}
+                 | cycle_on:co DEFAULT DOUBLEDOT code_block_loop:cb   {: co.add(new CycleCase(cb,new TrueExp())); RESULT = co; :}
+                 | cycle_on:co                                        {: RESULT = co; :}
+                 ;
+
+cycle_on       ::= cycle_on:co ON expr:e DO DOUBLEDOT code_block_loop:cb {: co.add(new CycleCase(cb,e)); RESULT = co; :}
+                 | ON expr:e DO DOUBLEDOT code_block_loop:cb             {: RESULT = (new ArrayList()); RESULT.add(new CycleCase(cb,e)); :}
+                 ;
+
+code_block    ::= code_block:cb instruction:i SEMI  {: cb.addInst(i); RESULT = cb; :}
+                | instruction:i SEMI                {: RESULT = new CodeBlock(new ArrayList()); RESULT.addInst(i); :}
+                ;
+
+code_block_loop ::= code_block_loop:cb instruction_loop:i SEMI  {: cb.addInst(i); RESULT = cb; :}
+                  | instruction_loop:i SEMI                     {: RESULT = new CodeBlock(new ArrayList()); RESULT.addInst(i); :}
+                  ;
+
+s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {:
+								       used(id);
+								       if (al.size() == 0){
+									   RESULT = new SingleAssignation(new String(id), e);
+								       }
+								       else {
+									   al.add(new SingleAssignation(new String(id), e));
+									   RESULT = new MultipleAssignation(al);
+								       }
+								       :};
+
+s_asig_list ::= COMMA IDENTIFIER:id s_asig_list:al expr:e COMMA       {: used(id); al.add(new SingleAssignation(new String(id), e)); RESULT = al; :}
+              | ASIG                                                  {: RESULT = new ArrayList(); :}
+              ;
+
+// asig        ::= identifier:id asig_list:al expr:e                             {: al.add(new Assignation(id, e)); RESULT = al; :};
+// asig_list   ::= COMMA identifier:id asig_list:al expr:e COMMA                 {: al.add(new Assignation(id, e)); RESULT = al; :}
+//               | ASIG                                                          {: RESULT = new ArrayList(); :}
+//               ;
+
+fi        ::= END | ENDIF;
+elihw     ::= END | ENDWHILE;
+rof       ::= END | ENDFOR;
+elcyc     ::= END | ENDCYCLE;
+fed       ::= END | ENDDEF;
+
+print     ::= PRINT LPAREN expr RPAREN;
+
+identifier   ::= IDENTIFIER:id                                       {: RESULT = id; :}
+//                | IDENTIFIER LBRACKET INTEGER_V RBRACKET
+//                | IDENTIFIER LBRACKET IDENTIFIER RBRACKET
+               ;
+
+/*
+      USELESS STUFF
+
+number       ::= INTEGER_V
+               | FLOAT_V
+               ;
+
+bool         ::= TRUE | FALSE;
+
+s_ident_list ::= s_ident_list IDENTIFIER
+               | IDENTIFIER
+               ;
+*/

@@ -28,16 +28,16 @@ import zinara.parser.*;
 %}
 
 LineTerminator = \r|\n|\r\n
-InputCharacter = [^\n]
+InputCharacter = [^\n\r]
 WhiteSpace     = [ \t\f]
-EmptyLine      = [\ ]* "\n"
+EmptyLine      = [\ ]* {LineTerminator}
 Letter         = [a-zA-Z]
 Digit          = [0-9]
 Alphanumeric   = [a-zA-Z0-9]
 
 Comment = {MultipleComment} | {SimpleComment}
 
-MultipleComment   = "/\." [^\.] ~"\./" "\ "* "\n"?| "/\." "\."+ "\./" "\ "* "\n"?
+MultipleComment   = "/\." ~"\./" {WhiteSpace}* {LineTerminator}?
 SimpleComment     = "//" {InputCharacter}* {LineTerminator}
 
 Identifier  = {Letter} {Alphanumeric}*
@@ -49,8 +49,8 @@ Number      = {Digit}+
 {WhiteSpace}                     {}
 ^{EmptyLine}                     {}
 
- "main" "\ "* "\n"               { return symbol(sym.MAIN); }
- "endmain" "\ "* "\n"            { return symbol(sym.ENDMAIN); }
+ "main" "\ "* \n                 { return symbol(sym.MAIN); }
+ "endmain" "\ "* \n?             { return symbol(sym.ENDMAIN); }
 
  {LineTerminator}                { return symbol(sym.SEMI); }
 
@@ -120,12 +120,13 @@ Number      = {Digit}+
 
  "true"                          { return symbol(sym.TRUE); }
  "false"                         { return symbol(sym.FALSE); }
- [0-9]+"."[0-9]+                  { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
- [0-9]+"."                        { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()+".0"))); }
- "."[0-9]+                        { return symbol(sym.FLOAT_V,new Float(Float.parseFloat("0."+yytext()))); }
- [0-9]+                          { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
- \'.\'                           { return symbol(sym.CHAR,new Character(yytext().charAt(1))); }
- [A-Za-z] [a-zA-Z\'_0-9]*        { return symbol(sym.IDENTIFIER,yytext()); }
+ 
+ {Number}"."{Number}+            { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
+ {Number}+"."                    { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()+"0"))); }
+ "."{Number}+                    { return symbol(sym.FLOAT_V,new Float(Float.parseFloat("0"+yytext()))); }
+ {Number}+                       { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
+ \'[^\n\r]\'                     { return symbol(sym.CHAR,new Character(yytext().charAt(1))); }
+ \"[^\n\r]*\"                    { return symbol(sym.STRING,yytext()); }
+ {Letter} [a-zA-Z\'_0-9]*        { return symbol(sym.IDENTIFIER,yytext()); }
 
-
-// .*     { throw new Error("Illegal character <"+yytext()+">"); }
+ .                               { throw new Error("Illegal character <"+yytext()+">"); }
