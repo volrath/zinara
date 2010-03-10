@@ -1,9 +1,15 @@
 package zinara.ast;
 
+import zinara.ast.instructions.CodeBlock;
+
 public class Main {
-    int i;
+    CodeBlock code;
     
-    public Main() {
-	i=0;
+    public Main(CodeBlock c) {
+	this.code = c;
+    }
+    
+    public CodeBlock getCode(){
+	return this.code;
     }
 }

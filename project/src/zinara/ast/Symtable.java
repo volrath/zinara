@@ -4,8 +4,10 @@ import java.util.*;
 
 public class Symtable{
     private Hashtable symtable;
+    private Symtable father;
     
-    public Symtable(){
+    public Symtable(Symtable f){
+	this.father = f;
 	this.symtable = new Hashtable();
     }
 
@@ -19,6 +21,10 @@ public class Symtable{
 
     public Object getSymbol (String id){
 	return this.symtable.get(id);
+    }
+
+    public Symtable getFather (){
+	return this.father;
     }
 
     public boolean containsSymbol (String id){
