@@ -329,8 +329,8 @@ inst_list     ::= inst_list instruction SEMI
                 | instruction SEMI
                 ;
 
-instruction   ::= s_asig:a                                  {: RESULT = a; :}
-                | print expr:e                              {: RESULT = new Print(e); :}
+instruction   ::= s_asig:a                                  {: RESULT = a; :} // type checking here
+                | print expr:e                              {: RESULT = new Print(e); :} // type checking here
                 | declaration:d                             {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :} 
                 | IDENTIFIER:n LPAREN expr_list:el RPAREN   {: RESULT = new FunctionCall(n, el); :}
@@ -346,9 +346,9 @@ instruction_loop  ::= s_asig:a                                 {: RESULT = a; :}
                     | RETURN expr:e                            {: RESULT = new Return(e); :}
                     ;
 
-ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
-                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:}
-                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  {: RESULT = new For(id,cb,e);:}
+ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :} // type checking on e here
+                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:} // type checking on e here
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  {: RESULT = new For(id,cb,e);:} // type checking on e here
                 | CYCLE DOUBLEDOT code_block_loop:cb cycle_default:cd elcyc     {: RESULT = new Cycle(cd,cb);:}
                 | CYCLE SEMI cycle_default:cd elcyc                             {: RESULT = new Cycle(cd,null);:}
                 ;
