@@ -10,6 +10,8 @@
 tools/jflex/doc
 tools/jflex/examples
 
+zinara/
+
 *.class
 project/src/zinara/parser/parser.java
 project/src/zinara/parser/sym.java
