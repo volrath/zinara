@@ -4,6 +4,8 @@ import zinara.ast.type.*;
 import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
 import zinara.ast.*;
+import zinara.semantic.Operators;
+import zinara.symtable.*;
 
 import java_cup.runtime.*;
 
@@ -11,65 +13,15 @@ import java.util.ArrayList;
 
 /* Preliminaries to set up and use the scanner.  */
 
-/* Parser code to change the way the parser reports errors (include
-   line and column number of the error). */
 action code{:
-Symtable GlobalTable = new Symtable(null);
-Symtable MainTable = new Symtable(GlobalTable);
-Symtable CurrentTable = GlobalTable;
-
-public void pushToSymt(Declaration d){
-    if (d.isSingle()){
-	notused(((SingleDeclaration)d).getId());
-	CurrentTable.addSymbol(((SingleDeclaration)d).getId(),new SymValue(((SingleDeclaration)d).getValue(),((SingleDeclaration)d).getType(),((SingleDeclaration)d).isVariable()));
-    }
-    else{
-	SingleDeclaration current_decl;
-	for (int i=0;i<((MultipleDeclaration)d).size();++i){
-	    current_decl=((MultipleDeclaration)d).get(i);
-	    notused(((SingleDeclaration)current_decl).getId());
-	    CurrentTable.addSymbol(current_decl.getId(),new SymValue(current_decl.getValue(),current_decl.getType(),current_decl.isVariable()));
-	}
-    }
-}
-
-public void notused(String id){
-    if (CurrentTable.containsSymbol(id)){
-	System.out.println("Simbolo \'"+id+"\' ya declarado");
-	System.exit(1);
-    }
-    
-}
-
-public void used(String id,Symtable symt){
-    if (! symt.containsSymbol(id)){
-	if (symt.getFather() == null){
-	    System.out.println("Simbolo \'"+id+"\' no existe");
-	    System.exit(1);
-	}
-	else
-	    used(id,symt.getFather());
-/*        if ((GlobalTable != CurrentTable) && (!GlobalTable.containsSymbol(id))){
-	    System.out.println("Simbolo \'"+id+"\' no existe");
-	    System.exit(1);
-        }*/
-    }
-}
-
-/*public void used_for_for(String id){
-    if (! CurrentTable.containsSymbol(id)){
-	if ((!MainTable.containsSymbol(id))){
-	    if ((!GlobalTable.containsSymbol(id))){
-		System.out.println("Simbolo \'"+id+"\' no existe");
-		System.exit(1);
-	    }
-	}
-    }
-    }*/
-
+public SymTable rootTable = new SymTable();
+public SymTable symTable = rootTable;
+public SymTable tmpTable;
 :}
 
-parser code {:    
+/* Parser code to change the way the parser reports errors (include
+   line and column number of the error). */
+parser code {:
     
     /* Change the method report_error so it will display the line and
        column of where the error occurred in the input as well as the
@@ -121,6 +73,8 @@ parser code {:
         report_error(message, info);
         System.exit(1);
     }
+
+public static final Operators operators = new Operators();
 :};
 
 
@@ -146,7 +100,7 @@ terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
 
 
 /* Non-terminals */
-nonterminal Program program;
+nonterminal Program init, program;
 nonterminal Main main;
 nonterminal ArrayList decl_list;                      // arraylist of declarations (multiples or singles)
 nonterminal Declaration declaration, decl, def_decl;  // (just one declaration, multiple or single)
@@ -192,11 +146,12 @@ precedence left AND, SAND, OR, SOR, XOR;
 /*
       THE PROGRAM
  */
+init      ::= program:p            {: RESULT = p; System.out.println(symTable); :}
 program   ::= main:m               {: RESULT = new Program(m);   :}
             | decl_list:ds main:m  {: RESULT = new Program(m,ds);:}
             ;
 
-main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
+main      ::= MAIN {: tmpTable = symTable; symTable = new SymTable(tmpTable, "main"); :} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
             ;
 
 /*
@@ -208,7 +163,6 @@ type         ::= INTEGER                    {: RESULT = new IntType(); :}
                | CHAR                       {: RESULT = new CharType(); :}
                | BOOL                       {: RESULT = new BoolType(); :}
                ;
-
 type_list    ::= type_list COMMA type
                | type
                ;
@@ -226,14 +180,13 @@ declaration  ::= VAR decl:d                       {:
 						       for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
 						   }
 						   RESULT = d;
-						   pushToSymt(RESULT);
+						   symTable.addDeclaration(RESULT);
 						   :}
-               | decl:d                           {: RESULT = d; pushToSymt(RESULT);:}
+               | decl:d                           {: RESULT = d; symTable.addDeclaration(RESULT);:}
                ;
 
 decl         ::= type:t s_asig:a                 {: 
  						  if (!(a.isSingle())) { // a Multiple
-						      //System.out.println(a.isSingle);
 						      ArrayList ds = new ArrayList();
 						      for (int i = 0; i < ((MultipleAssignation)a).assignations.size(); i++)
 							  ds.add(new SingleDeclaration(t, ((MultipleAssignation)a).get(i).getId(), ((MultipleAssignation)a).get(i).getExpression(), false));
@@ -284,7 +237,7 @@ expr      ::= CHAR_V:e                                 {: RESULT = new CharExp(e
             | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
             | TRUE                                     {: RESULT = new TrueExp(); :}
             | FALSE                                    {: RESULT = new FalseExp(); :}
-            | identifier:n                             {: used(n); RESULT = new IdentifierExp(n); :}
+            | identifier:n                             {: symTable.checkDoubleDeclaration(n); RESULT = new IdentifierExp(n); :}
             | LPAREN expr:e RPAREN                     {: RESULT = e; :}
     /* ----- Basic types ----- */
             | expr:e1 arithmetic_op:o expr:e2          {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
@@ -342,8 +295,8 @@ inst_list     ::= inst_list instruction SEMI
                 | instruction SEMI
                 ;
 
-instruction   ::= s_asig:a                                  {: RESULT = a; :}
-                | print expr:e                              {: RESULT = new Print(e); :}
+instruction   ::= s_asig:a                                  {: RESULT = a; :} // type checking here
+                | print expr:e                              {: RESULT = new Print(e); :} // type checking here
                 | declaration:d                             {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :} 
                 | IDENTIFIER:n LPAREN expr_list:el RPAREN   {: RESULT = new FunctionCall(n, el); :}
@@ -359,9 +312,9 @@ instruction_loop  ::= s_asig:a                                 {: RESULT = a; :}
                     | RETURN expr:e                            {: RESULT = new Return(e); :}
                     ;
 
-ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
-                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:}
-                | FOR IDENTIFIER:id IN expr:e {: RESULT = new For(id,cb,e,CurrentTable,new IntType());:} DOUBLEDOT code_block_loop:cb rof
+ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :} // type checking on e here
+                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:} // type checking on e here
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  {: RESULT = new For(id, e, cb);:} // type checking on e here
                 | CYCLE DOUBLEDOT code_block_loop:cb cycle_default:cd elcyc     {: RESULT = new Cycle(cd,cb);:}
                 | CYCLE SEMI cycle_default:cd elcyc                             {: RESULT = new Cycle(cd,null);:}
                 ;
@@ -391,8 +344,7 @@ code_block_loop ::= code_block_loop:cb instruction_loop:i SEMI  {: cb.addInst(i)
                   | instruction_loop:i SEMI                     {: RESULT = new CodeBlock(new ArrayList()); RESULT.addInst(i); :}
                   ;
 
-s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {:
-								       used(id);
+s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {: 
 								       if (al.size() == 0){
 									   RESULT = new SingleAssignation(new String(id), e);
 								       }
@@ -402,7 +354,7 @@ s_asig      ::= IDENTIFIER:id s_asig_list:al expr:e                   {:
 								       }
 								       :};
 
-s_asig_list ::= COMMA IDENTIFIER:id s_asig_list:al expr:e COMMA       {: used(id); al.add(new SingleAssignation(new String(id), e)); RESULT = al; :}
+s_asig_list ::= COMMA IDENTIFIER:id s_asig_list:al expr:e COMMA       {: al.add(new SingleAssignation(new String(id), e)); RESULT = al; :}
               | ASIG                                                  {: RESULT = new ArrayList(); :}
               ;
 
