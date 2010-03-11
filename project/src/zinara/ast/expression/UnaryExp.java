@@ -1,8 +1,15 @@
 package zinara.ast.expression;
 
-public class UnaryExp extends Expression {
-   public int operator;
-   public Expression operand;
+import zinara.parser.parser;
+import zinara.exceptions.TypeClashException;
 
-   public UnaryExp ( int o, Expression e ) { operator=o; operand=e; }
+public class UnaryExp extends Expression {
+    public int operator;
+    public Expression operand;
+    
+    public UnaryExp ( int o, Expression e ) { operator=o; operand=e; }
+
+    public Integer getType() throws TypeClashException {
+	return parser.operators.check(this.operator, this.operand.getType(), null);
+   }
 }

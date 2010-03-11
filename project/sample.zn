@@ -1,0 +1,10 @@
+Int k' = "sdfg4"
+
+def k'' (a as Int, b as String) returns<Int>:
+  Char hj 
+  print(k')
+enddef 
+
+main
+    Int x
+endmain
