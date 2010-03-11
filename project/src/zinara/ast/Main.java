@@ -12,4 +12,6 @@ public class Main {
     public CodeBlock getCode(){
 	return this.code;
     }
+
+    public String toString() { return "(Main: " + code + ")"; }
 }

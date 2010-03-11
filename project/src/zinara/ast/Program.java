@@ -17,4 +17,6 @@ public class Program {
     }
 
     public Main getMain() { return this.main; }
+
+    public String toString() { return "(Program: " + main + ")"; }
 }

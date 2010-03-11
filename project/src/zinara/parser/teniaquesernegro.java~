@@ -1,7 +1,0 @@
-abstract class teniaquesernegro{
-    abstract void creoqestosiesnecesario(){}
-
-    public void estoesunmetodo(){
-	System.out.println("no abstracto en una clase abstracta");
-    }
-}
