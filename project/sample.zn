@@ -1,4 +1,4 @@
-Int k' = "sdfg4"
+Int k' = 'h'
 
 def k'' (a as Int, b as String) returns<Int>:
   Char hj 

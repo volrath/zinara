@@ -8,6 +8,8 @@ public class CodeBlock extends Instruction{
     private ArrayList block;   // ArrayList of... ?
     private SymTable symTable;
 
+    public CodeBlock() { this.block = new ArrayList(); }
+
     public CodeBlock(ArrayList b){
 	this.block = b;
     }
