@@ -1,4 +1,4 @@
-package zinara.utils;
+package zinara.exceptions;
 
 public class TypeClashException extends Exception {
     String mistake;

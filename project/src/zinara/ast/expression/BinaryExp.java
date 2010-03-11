@@ -1,7 +1,7 @@
 package zinara.ast.expression;
 
 import zinara.parser.parser;
-import zinara.utils.TypeClashException;
+import zinara.exceptions.TypeClashException;
 
 public class BinaryExp extends Expression {
     public int operator;

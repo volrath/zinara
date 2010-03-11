@@ -1,8 +1,8 @@
 package zinara.ast.expression;
 
-import zinara.ast.Symtable;
 import zinara.ast.type.*;
 import zinara.semantic.basicTypes;
+//import zinara.symtable.SymTable;
 
 public class IdentifierExp extends Expression {
     public String value;

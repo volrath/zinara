@@ -1,7 +1,7 @@
 package zinara.semantic;
 
 import zinara.parser.sym;
-import zinara.utils.TypeClashException;
+import zinara.exceptions.TypeClashException;
 
 import java.util.Hashtable;
 

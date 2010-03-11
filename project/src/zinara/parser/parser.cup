@@ -5,6 +5,7 @@ import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
 import zinara.ast.*;
 import zinara.semantic.Operators;
+import zinara.symtable.*;
 
 import java_cup.runtime.*;
 
@@ -13,54 +14,9 @@ import java.util.ArrayList;
 /* Preliminaries to set up and use the scanner.  */
 
 action code{:
-
-Symtable GlobalTable = new Symtable();
-Symtable MainTable = new Symtable();
-Symtable CurrentTable = GlobalTable;
-
-public void varDecl(Declaration d){
-    if (d.isSingle()){
-	notused(((SingleDeclaration)d).getId());
-	CurrentTable.addSymbol(((SingleDeclaration)d).getId(),new SymValue(((SingleDeclaration)d).getValue(),((SingleDeclaration)d).getType(),((SingleDeclaration)d).isVariable()));
-    }
-    else{
-	SingleDeclaration current_decl;
-	for (int i=0;i<((MultipleDeclaration)d).size();++i){
-	    current_decl=((MultipleDeclaration)d).get(i);
-	    notused(((SingleDeclaration)current_decl).getId());
-	    CurrentTable.addSymbol(current_decl.getId(),new SymValue(current_decl.getValue(),current_decl.getType(),current_decl.isVariable()));
-	}
-    }
-}
-
-public void notused(String id){
-    if (CurrentTable.containsSymbol(id)){
-	System.out.println("Simbolo \'"+id+"\' ya declarado");
-	System.exit(1);
-    }
-    
-}
-
-public void used(String id){
-    if (! CurrentTable.containsSymbol(id)){
-	if ((GlobalTable != CurrentTable) && (!GlobalTable.containsSymbol(id))){
-	    System.out.println("Simbolo \'"+id+"\' no existe");
-	    System.exit(1);
-	}
-    }
-}
-
-public void used_for_for(String id){
-    if (! CurrentTable.containsSymbol(id)){
-	if ((!GlobalTable.containsSymbol(id))){
-	    if ((!GlobalTable.containsSymbol(id))){
-		System.out.println("Simbolo \'"+id+"\' no existe");
-		System.exit(1);
-	    }
-	}
-    }
-}
-
+public SymTable rootTable = new SymTable();
+public SymTable symTable = rootTable;
+public SymTable tmpTable;
 :}
 
 /* Parser code to change the way the parser reports errors (include
@@ -144,7 +100,7 @@ terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
 
 
 /* Non-terminals */
-nonterminal Program program;
+nonterminal Program init, program;
 nonterminal Main main;
 nonterminal ArrayList decl_list;                      // arraylist of declarations (multiples or singles)
 nonterminal Declaration declaration, decl, def_decl;  // (just one declaration, multiple or single)
@@ -190,11 +146,12 @@ precedence left AND, SAND, OR, SOR, XOR;
 /*
       THE PROGRAM
  */
+init      ::= program:p            {: RESULT = p; System.out.println(symTable); :}
 program   ::= main:m               {: RESULT = new Program(m);   :}
             | decl_list:ds main:m  {: RESULT = new Program(m,ds);:}
             ;
 
-main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
+main      ::= MAIN {: tmpTable = symTable; symTable = new SymTable(tmpTable, "main"); :} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
             ;
 
 /*
@@ -206,7 +163,6 @@ type         ::= INTEGER                    {: RESULT = new IntType(); :}
                | CHAR                       {: RESULT = new CharType(); :}
                | BOOL                       {: RESULT = new BoolType(); :}
                ;
-
 type_list    ::= type_list COMMA type
                | type
                ;
@@ -224,14 +180,13 @@ declaration  ::= VAR decl:d                       {:
 						       for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
 						   }
 						   RESULT = d;
-						   varDecl(RESULT);
+						   symTable.addDeclaration(RESULT);
 						   :}
-               | decl:d                           {: RESULT = d; varDecl(RESULT);:}
+               | decl:d                           {: RESULT = d; symTable.addDeclaration(RESULT);:}
                ;
 
 decl         ::= type:t s_asig:a                 {: 
  						  if (!(a.isSingle())) { // a Multiple
-						      //System.out.println(a.isSingle);
 						      ArrayList ds = new ArrayList();
 						      for (int i = 0; i < ((MultipleAssignation)a).assignations.size(); i++)
 							  ds.add(new SingleDeclaration(t, ((MultipleAssignation)a).get(i).getId(), ((MultipleAssignation)a).get(i).getExpression(), false));
@@ -282,7 +237,7 @@ expr      ::= CHAR_V:e                                 {: RESULT = new CharExp(e
             | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
             | TRUE                                     {: RESULT = new TrueExp(); :}
             | FALSE                                    {: RESULT = new FalseExp(); :}
-            | identifier:n                             {: used(n); RESULT = new IdentifierExp(n); :}
+            | identifier:n                             {: symTable.checkDoubleDeclaration(n); RESULT = new IdentifierExp(n); :}
             | LPAREN expr:e RPAREN                     {: RESULT = e; :}
     /* ----- Basic types ----- */
             | expr:e1 arithmetic_op:o expr:e2          {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
@@ -359,7 +314,7 @@ instruction_loop  ::= s_asig:a                                 {: RESULT = a; :}
 
 ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :} // type checking on e here
                 | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:} // type checking on e here
-                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  {: RESULT = new For(id,cb,e);:} // type checking on e here
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  {: RESULT = new For(id, e, cb);:} // type checking on e here
                 | CYCLE DOUBLEDOT code_block_loop:cb cycle_default:cd elcyc     {: RESULT = new Cycle(cd,cb);:}
                 | CYCLE SEMI cycle_default:cd elcyc                             {: RESULT = new Cycle(cd,null);:}
                 ;

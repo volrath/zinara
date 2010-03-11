@@ -5,10 +5,6 @@ def k'' (a as Int, b as String) returns<Int>:
   print(k')
 enddef 
 
-/.
-  e   /.sto es un comentario 
-./
 main
-  Int y = 65 + k' + 9 + 90
-  k''(y,k')
+    Int x
 endmain
