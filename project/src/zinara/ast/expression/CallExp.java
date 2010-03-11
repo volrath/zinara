@@ -2,6 +2,9 @@ package zinara.ast.expression;
 
 import java.util.ArrayList;
 
+import zinara.ast.type.Type;
+import zinara.ast.type.IntType;
+
 public class CallExp extends Expression {
     private String name;
     private ArrayList arguments;
@@ -11,5 +14,5 @@ public class CallExp extends Expression {
 	arguments = s;
     }
 
-    public Integer getType() { return new Integer(0); }
+    public Type getType() { return new IntType(); }
 }

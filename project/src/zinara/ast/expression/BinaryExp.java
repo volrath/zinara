@@ -1,5 +1,6 @@
 package zinara.ast.expression;
 
+import zinara.ast.type.Type;
 import zinara.parser.parser;
 import zinara.exceptions.TypeClashException;
 
@@ -10,7 +11,7 @@ public class BinaryExp extends Expression {
     
     public BinaryExp (int o, Expression l, Expression r) { operator=o; left=l; right=r; }
     
-    public Integer getType() throws TypeClashException {
+    public Type getType() throws TypeClashException {
 	return parser.operators.check(this.operator, this.left.getType(), this.right.getType());
     }
 }

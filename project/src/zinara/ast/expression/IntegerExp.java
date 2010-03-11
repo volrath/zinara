@@ -1,9 +1,10 @@
 package zinara.ast.expression;
 
-import zinara.semantic.basicTypes;
+import zinara.ast.type.Type;
+import zinara.ast.type.IntType;
 
 public class IntegerExp extends Expression {
     public int value;
     public IntegerExp ( int n ) { value=n; }
-    public Integer getType() { return basicTypes.Int; }
+    public Type getType() { return new IntType(); }
 }

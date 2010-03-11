@@ -1,9 +1,10 @@
 package zinara.ast.expression;
 
-import zinara.semantic.basicTypes;
+import zinara.ast.type.Type;
+import zinara.ast.type.FloatType;
 
 public class FloatExp extends Expression {
    public float value;
    public FloatExp ( float n ) { value=n; }
-    public Integer getType() { return basicTypes.Float; }
+    public Type getType() { return new FloatType(); }
 }

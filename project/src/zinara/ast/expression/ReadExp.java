@@ -1,6 +1,9 @@
 package zinara.ast.expression;
 
+import zinara.ast.type.Type;
+import zinara.ast.type.IntType;
+
 public class ReadExp extends Expression {
     public ReadExp () {}
-    public Integer getType() { return new Integer(0); }
+    public Type getType() { return new IntType(); }
 }

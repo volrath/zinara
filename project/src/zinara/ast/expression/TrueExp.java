@@ -1,8 +1,9 @@
 package zinara.ast.expression;
 
-import zinara.semantic.basicTypes;
+import zinara.ast.type.Type;
+import zinara.ast.type.BoolType;
 
 public class TrueExp extends Expression {
     public TrueExp () {}
-    public Integer getType() { return basicTypes.Bool; }
+    public Type getType() { return new BoolType(); }
 }
