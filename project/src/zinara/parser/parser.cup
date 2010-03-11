@@ -17,99 +17,9 @@ import zinara.semantic.Operators;
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
 action code{:
-SymTable GlobalTable = new SymTable(null);
-SymTable MainTable = new SymTable(GlobalTable);
-SymTable CurrentTable = GlobalTable;
-
-public void pushToSymt(Declaration d){
-    if (d.isSingle()){
-	notused(((SingleDeclaration)d).getId());
-	CurrentTable.addSymbol(((SingleDeclaration)d).getId(),new SymValue(((SingleDeclaration)d).getType(),((SingleDeclaration)d).isVariable()));
-    }
-    else{
-	SingleDeclaration current_decl;
-	for (int i=0;i<((MultipleDeclaration)d).size();++i){
-	    current_decl=((MultipleDeclaration)d).get(i);
-	    notused(((SingleDeclaration)current_decl).getId());
-	    CurrentTable.addSymbol(current_decl.getId(),new SymValue(current_decl.getType(),current_decl.isVariable()));
-	}
-    }
-}
-
-public void checkAsig(Assignation asig){
-    if (asig.isSingle()){
-	usedConst(((SingleAssignation)asig).getId(),CurrentTable);	
-    }
-    else{
-	SingleAssignation current_asig;
-	for (int i=0;i<((MultipleAssignation)asig).size();++i){
-	    current_asig=((MultipleAssignation)asig).get(i);
-	    usedConst(((SingleAssignation)current_asig).getId(),CurrentTable);
-	}
-    }
-}
-
-public void notused(String id){
-    if (CurrentTable.containsId(id)){
-	System.out.println("Simbolo \'"+id+"\' ya declarado");
-	System.exit(1);
-    }
-}
-
-public void usedConst(String id,SymTable symt){
-    if (! symt.containsId(id) && (symt.getSymbol(id) instanceof SymValue)){
-	if (symt.getFather() == null){
-	    System.out.println("Simbolo \'"+id+"\' no existe");
-	    System.exit(1);
-	}
-	else
-	    usedConst(id,symt.getFather());
-    }
-}
-
-// public void usedDef(String id,SymTable symt){
-//     if (! symt.containsId(id) && (symt.getSymbol(id) instanceof SymDef)){
-// 	if (symt.getFather() == null){
-// 	    System.out.println("Simbolo \'"+id+"\' no existe");
-// 	    System.exit(1);
-// 	}
-// 	else
-// 	    usedDef(id,symt.getFather());
-//     }
-// }
-
-public MultipleAssignation multipleAsig(ArrayList ids, ArrayList exprs){
-    if (ids.size()!=exprs.size()){
-	    System.out.println("Asignacion invalida");
-	    System.exit(1);	
-    }
-	
-    ArrayList asigs=new ArrayList();
-
-    for (int i=0 ; i<ids.size() ; ++i){
-	asigs.add(new SingleAssignation(((String)ids.get(i)),((Expression)exprs.get(i))));
-    }
-
-    return new MultipleAssignation(asigs);
-}
-
-public MultipleDeclaration multipleDecl(MultipleAssignation asigs, Type t){
-    ArrayList decls = new ArrayList();
-
-    for (int i = 0; i < asigs.assignations.size(); i++)
-	decls.add(new SingleDeclaration(t, asigs.get(i).getId(), asigs.get(i).getExpression(), false));
- 
-    return new MultipleDeclaration(decls);
-}
-
-public MultipleDeclaration multipleDecl(ArrayList ids, Type t){
-    ArrayList decls = new ArrayList();
-
-    for (int i = 0; i < ids.size(); i++)
-	decls.add(new SingleDeclaration(t, ((String)ids.get(i)), null, false));
- 
-    return new MultipleDeclaration(decls);
-}
+SymTable globalTable = new SymTable();
+SymTable mainTable = new SymTable(globalTable);
+SymTable currentTable = globalTable;
 :}
 
 parser code {:
@@ -241,7 +151,7 @@ program   ::= main:m               {: RESULT = new Program(m);   :}
             | decl_list:ds main:m  {: RESULT = new Program(m,ds);:}
             ;
 
-main      ::= MAIN {:CurrentTable=MainTable;:} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
+main      ::= MAIN {:currentTable=mainTable;:} code_block:cb ENDMAIN    {: RESULT = new Main(cb); :}
             ;
 
 /*
@@ -258,17 +168,17 @@ decl_list    ::= decl_list:ds const_decl:d SEMI  {: RESULT = ds; RESULT.add(d);:
 /* --- Functions declarations --- */
 def_decl     ::= DEF IDENTIFIER:id 
                  {:
-		  notused(id);
-		  CurrentTable=new SymTable(CurrentTable);
+		  currentTable.checkDoubleDeclaration(id);
+		  currentTable = new SymTable(currentTable);
 		  :}
                  LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT
 		     code_block:cb 
                  fed
                  {: 
 		  RESULT = new SingleDeclaration(new FunctionType(al,t,cb),id,null,false);
-		  CurrentTable=CurrentTable.getFather();
-		  cb.setSymTable(CurrentTable);
-		  CurrentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), false));
+		  currentTable=currentTable.getFather();
+		  cb.setSymTable(currentTable);
+		  currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), false));
                  :};
 
 args_list    ::= args_list:al COMMA arg:a        {: al.add(a); RESULT = al; :}
@@ -280,11 +190,11 @@ args_list    ::= args_list:al COMMA arg:a        {: al.add(a); RESULT = al; :}
 
 arg          ::= COPY IDENTIFIER:id AS type:t    {: 
 						  RESULT = t;
-						  CurrentTable.addSymbol(id,new SymValue(t,true));
+						  currentTable.addSymbol(id,new SymValue(t,true));
 						  :}
                | IDENTIFIER:id AS type:t         {: 
 		                                  RESULT = t;
-						  CurrentTable.addSymbol(id,new SymValue(t,true));
+						  currentTable.addSymbol(id,new SymValue(t,true));
 						  :}
                ;
 
@@ -295,24 +205,24 @@ const_decl   ::= VAR decl:d                   {:
 					       else {
 						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
 					       }
-					       pushToSymt(d);
+					       currentTable.addDeclaration(d);
 					       RESULT = d;
 					       :}
-               | decl:d                       {:pushToSymt(d);RESULT = d;:}
+               | decl:d                       {: currentTable.addDeclaration(d); RESULT = d; :}
                ;
 
 decl         ::= type:t asig:a               {:
 					      if (a.isSingle())
 					          RESULT = new SingleDeclaration(t, ((SingleAssignation)a).getId(), ((SingleAssignation)a).getExpression(), false);
 					      else
-					          RESULT = multipleDecl(((MultipleAssignation)a),t);
+					          RESULT = new MultipleDeclaration(((MultipleAssignation)a),t);
 					      :}         
 
                | type:t ident_list:ids       {:
 		                              if (ids.size() == 1)
 						  RESULT = new SingleDeclaration(t, (String)(ids.get(0)),null, false);
 					      else
-						  RESULT = multipleDecl(ids,t);
+						  RESULT = new MultipleDeclaration(ids,t);
 					      :}
                ;
 
@@ -359,11 +269,11 @@ code_block    ::= code_block:cb instruction:i SEMI          {: cb.addInst(i); RE
                 | instruction:i SEMI                        {: RESULT = new CodeBlock(); RESULT.addInst(i); :}
                 ;
 
-instruction   ::= asig:a                                    {: checkAsig(a); RESULT = a; :}
+instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :}
-                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: usedConst(id,CurrentTable); RESULT = new FunctionCall(id, el); :}
+                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: currentTable.containsIdOrDie(id); RESULT = new FunctionCall(id, el); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = new Return(e); :}
                 ;
@@ -373,10 +283,10 @@ code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i
                     | instruction_loop:i SEMI                     {:RESULT = new CodeBlock(); RESULT.addInst(i);:}
                     ;
 
-instruction_loop  ::= asig:a                                      {: checkAsig(a); RESULT = a; :}
+instruction_loop  ::= asig:a                                      {: RESULT = a; :}
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
-                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: usedConst(id,CurrentTable); RESULT = new FunctionCall(id, el); :}
+                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: currentTable.containsIdOrDie(id); RESULT = new FunctionCall(id, el); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
                     ;
@@ -409,12 +319,7 @@ cycle_on    ::= cycle_on:co ON expr:e DO DOUBLEDOT code_block_loop:cb {: co.add(
               ;
 
 // Asignation
-asig      ::= ident_list:il ASIG expr_list:el {: 
-					       if (il.size()==1 && el.size()==1)
-						   RESULT=new SingleAssignation(((String)il.get(0)),((Expression)el.get(0)));
-					       else
-						   RESULT=multipleAsig(il,el);
-                                              :} ;
+asig      ::= ident_list:il ASIG expr_list:el {: RESULT = currentTable.checkMultipleAssignations(il, el); :};
 // No, it doesn't generate valid asignations only,
 // that's checked while building the AST.
 
@@ -440,7 +345,7 @@ expr      ::=
             | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
             | TRUE                                     {: RESULT = new TrueExp(); :}
             | FALSE                                    {: RESULT = new FalseExp(); :}
-            | IDENTIFIER:n                             {: usedConst(n,CurrentTable); RESULT = new IdentifierExp(n); :}
+            | IDENTIFIER:n                             {: currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n); :}
            // tuples and parentitation
 //             | LPAREN expr_list:e RPAREN                {:
 // 		                                          if (e.size()==1)

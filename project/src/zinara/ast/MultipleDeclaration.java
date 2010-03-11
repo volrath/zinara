@@ -2,10 +2,27 @@ package zinara.ast;
 
 import java.util.ArrayList;
 
+import zinara.ast.instructions.MultipleAssignation;
+import zinara.ast.type.Type;
+
 public class MultipleDeclaration extends Declaration {
     public ArrayList declarations; // arraylist of SingleDeclaration
 
     public MultipleDeclaration(ArrayList ds) { this.declarations = ds; }
+
+    public MultipleDeclaration(ArrayList ids, Type type) {
+	ArrayList declarations = new ArrayList();
+	for (int  i = 0; i < ids.size(); i++)
+	    declarations.add(new SingleDeclaration(type, ((String)ids.get(i)), null, false));
+	this.declarations = declarations;
+    }
+
+    public MultipleDeclaration(MultipleAssignation asigs, Type type) {
+	ArrayList declarations = new ArrayList();
+	for (int i = 0; i < asigs.assignations.size(); i++)
+	    declarations.add(new SingleDeclaration(type, asigs.get(i).getId(), asigs.get(i).getExpression(), false));
+	this.declarations = declarations;
+    }
 
     public boolean isSingle(){
 	return false;
