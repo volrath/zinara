@@ -5,4 +5,5 @@ import zinara.exceptions.TypeClashException;
 
 public abstract class Expression {
     public abstract Type getType() throws TypeClashException;
+    public abstract String toString();
 }

@@ -3,7 +3,7 @@ package zinara.ast.instructions;
 import java.util.ArrayList;
 
 import zinara.ast.expression.Expression;
-import zinara.exceptions.InvalidAssignation;
+import zinara.exceptions.InvalidAssignationException;
 
 public class MultipleAssignation extends Assignation {
     public ArrayList assignations; // Array of SingleAssignation
@@ -13,8 +13,8 @@ public class MultipleAssignation extends Assignation {
     }
 
     public MultipleAssignation(ArrayList as) { this.assignations = as; }
-    public MultipleAssignation(ArrayList ids, ArrayList expressions) throws InvalidAssignation {
-	if (ids.size() != expressions.size()) throw new InvalidAssignation(); // FIX THIS: it's missing some argument to InvalidAssignation to tell whats the reason of its invalidness
+    public MultipleAssignation(ArrayList ids, ArrayList expressions) throws InvalidAssignationException {
+	if (ids.size() != expressions.size()) throw new InvalidAssignationException(); // FIX THIS: it's missing some argument to InvalidAssignationException to tell whats the reason of its invalidness
 	
 	ArrayList asigs = new ArrayList();
 	for (int i = 0 ; i < ids.size() ; ++i){
@@ -30,5 +30,13 @@ public class MultipleAssignation extends Assignation {
 
     public int size(){
 	return this.assignations.size();
+    }
+
+    public String toString() {
+	String ret = "";
+	SingleAssignation currentAssignation;
+	for (int i = 0; i < assignations.size(); i++)
+	    ret += " " + assignations.get(0);
+	return "<MultipleAssignation:" + ret + ">";
     }
 }

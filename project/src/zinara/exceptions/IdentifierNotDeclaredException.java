@@ -4,7 +4,7 @@ public class IdentifierNotDeclaredException extends Exception {
     String mistake;
     public IdentifierNotDeclaredException() {
 	super();
-	mistake = "unknown";
+	mistake = "IdentifierNotDeclaredException<unknown>";
     }
 
     public IdentifierNotDeclaredException(String id) /* Maybe put the line of the previous declaration or something */ {

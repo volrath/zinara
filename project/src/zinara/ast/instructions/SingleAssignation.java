@@ -22,4 +22,8 @@ public class SingleAssignation extends Assignation {
     public Expression getExpression(){
 	return this.expr;
     }
+
+    public String toString() {
+	return "<" + id + " = " +  expr + ">";
+    }
 }

@@ -8,5 +8,6 @@ public class IdentifierExp extends Expression {
 
     public IdentifierExp (String n) { value=n; }
     public Type getType() { return new IntType(); }
+    public String toString() { return value; }
 }
 

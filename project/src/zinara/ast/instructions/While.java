@@ -18,4 +18,6 @@ public class While extends Instruction{
     public Expression getExpression(){
 	return this.expr;
     }
+
+    public String toString() { return "While " + expr + ": " + code + ">"; }
 }

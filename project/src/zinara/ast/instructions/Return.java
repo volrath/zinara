@@ -12,4 +12,8 @@ public class Return extends Instruction{
     public Expression getExpression(){
 	return this.expr;
     }
+
+    public String toString() {
+	return "<Return " + expr + ">";
+    }
 }

@@ -9,4 +9,6 @@ public class DecInst extends Instruction {
     public DecInst(Declaration d) { this.declaration = d; }
     public Declaration getDeclaration() { return this.declaration; }
     public void setDeclaration(Declaration d) { this.declaration = d; }
+
+    public String toString() { return "<" + declaration + ">"; }
 }

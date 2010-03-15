@@ -1,10 +1,6 @@
-Int k' = 'h'
-
-def k'' (a as Int, b as String) returns<Int>:
-  Char hj 
-  print(k')
-enddef 
+Int k' = 6
+Int hola = 1
 
 main
-    Int x
+    k' = 3
 endmain

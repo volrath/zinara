@@ -121,10 +121,10 @@ Number      = {Digit}+
  "true"                          { return symbol(sym.TRUE); }
  "false"                         { return symbol(sym.FALSE); }
  
+ {Number}+                       { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
  {Number}"."{Number}+            { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
  {Number}+"."                    { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()+"0"))); }
  "."{Number}+                    { return symbol(sym.FLOAT_V,new Float(Float.parseFloat("0"+yytext()))); }
- {Number}+                       { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
  \'[^\n\r]\'                     { return symbol(sym.CHAR,new Character(yytext().charAt(1))); }
  \"[^\n\r]*\"                    { return symbol(sym.STRING,yytext()); }
  {Letter} [a-zA-Z\'_0-9]*        { return symbol(sym.IDENTIFIER,yytext()); }

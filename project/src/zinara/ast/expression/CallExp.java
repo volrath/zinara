@@ -7,7 +7,7 @@ import zinara.ast.type.IntType;
 
 public class CallExp extends Expression {
     private String name;
-    private ArrayList arguments;
+    private ArrayList arguments; // arraylist of ????
    
     public CallExp (String nm, ArrayList s) { 
 	this.name = nm; 
@@ -15,4 +15,6 @@ public class CallExp extends Expression {
     }
 
     public Type getType() { return new IntType(); }
+
+    public String toString() { return name + "(" + arguments + ")"; }
 }

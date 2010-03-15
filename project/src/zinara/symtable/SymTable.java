@@ -12,7 +12,7 @@ import zinara.ast.instructions.SingleAssignation;
 import zinara.ast.instructions.MultipleAssignation;
 import zinara.exceptions.IdentifierAlreadyDeclaredException;
 import zinara.exceptions.IdentifierNotDeclaredException;
-import zinara.exceptions.InvalidAssignation;
+import zinara.exceptions.InvalidAssignationException;
 import zinara.exceptions.TypeClashException;
 
 public class SymTable{
@@ -46,7 +46,7 @@ public class SymTable{
 	SingleDeclaration current_decl;
 	if (decl.isSingle()) {
 	    current_decl = (SingleDeclaration)decl;
-	    if (containsId(current_decl.getId())) {
+	    if (!containsId(current_decl.getId())) {
 		addSymbol(current_decl.getId(),
 			  new SymValue(current_decl.getType(), current_decl.isVariable()));
 	    } else
@@ -54,7 +54,7 @@ public class SymTable{
 	} else {
 	    for (int i = 0; i < ((MultipleDeclaration)decl).size(); i++) {
 		current_decl = ((MultipleDeclaration)decl).get(i);
-		if (containsId(current_decl.getId())) {
+		if (!containsId(current_decl.getId())) {
 		    addSymbol(current_decl.getId(),
 			      new SymValue(current_decl.getType(), current_decl.isVariable()));
 		} else
@@ -76,7 +76,7 @@ public class SymTable{
     }
 
     public SymValue getSymbolOrDie(String id) throws IdentifierNotDeclaredException {
-	if (!table.containsKey(id)) throw new IdentifierNotDeclaredException();
+	if (!table.containsKey(id)) throw new IdentifierNotDeclaredException(id);
 	return (SymValue)table.get(id);
     }
 
@@ -125,9 +125,9 @@ public class SymTable{
       `checkAssignation`.
      */
     public Assignation checkMultipleAssignations(ArrayList ids, ArrayList exprs)
-	throws IdentifierNotDeclaredException, TypeClashException, InvalidAssignation {
+	throws IdentifierNotDeclaredException, TypeClashException, InvalidAssignationException {
 	if (ids.size() != exprs.size())
-	    throw new InvalidAssignation(); // FIX THIS: same as in MultipleAssignation.java
+	    throw new InvalidAssignationException(); // FIX THIS: same as in MultipleAssignation.java
 	if (ids.size() == 1)
 	    return checkAssignation((String)ids.get(0), (Expression)exprs.get(0));
 	else {

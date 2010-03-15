@@ -12,4 +12,8 @@ public class Print extends Instruction{
     public Expression getExpression(){
 	return this.expr;
     }
+
+    public String toString() {
+	return "<Print " + expr + ">";
+    }
 }

@@ -35,4 +35,8 @@ public class SingleDeclaration extends Declaration {
 
     public void setType(Type t) { this.type = t; }
     public void setVariable(boolean var) { this.variable = var; }
+
+    public String toString() {
+	return "(Declaration: " + type + " " + identifier + " [" + (variable ? "VAR" : "CONST") + (value != null ? "="+value : "") +  "])";
+    }
 }

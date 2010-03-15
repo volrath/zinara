@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import zinara.symtable.SymTable;
 
 public class CodeBlock extends Instruction{
-    private ArrayList block;   // ArrayList of... ?
+    private ArrayList block;   // ArrayList of Instructions
     private SymTable symTable;
 
     public CodeBlock() { this.block = new ArrayList(); }
@@ -23,4 +23,11 @@ public class CodeBlock extends Instruction{
     }
 
     public void setSymTable(SymTable st) { this.symTable = st; }
+
+    public String toString() {
+	String ret = "<CodeBlock:";
+	for (int i = 0; i < block.size(); i++)
+	    ret += " <" + (Instruction)block.get(i) + ">,";
+	return (ret + ">");
+    }
 }

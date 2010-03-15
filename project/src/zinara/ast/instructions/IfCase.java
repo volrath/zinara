@@ -18,4 +18,6 @@ public class IfCase extends Instruction {
     public Expression getExpression(){
 	return this.expr;
     }
+
+    public String toString() { return "<If " + expr + ": " + code + ">"; }
 }

@@ -18,4 +18,6 @@ public abstract class Type {
 	    return false;
 	}
     }
+
+    public abstract String toString();
 }

@@ -27,4 +27,8 @@ public class For extends Instruction{
     public Expression getExpression(){
 	return this.expr;
     }
+
+    public String toString() {
+	return "<For " + i + " in " + expr + ": " + code + ">";
+    }
 }

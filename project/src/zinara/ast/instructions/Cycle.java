@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Cycle extends Instruction{
     private CodeBlock optional;
-    private ArrayList cases;
+    private ArrayList cases; // arraylist of....? ?? CycleCase's?!
     private boolean has_optional;
 
     public Cycle(ArrayList cs, CodeBlock cb){
@@ -27,5 +27,9 @@ public class Cycle extends Instruction{
 
     public boolean has_optional(){
 	return this.has_optional;
+    }
+
+    public String toString() {
+	return "<G-LOOP>";
     }
 }

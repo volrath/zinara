@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import zinara.ast.instructions.MultipleAssignation;
 import zinara.ast.type.Type;
+import zinara.ast.type.ConstantType;
 
 public class MultipleDeclaration extends Declaration {
     public ArrayList declarations; // arraylist of SingleDeclaration
@@ -17,10 +18,11 @@ public class MultipleDeclaration extends Declaration {
 	this.declarations = declarations;
     }
 
+    // Constant type!!!
     public MultipleDeclaration(MultipleAssignation asigs, Type type) {
 	ArrayList declarations = new ArrayList();
 	for (int i = 0; i < asigs.assignations.size(); i++)
-	    declarations.add(new SingleDeclaration(type, asigs.get(i).getId(), asigs.get(i).getExpression(), false));
+	    declarations.add(new SingleDeclaration(new ConstantType(type,asigs.get(i).getExpression()), asigs.get(i).getId(), asigs.get(i).getExpression(), false));
 	this.declarations = declarations;
     }
 

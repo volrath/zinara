@@ -1,8 +1,9 @@
 package zinara;
 
-import zinara.parser.*;
-import zinara.lexer.*;
 import zinara.ast.Program;
+import zinara.exceptions.*;
+import zinara.lexer.*;
+import zinara.parser.*;
 
 import java.io.*;
 
@@ -23,9 +24,14 @@ public class Main {
 	    System.out.println("oops..., classcastE: "+e.toString());
 	    e.printStackTrace();
 	}
+	catch (IdentifierAlreadyDeclaredException e) { System.out.println(e.getMessage()); }
+	catch (IdentifierNotDeclaredException e) { System.out.println(e.getMessage()); }
+	catch (InvalidAssignationException e) { System.out.println(e.getMessage()); }
+	catch (TypeClashException e) { System.out.println(e.getMessage()); }
 	catch (Exception e) {
 	    System.out.println("oops...");
 	    e.printStackTrace();
+	    System.out.println(e.getMessage());
 	}
     }
 }

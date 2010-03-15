@@ -13,4 +13,8 @@ public class UnaryExp extends Expression {
     public Type getType() throws TypeClashException {
 	return parser.operators.check(this.operator, this.operand.getType(), null);
    }
+
+    public String toString() {
+	return operator + " " + operand;
+    }
 }
