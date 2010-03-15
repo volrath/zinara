@@ -5,10 +5,10 @@ public abstract class Type {
 	/*
 	  Basic Types
 	*/
-	if ((this instanceof IntType && other instanceof IntType) || 
-	    (this instanceof FloatType && other instanceof FloatType) ||
-	    (this instanceof CharType && other instanceof CharType) ||
-	    (this instanceof BoolType && other instanceof BoolType))
+	if ((this.getType() instanceof IntType && other.getType() instanceof IntType) || 
+	    (this.getType() instanceof FloatType && other.getType() instanceof FloatType) ||
+	    (this.getType() instanceof CharType && other.getType() instanceof CharType) ||
+	    (this.getType() instanceof BoolType && other.getType() instanceof BoolType))
 	    return true;
 	else {
 	    /*
@@ -19,5 +19,6 @@ public abstract class Type {
 	}
     }
 
+    public abstract Type getType();
     public abstract String toString();
 }

@@ -4,7 +4,7 @@ public class TypeClashException extends Exception {
     String mistake;
     public TypeClashException() {
 	super();
-	mistake = "unknown";
+	mistake = "TypeClashException<unknown>";
     }
 
     public TypeClashException(String err) {

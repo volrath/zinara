@@ -1,6 +1,9 @@
 Int k' = 6
-Int hola = 1
+Float hola = 1
 
-main
+main  
     k' = 3
+    k' = k' + 1
+    hola = k' + 5.3
+    print(hola)
 endmain

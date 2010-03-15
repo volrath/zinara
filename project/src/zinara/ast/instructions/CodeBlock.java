@@ -27,7 +27,7 @@ public class CodeBlock extends Instruction{
     public String toString() {
 	String ret = "<CodeBlock:";
 	for (int i = 0; i < block.size(); i++)
-	    ret += " <" + (Instruction)block.get(i) + ">,";
-	return (ret + ">");
+	    ret += " " + (Instruction)block.get(i) + ",";
+	return (ret.substring(0, ret.length()-1) + ">");
     }
 }

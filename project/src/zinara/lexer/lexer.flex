@@ -49,8 +49,8 @@ Number      = {Digit}+
 {WhiteSpace}                     {}
 ^{EmptyLine}                     {}
 
- "main" "\ "* \n                 { return symbol(sym.MAIN); }
- "endmain" "\ "* \n?             { return symbol(sym.ENDMAIN); }
+ "main" "\ "* {LineTerminator}                 { return symbol(sym.MAIN); }
+ "endmain" "\ "* {LineTerminator}?             { return symbol(sym.ENDMAIN); }
 
  {LineTerminator}                { return symbol(sym.SEMI); }
 
@@ -85,6 +85,7 @@ Number      = {Digit}+
  "<="                            { return symbol(sym.LTE);}
  "=="                            { return symbol(sym.SHEQ);}
  "<=>"                           { return symbol(sym.DEEQ);}
+
  "AND"                           { return symbol(sym.AND);}
  "OR"                            { return symbol(sym.OR);}
  "&"                             { return symbol(sym.SAND);}

@@ -21,4 +21,6 @@ public class FunctionType extends Type {
 	    ret += (Type)argsTypes.get(i) + " -> ";
 	return (ret + returnType);
     }
+
+    public Type getType() { return this; }
 }

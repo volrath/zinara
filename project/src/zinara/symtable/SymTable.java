@@ -1,6 +1,6 @@
 package zinara.symtable;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 import zinara.ast.Declaration;
@@ -16,23 +16,23 @@ import zinara.exceptions.InvalidAssignationException;
 import zinara.exceptions.TypeClashException;
 
 public class SymTable{
-    private Hashtable table;
+    private HashMap table;
     private SymTable father;
     public String name = "";
     
     public SymTable() {
 	this.father = null;
-	this.table = new Hashtable();
+	this.table = new HashMap();
     }
 
     public SymTable(SymTable f) {
 	this.father = f;
-	this.table = new Hashtable();
+	this.table = new HashMap();
     }
 
     public SymTable(SymTable f, String name) {
 	this.father = f;
-	this.table = new Hashtable();
+	this.table = new HashMap();
 	this.name = name;
     }
 
@@ -76,8 +76,9 @@ public class SymTable{
     }
 
     public SymValue getSymbolOrDie(String id) throws IdentifierNotDeclaredException {
-	if (!table.containsKey(id)) throw new IdentifierNotDeclaredException(id);
-	return (SymValue)table.get(id);
+	if (table.containsKey(id)) return (SymValue)table.get(id);
+	else if (father != null) return father.getSymbolOrDie(id);
+	else throw new IdentifierNotDeclaredException(id);
     }
 
     public SymTable getFather (){
@@ -114,10 +115,10 @@ public class SymTable{
 	throws IdentifierNotDeclaredException, TypeClashException {
 	SymValue idSymValue = getSymbolOrDie(id);
 
-	if (idSymValue.getType() == expr.getType())
+	if (idSymValue.getType().equals(expr.getType()))
 	    return new SingleAssignation(id, expr);
 	else
-	    throw new TypeClashException(id);
+	    throw new TypeClashException("Conflicto de tipos entre el identificador " + id + idSymValue.getType() +" y la expresion " + expr + expr.getType());
     }
 
     /*
