@@ -8,7 +8,7 @@ import zinara.parser.*;
 import java.io.*;
 
 public class Main {
-    public static final boolean debug_parsing = true;
+    public static final boolean debug_parsing = false;
 
     public static void main(String argv[]) {
 	try {
@@ -19,6 +19,7 @@ public class Main {
 	    else
 		root = (Program)p.parse().value;
 	    System.out.println(root);
+	    System.out.println("SYMTABLE: " + root.getSymTable());
 	} 
 	catch (ClassCastException e) {
 	    System.out.println("oops..., classcastE: "+e.toString());

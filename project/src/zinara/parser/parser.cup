@@ -147,8 +147,8 @@ precedence right RPAREN;
 /*
       THE PROGRAM
  */
-program   ::= main:m               {: RESULT = new Program(m);   :}
-            | decl_list:ds main:m  {: RESULT = new Program(m,ds);:}
+program   ::= main:m               {: RESULT = new Program(currentTable, m);     :}
+            | decl_list:ds main:m  {: RESULT = new Program(currentTable, m, ds); :}
             ;
 
 main      ::= MAIN {: currentTable = new SymTable(currentTable); :} code_block:cb {: currentTable = currentTable.getFather(); :} ENDMAIN    {: RESULT = new Main(cb); :}

@@ -119,8 +119,8 @@ Number      = {Digit}+
  "print"                         { return symbol(sym.PRINT);}
  "read"                          { return symbol(sym.READ);}
 
- "true"                          { return symbol(sym.TRUE); }
- "false"                         { return symbol(sym.FALSE); }
+ "True"                          { return symbol(sym.TRUE); }
+ "False"                         { return symbol(sym.FALSE); }
  
  {Number}+                       { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
  {Number}"."{Number}+            { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
