@@ -88,8 +88,9 @@ public class SymTable{
 	return this.table.containsKey(id);
     }
 
-    public boolean containsIdOrDie(String id) throws IdentifierNotDeclaredException {
-	if (containsId(id)) return true;
+    public SymTable containsIdOrDie(String id) throws IdentifierNotDeclaredException {
+	if (containsId(id)) return this;
+	else if (father != null) return father.containsIdOrDie(id);
 	else throw new IdentifierNotDeclaredException(id);
     }
 

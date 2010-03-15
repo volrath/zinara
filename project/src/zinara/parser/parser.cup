@@ -346,7 +346,7 @@ expr      ::=
             | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
             | TRUE                                     {: RESULT = new TrueExp(); :}
             | FALSE                                    {: RESULT = new FalseExp(); :}
-            | IDENTIFIER:n                             {: currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n); :}
+            | IDENTIFIER:n                             {: SymTable finded = currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n, finded); :}
            // tuples and parentitation
 //             | LPAREN expr_list:e RPAREN                {:
 // 		                                          if (e.size()==1)
