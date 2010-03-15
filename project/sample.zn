@@ -2,7 +2,8 @@ Int k' = 6
 Float hola = 1
 var Bool b = True
 
-main  
+main
+    Float x = 5.
     k' = 3
     k' = k' + 1
     hola = k' + 5.3

@@ -151,7 +151,7 @@ program   ::= main:m               {: RESULT = new Program(currentTable, m);    
             | decl_list:ds main:m  {: RESULT = new Program(currentTable, m, ds); :}
             ;
 
-main      ::= MAIN {: currentTable = new SymTable(currentTable); :} code_block:cb {: currentTable = currentTable.getFather(); :} ENDMAIN    {: RESULT = new Main(cb); :}
+main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); :} ENDMAIN    {: RESULT = new Main(cb); :}
             ;
 
 /*
@@ -169,7 +169,7 @@ decl_list    ::= decl_list:ds const_decl:d SEMI  {: RESULT = ds; RESULT.add(d);:
 def_decl     ::= DEF IDENTIFIER:id 
                  {:
 		  currentTable.checkDoubleDeclaration(id);
-		  currentTable = new SymTable(currentTable);
+		  currentTable = currentTable.newTable();
 		  :}
                  LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT
 		     code_block:cb 

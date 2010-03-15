@@ -22,7 +22,7 @@ public class Main {
 	    System.out.println("SYMTABLE: " + root.getSymTable());
 	} 
 	catch (ClassCastException e) {
-	    System.out.println("oops..., classcastE: "+e.toString());
+	    System.out.println("oops..., classcastE: " + e.toString());
 	    e.printStackTrace();
 	}
 	catch (IdentifierAlreadyDeclaredException e) { System.out.println(e.getMessage()); }

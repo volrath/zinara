@@ -18,19 +18,23 @@ import zinara.exceptions.TypeClashException;
 public class SymTable{
     private HashMap table;
     private SymTable father;
+    private ArrayList sons;    // ArrayList of symtables
     public String name = "";
     
     public SymTable() {
+	this.sons = new ArrayList();
 	this.father = null;
 	this.table = new HashMap();
     }
 
     public SymTable(SymTable f) {
+	this.sons = new ArrayList();
 	this.father = f;
 	this.table = new HashMap();
     }
 
     public SymTable(SymTable f, String name) {
+	this.sons = new ArrayList();
 	this.father = f;
 	this.table = new HashMap();
 	this.name = name;
@@ -104,7 +108,11 @@ public class SymTable{
     }
 
     public String toString() {
-	return this.table.toString();
+	String ret = "";
+	for (int i = 0; i < sons.size(); i++)
+	    ret += (SymTable)sons.get(i) + ", ";
+	if (ret.length() != 0) ret = ret.substring(0, ret.length()-2);
+	return "<" + table.toString() + "[" + ret + "]>";
     }
 
     /*
@@ -138,5 +146,11 @@ public class SymTable{
 		assignations.add(checkAssignation((String)ids.get(i), (Expression)exprs.get(i)));
 	    return new MultipleAssignation(assignations);
 	}
+    }
+
+    public SymTable newTable() {
+	SymTable son = new SymTable(this);
+	sons.add(son);
+	return son;
     }
 }
