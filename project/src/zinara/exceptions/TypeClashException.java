@@ -12,5 +12,5 @@ public class TypeClashException extends Exception {
 	mistake = err;
     }
 
-    public String getError() { return mistake; }
+    public String getMessage() { return mistake; }
 }
