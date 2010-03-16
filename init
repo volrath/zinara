@@ -1,5 +1,5 @@
 #!/bin/bash
 
 export PATH=${JAVA4_HOME}:${PATH}
-export CLASSPATH=`pwd`/tools/cup/:${CLASSPATH}
+export CLASSPATH=`pwd`/tools/cup/:`pwd`/tools/junit/junit.jar:${CLASSPATH}
 export JAVACMD=${JAVA4_HOME}/java

@@ -1,0 +1,4 @@
+main
+    Float y = 1.
+    Int x = y
+endmain

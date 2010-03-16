@@ -1,0 +1,9 @@
+def fun() returns <Float>:
+    Int x = 10
+    return x
+end
+
+main
+    Int x = fun()
+endmain
+    
