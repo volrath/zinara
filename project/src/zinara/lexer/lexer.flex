@@ -68,7 +68,7 @@ Number      = {Digit}+
  "Bool"                          { return symbol(sym.BOOL); }
  "var"                           { return symbol(sym.VAR); }
  "def"                           { return symbol(sym.DEF); }
- ":" "\ "* "\n"                  { return symbol(sym.DOUBLEDOT); }
+ ":" "\ "* {LineTerminator}      { return symbol(sym.DOUBLEDOT); }
  "copy"                          { return symbol(sym.COPY); }
  ","                             { return symbol(sym.COMMA);}
 

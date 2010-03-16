@@ -11,13 +11,9 @@ public class SymValue{
         this.type = t;
     }
 
-    public Type getType() {
-        return this.type;
-    }
+    public Type getType() { return this.type; }
 
-    public boolean isVariable() {
-        return this.variable;
-    }
+    public boolean isVariable() { return this.variable; }
 
     public String toString() {
 	return "<" + (this.variable ? "Variable" : "Constant") + ": " + this.type + ">";

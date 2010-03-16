@@ -18,8 +18,8 @@ public class Main {
 		root = (Program)p.debug_parse().value;
 	    else
 		root = (Program)p.parse().value;
-	    System.out.println(root);
-	    System.out.println("SYMTABLE: " + root.getSymTable());
+	    System.out.println("AST:      " + root + "\n");
+	    System.out.println("SYMTABLE: " + root.getSymTable() + "\n");
 	} 
 	catch (ClassCastException e) {
 	    System.out.println("oops..., classcastE: " + e.toString());

@@ -3,9 +3,14 @@ Float hola = 1
 var Bool b = True
 
 main
-    Float x = 5.
+    Float x
     k' = 3
     k' = k' + 1
-    hola = k' + 5.3
+    hola = k' + x
     print(hola)
+
+    if x == .2:
+       Bool y
+       print(y)
+    end
 endmain

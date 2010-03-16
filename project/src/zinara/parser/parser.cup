@@ -11,6 +11,7 @@ import zinara.ast.instructions.*;
 import zinara.ast.type.*;
 import zinara.symtable.*;
 import zinara.semantic.Operators;
+import zinara.semantic.StaticTypeChecking;
 
 /* Preliminaries to set up and use the scanner.  */
 
@@ -174,7 +175,7 @@ def_decl     ::= DEF IDENTIFIER:id
                  LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT
 		     code_block:cb 
                  fed
-                 {: 
+                 {:
 		  RESULT = new SingleDeclaration(new FunctionType(al,t,cb),id,null,false);
 		  currentTable=currentTable.getFather();
 		  cb.setSymTable(currentTable);
@@ -203,7 +204,7 @@ const_decl   ::= VAR decl:d                   {:
 					       if (d.isSingle())
 						   ((SingleDeclaration)d).setVariable(true);
 					       else {
-						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);//((SingleDeclaration)(d.get(i))).setVariable(true); 
+						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);
 					       }
 					       currentTable.addDeclaration(d);
 					       RESULT = d;
@@ -292,8 +293,8 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
                     ;
 
 /* --- Control structures --- */
-ctrl_struct   ::= IF expr:e DOUBLEDOT code_block:cb else:el fi                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
-                | WHILE expr:e DOUBLEDOT code_block_loop:cb elihw               {: RESULT = new While(cb,e);:}
+ctrl_struct   ::= IF expr:e DOUBLEDOT {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); :} else:el fi                  {: el.add(0,new IfCase(cb,e)); StaticTypeChecking.checkExpression(e, new BoolType()); RESULT = new If(el); :}
+                | WHILE expr:e DOUBLEDOT {: currentTable = currentTable.newTable(); :} code_block_loop:cb {: currentTable = currentTable.getFather(); :} elihw               {: StaticTypeChecking.checkExpression(e, new BoolType()); RESULT = new While(cb,e); :}
                 | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  
                 | CYCLE DOUBLEDOT code_block_loop:cb cycle_body:cd elcyc        {: RESULT = new Cycle(cd,cb);:}
                 | CYCLE SEMI cycle_body:cd elcyc                                {: RESULT = new Cycle(cd,null);:}
@@ -304,7 +305,7 @@ else          ::= elif:el ELSE DOUBLEDOT code_block:cb   {: el.add(new IfCase(cb
                 | elif:el                                {: RESULT = el; :}
                 ;
 
-elif          ::= elif:el ELIF expr:e DOUBLEDOT code_block:cb   {: el.add(new IfCase(cb,e)); RESULT=el;:}
+elif          ::= elif:el ELIF expr:e DOUBLEDOT code_block:cb   {: StaticTypeChecking.checkExpression(e, new BoolType()); el.add(new IfCase(cb,e)); RESULT=el;:}
                 |                                               {: RESULT = new ArrayList(); :}
                 ;
 
