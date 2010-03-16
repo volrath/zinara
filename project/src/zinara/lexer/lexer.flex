@@ -49,8 +49,8 @@ Number      = {Digit}+
 {WhiteSpace}                     {}
 ^{EmptyLine}                     {}
 
- "main" "\ "* {LineTerminator}                 { return symbol(sym.MAIN); }
- "endmain" "\ "* {LineTerminator}?             { return symbol(sym.ENDMAIN); }
+ "main:" "\ "* {LineTerminator}     { return symbol(sym.MAIN); }
+ "endmain" "\ "* {LineTerminator}?  { return symbol(sym.ENDMAIN); }
 
  {LineTerminator}                { return symbol(sym.SEMI); }
 
