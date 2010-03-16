@@ -9,6 +9,7 @@ import zinara.ast.*;
 import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
 import zinara.ast.type.*;
+import zinara.exceptions.TypeClashException;
 import zinara.symtable.*;
 import zinara.semantic.Operators;
 import zinara.semantic.StaticTypeChecking;
@@ -201,15 +202,39 @@ arg          ::= COPY IDENTIFIER:id AS type:t    {:
 
 /* --- Variables and constants declarations --- */
 const_decl   ::= VAR decl:d                   {:
-					       if (d.isSingle())
-						   ((SingleDeclaration)d).setVariable(true);
-					       else {
-						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) ((MultipleDeclaration)d).get(i).setVariable(true);
+					       SingleDeclaration currentDeclaration;
+					       if (d.isSingle()) {
+						   currentDeclaration = ((SingleDeclaration)d);
+						   currentDeclaration.setVariable(true);
+						   //currentDeclaration.setType(((ConstantType)(currentDeclaration.getType())).getRealType());
+						   // Aqui, una vez agregada la declaracion, se chequea los tipos
+						   if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
+					       } else {
+						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) {
+						       currentDeclaration = (SingleDeclaration)((MultipleDeclaration)d).get(i);
+						       currentDeclaration.setVariable(true);
+						       //((MultipleDeclaration)d).get(i).setType(((ConstantType)(((MultipleDeclaration)d).get(i).getType())).getRealType());
+						       if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
+						   }
 					       }
 					       currentTable.addDeclaration(d);
 					       RESULT = d;
 					       :}
-               | decl:d                       {: currentTable.addDeclaration(d); RESULT = d; :}
+               | decl:d                       {:
+	            	                       SingleDeclaration currentDeclaration;
+					       if (d.isSingle()) {
+						   currentDeclaration = ((SingleDeclaration)d);
+						   // Aqui, una vez agregada la declaracion, se chequea los tipos
+						   if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
+					       } else {
+						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) {
+						       currentDeclaration = (SingleDeclaration)((MultipleDeclaration)d).get(i);
+						       //((MultipleDeclaration)d).get(i).setType(((ConstantType)(((MultipleDeclaration)d).get(i).getType())).getRealType());
+						       if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
+						   }
+					       }
+		                               currentTable.addDeclaration(d); RESULT = d; 
+					       :}
                ;
 
 decl         ::= type:t dasig:a               {:

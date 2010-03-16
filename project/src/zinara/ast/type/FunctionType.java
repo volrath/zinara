@@ -18,8 +18,9 @@ public class FunctionType extends Type {
     public String toString() {
 	String ret = "";
 	for (int i = 0; i < argsTypes.size(); i++)
-	    ret += (Type)argsTypes.get(i) + " -> ";
-	return (ret + returnType);
+	    ret += (Type)argsTypes.get(i) + "->";
+	return (ret + returnType);// + "{" + codeBlock + "}");
+	
     }
 
     public Type getType() { return this; }

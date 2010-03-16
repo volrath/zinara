@@ -1,9 +1,9 @@
 Int k' = 6
-Float hola = 1
+Float hola = .1
 var Bool b = True
 
 main
-    Float x
+    Float x = b
     k' = 3
     k' = k' + 1
     hola = k' + x
@@ -12,5 +12,9 @@ main
     if x == .2:
        Bool y
        print(y)
+    end
+
+    def some_function(a as Int, copy b as Float, c as Bool) returns <Float>:
+    	Bool z = False
     end
 endmain
