@@ -153,4 +153,8 @@ public class SymTable{
 	sons.add(son);
 	return son;
     }
+
+    public void addSon(SymTable son){
+	this.sons.add(son);
+    }
 }
