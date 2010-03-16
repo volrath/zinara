@@ -1,0 +1,8 @@
+def fun(a as Int) returns <Float>:
+    return .1
+end
+
+main:
+    Float x = .1
+    fun(x)
+endmain

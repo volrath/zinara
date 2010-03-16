@@ -1,4 +1,4 @@
-main
+main:
     Int x
     Float y = 1.
     x = y

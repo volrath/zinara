@@ -3,7 +3,7 @@ def fun() returns <Float>:
     return x
 end
 
-main
+main:
     Int x
     x = fun()
 endmain
