@@ -1,0 +1,8 @@
+def fun(a as Int) returns <Bool>:
+    return True
+end
+
+main:
+    Bool x
+    x = fun(y)
+endmain
