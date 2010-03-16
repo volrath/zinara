@@ -91,6 +91,7 @@ terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
 terminal String AND, SAND, OR, SOR, XOR;
 
 terminal Character CHAR_V;
+terminal String STRING_V;
 terminal Main MAIN;
 terminal SEMI;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
@@ -116,7 +117,7 @@ nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
 nonterminal Expression expr;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
-nonterminal ArrayList args_list; // arraylist of types
+nonterminal ArrayList args_list, args_list2; // arraylist of types
 nonterminal Type arg;
 nonterminal HashMap dict_vals;
 nonterminal ArrayList dict_val;
@@ -183,7 +184,11 @@ def_decl     ::= DEF IDENTIFIER:id
 		  currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), false));
                  :};
 
-args_list    ::= args_list:al COMMA arg:a        {: al.add(a); RESULT = al; :}
+args_list    ::= args_list2:al                   {: RESULT = al; :}
+               |                                 {: RESULT = new ArrayList(); :}
+	       ;
+
+args_list2   ::= args_list2:al COMMA arg:a        {: al.add(a); RESULT = al; :}
                | arg:a                           {:
 		                                   RESULT = new ArrayList();
 						   RESULT.add(a); 
@@ -389,6 +394,7 @@ expr      ::=
 
     /* ----- Functions calls ----- */
             | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new CallExp(n, el); :}
+            | IDENTIFIER:n LPAREN RPAREN               {: RESULT = new CallExp(n, new ArrayList()); :}
 
     /* ----- Composite types ----- */
             //Tuples are at basic types because, for example, (6) it's just 6

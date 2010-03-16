@@ -19,6 +19,28 @@ public class Main {
 	return true;
     }
 
+    public static String getStringAST(String programName) {
+	try {
+	    parser p = new parser(new Scanner(new FileReader(argv[0])));
+	    Program root = (Program)p.parse().value;
+	    return root.toString()
+	} 
+	catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public static String getStringSymTable(String programName) {
+	try {
+	    parser p = new parser(new Scanner(new FileReader(argv[0])));
+	    Program root = (Program)p.parse().value;
+	    return root.getSymTable().toString();
+	} 
+	catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
     public static void main(String argv[]) {
 	try {
 	    parser p = new parser(new Scanner(new FileReader(argv[0])));
