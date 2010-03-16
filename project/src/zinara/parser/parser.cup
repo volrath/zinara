@@ -91,6 +91,7 @@ terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
 terminal String AND, SAND, OR, SOR, XOR;
 
 terminal Character CHAR_V;
+terminal String STRING_V;
 terminal Main MAIN;
 terminal SEMI;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
@@ -182,6 +183,7 @@ def_decl     ::= DEF IDENTIFIER:id
 		  cb.setSymTable(currentTable);
 		  currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), false));
                  :};
+
 
 args_list    ::= args_list:al COMMA arg:a        {: al.add(a); RESULT = al; :}
                | arg:a                           {:
@@ -318,30 +320,97 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
                     ;
 
 /* --- Control structures --- */
-ctrl_struct   ::= IF expr:e DOUBLEDOT {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); :} else:el fi                  {: el.add(0,new IfCase(cb,e)); StaticTypeChecking.checkExpression(e, new BoolType()); RESULT = new If(el); :}
-                | WHILE expr:e DOUBLEDOT {: currentTable = currentTable.newTable(); :} code_block_loop:cb {: currentTable = currentTable.getFather(); :} elihw               {: StaticTypeChecking.checkExpression(e, new BoolType()); RESULT = new While(cb,e); :}
-                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT code_block_loop:cb rof  
-                | CYCLE DOUBLEDOT code_block_loop:cb cycle_body:cd elcyc        {: RESULT = new Cycle(cd,cb);:}
-                | CYCLE SEMI cycle_body:cd elcyc                                {: RESULT = new Cycle(cd,null);:}
+ctrl_struct   ::= 
+                  /*If*/
+                  IF expr:e DOUBLEDOT
+		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
+                  {: currentTable = currentTable.newTable(); :} 
+                      code_block:cb
+		  {: currentTable = currentTable.getFather(); :} 
+                  else:el fi                  
+                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
+
+                  /*WHILE*/
+                | WHILE expr:e DOUBLEDOT
+		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
+		  {: currentTable = currentTable.newTable(); :}
+                      code_block_loop:cb
+                  {:currentTable = currentTable.getFather(); :}
+                  elihw
+                  {:RESULT = new While(cb,e); :}
+
+                  /*FOR*/
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT
+		{: currentTable = currentTable.newTable(); currentTable.addSymbol(id,new SymValue(e.getType(),false)); :}
+		      code_block_loop:cb rof
+		{:currentTable = currentTable.getFather(); :}
+
+                  /*CYCLE - WITH BRANCHES*/
+                | CYCLE DOUBLEDOT
+		  {: currentTable = currentTable.newTable(); :}
+                      code_block_loop:cb cycle_body:cd
+                  {:currentTable = currentTable.getFather(); :}
+                  elcyc
+                  {: RESULT = new Cycle(cd,cb);:}
+
+                  /*CYCLE - NO BRANCHES*/
+                | CYCLE SEMI
+                      cycle_body:cd
+                  elcyc
+                  {: RESULT = new Cycle(cd,null);:}
                 ;
 
 // If else/elif clause
-else          ::= elif:el ELSE DOUBLEDOT code_block:cb   {: el.add(new IfCase(cb,new TrueExp())); RESULT = el; :}
+else          ::= elif:el ELSE DOUBLEDOT
+                  {: currentTable = currentTable.newTable(); :}  
+		      code_block:cb
+                  {:currentTable = currentTable.getFather(); :} 
+                  {: el.add(new IfCase(cb,new TrueExp())); RESULT = el; :}
                 | elif:el                                {: RESULT = el; :}
                 ;
 
-elif          ::= elif:el ELIF expr:e DOUBLEDOT code_block:cb   {: StaticTypeChecking.checkExpression(e, new BoolType()); el.add(new IfCase(cb,e)); RESULT=el;:}
-                |                                               {: RESULT = new ArrayList(); :}
+elif          ::= elif:el 
+		  ELIF expr:e DOUBLEDOT
+		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
+                  {: currentTable = currentTable.newTable(); :}  
+                      code_block:cb   {:el.add(new IfCase(cb,e)); RESULT=el;:}
+                  {:currentTable = currentTable.getFather(); :} 
+
+                | {: RESULT = new ArrayList(); :}
                 ;
 
 // Cycle body
-cycle_body  ::= DEFAULT DOUBLEDOT code_block_loop:cb               {: RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp())); :}
-              | cycle_on:co DEFAULT DOUBLEDOT code_block_loop:cb   {: co.add(new CycleCase(cb,new TrueExp())); RESULT = co; :}
+cycle_body  ::= DEFAULT DOUBLEDOT
+                {: currentTable = currentTable.newTable(); :}  
+                    code_block_loop:cb
+                {:currentTable = currentTable.getFather(); :} 
+                {: RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp())); :}
+
+              | cycle_on:co
+                DEFAULT DOUBLEDOT
+                {: currentTable = currentTable.newTable(); :}  
+                    code_block_loop:cb
+                {:currentTable = currentTable.getFather(); :} 
+                {: co.add(new CycleCase(cb,new TrueExp())); RESULT = co; :}
+
+
               | cycle_on:co                                        {: RESULT = co; :}
               ;
 
-cycle_on    ::= cycle_on:co ON expr:e DO DOUBLEDOT code_block_loop:cb {: co.add(new CycleCase(cb,e)); RESULT = co; :}
-              | ON expr:e DO DOUBLEDOT code_block_loop:cb             {: RESULT = (new ArrayList()); RESULT.add(new CycleCase(cb,e)); :}
+cycle_on    ::= cycle_on:co
+                ON expr:e DO DOUBLEDOT
+		{:StaticTypeChecking.checkExpression(e, new BoolType());:}
+                {: currentTable = currentTable.newTable(); :}  
+                    code_block_loop:cb
+                {:currentTable = currentTable.getFather(); :} 
+                {: co.add(new CycleCase(cb,e)); RESULT = co; :}
+
+              | ON expr:e DO DOUBLEDOT
+	        {:StaticTypeChecking.checkExpression(e, new BoolType());:}
+                {: currentTable = currentTable.newTable(); :}  
+                    code_block_loop:cb
+                {:currentTable = currentTable.getFather(); :} 
+                {: RESULT = (new ArrayList()); RESULT.add(new CycleCase(cb,e)); :}
               ;
 
 // Asignation

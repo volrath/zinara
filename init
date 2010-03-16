@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 export PATH=${JAVA4_HOME}:${PATH}
 export CLASSPATH=`pwd`/tools/cup/:${CLASSPATH}
