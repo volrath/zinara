@@ -1,0 +1,6 @@
+main:
+    for i in [True, False]:
+    	Int x
+	x = i
+    end
+endmain

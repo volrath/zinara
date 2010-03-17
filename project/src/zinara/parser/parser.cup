@@ -360,10 +360,11 @@ ctrl_struct   ::=
 		{:
 		 StaticTypeChecking.checkIterable(e);
 		 currentTable = currentTable.newTable();
-		 currentTable.addSymbol(id,new SymValue(e.getType(),false));
+		 currentTable.addSymbol(id,new SymValue(((ListType)e.getType()).getInsideType(),false));
 		 :}
-		      code_block_loop:cb rof
-		{: currentTable = currentTable.getFather(); :}
+		      code_block_loop:cb
+		      {: currentTable = currentTable.getFather(); RESULT = new For(id, e, cb); :}
+                  rof
 
                   /*CYCLE - WITH BRANCHES*/
                 | CYCLE DOUBLEDOTTERM

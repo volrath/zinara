@@ -31,9 +31,11 @@ public abstract class Type {
 
 	    // Tuples
 	    if (this.getType() instanceof TupleType && other.getType() instanceof TupleType) {
-		if (((TupleType)this).size() != ((TupleType)other).size()) return false;
-		for (int i = 0; i < ((TupleType)this).size(); i++)
-		    if (!((TupleType)this).get(i).equals(((TupleType)other).get(i))) return false;
+		TupleType type1 = (TupleType)this.getType();
+		TupleType type2 = (TupleType)other.getType();
+		if (type1.size() != type2.size()) return false;
+		for (int i = 0; i < type1.size(); i++)
+		    if (!type1.get(i).equals(type2.get(i))) return false;
 		return true;
 	    }
 
