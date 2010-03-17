@@ -79,6 +79,12 @@ public class SymTable{
 	return (SymValue)this.table.get(id);
     }
 
+    public SymValue getSymbolRecursively(String id) {
+	if (containsId(id)) return this.getSymbol(id);
+	else if (father != null) return father.getSymbol(id);
+	else return null;
+    }
+
     public SymValue getSymbolOrDie(String id) throws IdentifierNotDeclaredException {
 	if (table.containsKey(id)) return (SymValue)table.get(id);
 	else if (father != null) return father.getSymbolOrDie(id);

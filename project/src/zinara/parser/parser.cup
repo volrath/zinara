@@ -173,8 +173,11 @@ def_decl     ::= DEF IDENTIFIER:id
                  {:
 		  currentTable.checkDoubleDeclaration(id);
 		  currentTable = currentTable.newTable();
-		  :}
+		 :}
                  LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT
+		 {:
+		     currentTable.addSymbol("return", new SymValue(t,false));
+		 :}
 		     code_block:cb 
                  fed
                  {:
@@ -306,7 +309,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :}
                 | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: currentTable.containsIdOrDie(id); RESULT = new FunctionCall(id, el); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
-                | RETURN expr:e                             {: RESULT = new Return(e); :}
+                | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
                 ;
 
 //Codeblocks special for loops because loops can't have function declarations
