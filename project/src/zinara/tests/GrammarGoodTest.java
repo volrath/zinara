@@ -24,7 +24,7 @@ public class GrammarGoodTest extends TestCase {
 
     public void testFor() {
 	try {
-	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_if.zn");
+	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_for.zn");
 	}
 	catch (Exception e) { // any other exception
 	    e.printStackTrace();
@@ -34,7 +34,7 @@ public class GrammarGoodTest extends TestCase {
 
     public void testWhile() {
 	try {
-	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_if.zn");
+	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_while.zn");
 	}
 	catch (Exception e) { // any other exception
 	    e.printStackTrace();
@@ -44,7 +44,7 @@ public class GrammarGoodTest extends TestCase {
 
     public void testCycle() {
 	try {
-	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_if.zn");
+	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_defs.zn");
 	}
 	catch (Exception e) { // any other exception
 	    e.printStackTrace();
