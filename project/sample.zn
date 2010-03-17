@@ -21,5 +21,5 @@ main:
 
     { lista_de_lista: [[Int]], str: String } dict1
     (Int, String, [[Char]]) tuple1
-    [(Char, Char)] list1 = [2, 3]
+    [(Char, Char)] list1
 endmain
