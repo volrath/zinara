@@ -313,6 +313,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :}
                 | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
+                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
                 ;
@@ -326,6 +327,7 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
                     | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
+                    | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
                     ;
