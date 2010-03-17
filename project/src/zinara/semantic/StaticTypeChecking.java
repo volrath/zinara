@@ -2,7 +2,6 @@ package zinara.semantic;
 
 import zinara.ast.expression.Expression;
 import zinara.ast.type.Type;
-import zinara.exceptions.IdentifierNotAssignedException;
 import zinara.exceptions.TypeClashException;
 import zinara.symtable.*;
 
