@@ -16,6 +16,7 @@ public class Operators {
 	Type leftType;
 	public OP(int o, Type l, Type r) { this.operator = o; this.rightType = r; this.leftType = l; }
 
+	//@ requires other != null;
 	public boolean equals(OP other) {
 	    return (this.leftType.equals(other.leftType)) && (this.rightType.equals(other.rightType)) && (this.operator == other.operator);
 	}
@@ -38,7 +39,7 @@ public class Operators {
 	}
     }
 
-    public HashMap table;
+    public HashMap table; //@invariant table != null;
     public final int arithmetic = -1;
     public final int relational = -2;
     public final int logical    = -3;
@@ -111,6 +112,7 @@ public class Operators {
 	}
 
 	String comp = new OP(om,r,l).toString();
+	//@ assume \typeof(table.get(comp)) == \type(Type);
 	Type result = (Type)table.get(comp);
 	if (!table.containsKey(comp)) throw new TypeClashException("Error de tipos con el operador " + o + " en la linea tal..."); // mejorar
 	return result;

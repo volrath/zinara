@@ -1,0 +1,18 @@
+main:
+/. WHILES ./
+
+Int a,b,c
+Int e,f,g = 1,2,3
+
+while 5<9:
+    print(a)
+    f = g+e
+    Char h = 'h'
+endwhile
+
+while False:
+    Int b
+    b = 7
+end
+
+endmain

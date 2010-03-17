@@ -15,12 +15,16 @@ public class StaticTypeChecking {
     /*
       Checks if a given expression is of a given type
      */
+    //@ requires expr != null;
+    //@ requires type != null;
     public static void checkExpression(Expression expr, Type type)
 	throws TypeClashException {
 	if (!type.equals(expr.getType()))
 	    throw new TypeClashException("Conflicto de tipos en la expresion " + expr + ". Se espera " + type + " y se obtuvo " + expr.getType());
     }
 
+    //@ requires expr != null;
+    //@ requires st != null;
     public static Return checkReturnValue(Expression expr, SymTable st)
 	throws TypeClashException, InvalidInstructionException {
 	SymValue idSymValue = st.getSymbolRecursively("return");
