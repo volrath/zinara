@@ -337,8 +337,10 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
 ctrl_struct   ::= 
                   /*If*/
                   IF expr:e DOUBLEDOTTERM
-		  {:StaticTypeChecking.checkExpression(e, new BoolType());
-                    currentTable = currentTable.newTable(); :} 
+		  {: 
+		   StaticTypeChecking.checkExpression(e, new BoolType());
+		   currentTable = currentTable.newTable();
+		   :} 
                       code_block:cb
                   else:el fi                  
 		  {:currentTable = currentTable.getFather();
@@ -392,8 +394,7 @@ elif          ::= elif:el ELIF expr:e DOUBLEDOTTERM
                     currentTable = currentTable.newTable(); :}
                        code_block:cb
                   {: el.add(new IfCase(cb,e));
-                     RESULT=el; currentTable = currentTable.getFather();
-                     System.out.println("reducing by elif NOT-lambda, RESULT = " + RESULT); :} 
+                     RESULT=el; currentTable = currentTable.getFather(); :}
                 |  {: RESULT = new ArrayList(); :}
                 ;
 
