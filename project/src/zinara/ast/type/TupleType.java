@@ -1,0 +1,22 @@
+package zinara.ast.type;
+
+import java.util.ArrayList;
+
+public class TupleType extends Type {
+    private ArrayList types; // arraylist of types
+
+    public TupleType(ArrayList ts) { types = ts; }
+
+    public int size() { return types.size(); }
+
+    public Type get(int i) { return (Type)types.get(i); }
+
+    public String toString() {
+	String ret = "<(";
+	for (int i = 0; i < types.size(); i++)
+	    ret += (Type)types.get(i) + ", ";
+	return ret.substring(0, ret.length()-2) + ")>";
+    }
+
+    public Type getType() { return this; }
+}
