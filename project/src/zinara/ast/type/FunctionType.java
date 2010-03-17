@@ -15,6 +15,10 @@ public class FunctionType extends Type {
 	this.codeBlock = cb;
     }
 
+    public Type getArgument(int i) {
+	return (Type)argsTypes.get(i);
+    }
+
     public String toString() {
 	String ret = "";
 	for (int i = 0; i < argsTypes.size(); i++)

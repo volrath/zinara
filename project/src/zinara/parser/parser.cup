@@ -463,8 +463,8 @@ expr      ::=
             | NOEQ:o expr:e                            {: RESULT = new UnaryExp(sym.NOEQ, e); :}
 
     /* ----- Functions calls ----- */
-            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new CallExp(n, el); :}
-            | IDENTIFIER:n LPAREN RPAREN               {: RESULT = new CallExp(n, new ArrayList()); :}
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallExp(n, el, currentTable); :}
+            | IDENTIFIER:n LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallExp(n, new ArrayList(), currentTable); :}
 
     /* ----- Composite types ----- */
             //Tuples are at basic types because, for example, (6) it's just 6
