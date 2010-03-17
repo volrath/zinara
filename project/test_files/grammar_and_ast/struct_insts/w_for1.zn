@@ -1,0 +1,8 @@
+main:
+/. No FOR ./
+
+i in [True,False,True,True]:
+   print(1)
+endfor
+
+endmain

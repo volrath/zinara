@@ -1,9 +1,10 @@
 main:
-/. No FOR ./
+/. FORS ./
 
 Bool h = False
+[Int] x = [1,2,3,4]
 
-for i in [True,False,True,True]:
+for i in x:
    Bool h
    print(h)
    Bool i'=True
