@@ -6,7 +6,7 @@ Bool h = False
 for i in [True,False,True,True]:
    Bool h
    print(h)
-   Bool i'=i
+   Bool i'=True
 endfor
 
 for i in [1,2,3,4,5]:

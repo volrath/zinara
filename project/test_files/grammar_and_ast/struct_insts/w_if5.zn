@@ -2,7 +2,7 @@ main:
 /. ELIF but no CONDITION ./
 
 //No elifs
-if FALSE:
+if False:
    print(1)
 elif:
    print(1)
