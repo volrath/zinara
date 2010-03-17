@@ -7,6 +7,8 @@ public class ListType extends Type {
 	insideType = it;
     }
 
+    public ListType() { insideType = null; }
+
     public Type getInsideType() { return insideType; }
     public String toString() { return "<[" + insideType + "]>"; }
     public Type getType() { return this; }

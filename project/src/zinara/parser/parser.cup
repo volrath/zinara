@@ -328,7 +328,7 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
                     | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
-                    | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
+                    | IDENTIFIER:id LPAREN RPAREN                 {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
                     ;
@@ -357,7 +357,7 @@ ctrl_struct   ::=
 
                   /*FOR*/
                 | FOR IDENTIFIER:id IN expr:e DOUBLEDOTTERM
-		{: currentTable = currentTable.newTable(); currentTable.addSymbol(id,new SymValue(e.getType(),false)); :}
+		{: StaticTypeChecking.checkIterable(e); currentTable = currentTable.newTable(); currentTable.addSymbol(id,new SymValue(e.getType(),false)); :}
 		      code_block_loop:cb rof
 		{: currentTable = currentTable.getFather(); :}
 
