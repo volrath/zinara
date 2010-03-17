@@ -18,8 +18,11 @@ public abstract class Type {
 	      Composed Types
 	     */
 	    // Lists
-	    if (this.getType() instanceof ListType && other.getType() instanceof ListType)
-		return ((ListType)this).getInsideType().equals(((ListType)other).getInsideType());
+	    if (this.getType() instanceof ListType && other.getType() instanceof ListType) {
+		ListType type1 = (ListType)this.getType();
+		ListType type2 = (ListType)other.getType();
+		return type1.getInsideType().equals(type2.getInsideType());
+	    }
 
 	    // Tuples
 	    if (this.getType() instanceof TupleType && other.getType() instanceof TupleType) {
@@ -31,8 +34,8 @@ public abstract class Type {
 
 	    // Dicts
 	    if (this.getType() instanceof DictType && other.getType() instanceof DictType) {
-		DictType type1 = (DictType)this;
-		DictType type2 = (DictType)other;
+		DictType type1 = (DictType)this.getType();
+		DictType type2 = (DictType)other.getType();
 		if (type1.getName() != "" && type2.getName() != "")
 		    if (type1.getName() != type2.getName()) return true;
 		    else return false;

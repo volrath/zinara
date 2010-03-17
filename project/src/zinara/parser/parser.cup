@@ -88,7 +88,7 @@ terminal Float FLOAT_V;
 terminal TrueExp TRUE;
 terminal FalseExp FALSE;
 terminal String IDENTIFIER;
-terminal String PLUS, MINUS, UMINUS, TIMES, DIVIDE, MOD, POW;
+terminal String PLUS, MINUS, TIMES, DIVIDE, MOD, POW;
 terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
 terminal String AND, SAND, OR, SOR, XOR;
 
@@ -99,7 +99,7 @@ terminal SEMI;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
 terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
-terminal COMMA, DOUBLEDOT, RETURN, RETURNS;
+terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, RETURNS;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal AS, IN;
 terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
@@ -179,7 +179,7 @@ def_decl     ::= DEF IDENTIFIER:id
 		  currentTable.checkDoubleDeclaration(id);
 		  currentTable = currentTable.newTable();
 		 :}
-                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT
+                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOTTERM
 		 {:
 		     currentTable.addSymbol("return", new SymValue(t,false));
 		 :}
@@ -278,13 +278,13 @@ type         ::=
                | BOOL                       {: RESULT = new BoolType(); :}
 
     /* ----- Composite types ----- */
-//                | STRING                        {: RESULT = new StringType(); :}
-//                | LBRACKET type:t RBRACKET      {: RESULT = new ListType(t); :}
-//                  // list - [type]
-//                | LPAREN type_list:tl RPAREN    {: RESULT = new TupleType(tl); :}
-//                  // tuple - (type0, type1, ..., typen)
-//                | LBRACET dict_types:dt RBRACET {: RESULT = new DictType(dt); :}  
-//                  // dictionary - {ident0:type0,ident1:type1...,identn:typen}
+               | STRING                     {: RESULT = new StringType(); :}
+               | LBRACKET type:t RBRACKET   {: RESULT = new ListType(t); :}
+                 // list - [type]
+               | LPAREN type_list:tl RPAREN {: RESULT = new TupleType(tl); :}
+                 // tuple - (type0, type1, ..., typen)
+               | LBRACET dict_types:dt RBRACET {: RESULT = new DictType(dt); :}  
+                 // dictionary - {ident0:type0,ident1:type1...,identn:typen}
                ;
 
 type_list    ::= type_list:tl COMMA type:t     {:tl.add(t); RESULT = tl;:}
@@ -333,7 +333,7 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
 /* --- Control structures --- */
 ctrl_struct   ::= 
                   /*If*/
-                  IF expr:e DOUBLEDOT
+                  IF expr:e DOUBLEDOTTERM
 		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
                   {: currentTable = currentTable.newTable(); :} 
                       code_block:cb
@@ -342,7 +342,7 @@ ctrl_struct   ::=
                   {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
 
                   /*WHILE*/
-                | WHILE expr:e DOUBLEDOT
+                | WHILE expr:e DOUBLEDOTTERM
 		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
 		  {: currentTable = currentTable.newTable(); :}
                       code_block_loop:cb
@@ -351,13 +351,13 @@ ctrl_struct   ::=
                   {:RESULT = new While(cb,e); :}
 
                   /*FOR*/
-                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOTTERM
 		{: currentTable = currentTable.newTable(); currentTable.addSymbol(id,new SymValue(e.getType(),false)); :}
 		      code_block_loop:cb rof
 		{:currentTable = currentTable.getFather(); :}
 
                   /*CYCLE - WITH BRANCHES*/
-                | CYCLE DOUBLEDOT
+                | CYCLE DOUBLEDOTTERM
 		  {: currentTable = currentTable.newTable(); :}
                       code_block_loop:cb 
                       cycle_body:cd
@@ -373,7 +373,7 @@ ctrl_struct   ::=
                 ;
 
 // If else/elif clause
-else          ::= elif:el ELSE DOUBLEDOT
+else          ::= elif:el ELSE DOUBLEDOTTERM
                   {: currentTable = currentTable.newTable(); :}  
 		      code_block:cb
                   {:currentTable = currentTable.getFather(); :} 
@@ -382,7 +382,7 @@ else          ::= elif:el ELSE DOUBLEDOT
                 ;
 
 elif          ::= elif:el 
-		  ELIF expr:e DOUBLEDOT
+		  ELIF expr:e DOUBLEDOTTERM
 		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
                   {: currentTable = currentTable.newTable(); :}  
                       code_block:cb   {:el.add(new IfCase(cb,e)); RESULT=el;:}
@@ -392,14 +392,14 @@ elif          ::= elif:el
                 ;
 
 // Cycle body
-cycle_body  ::= DEFAULT DOUBLEDOT
+cycle_body  ::= DEFAULT DOUBLEDOTTERM
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
                 {:currentTable = currentTable.getFather(); :} 
                 {: RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp())); :}
 
               | cycle_on:co
-                DEFAULT DOUBLEDOT
+                DEFAULT DOUBLEDOTTERM
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
                 {:currentTable = currentTable.getFather(); :} 
@@ -410,14 +410,14 @@ cycle_body  ::= DEFAULT DOUBLEDOT
               ;
 
 cycle_on    ::= cycle_on:co
-                ON expr:e DO DOUBLEDOT
+                ON expr:e DO DOUBLEDOTTERM
 		{:StaticTypeChecking.checkExpression(e, new BoolType());:}
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
                 {:currentTable = currentTable.getFather(); :} 
                 {: co.add(new CycleCase(cb,e)); RESULT = co; :}
 
-              | ON expr:e DO DOUBLEDOT
+              | ON expr:e DO DOUBLEDOTTERM
 	        {:StaticTypeChecking.checkExpression(e, new BoolType());:}
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
@@ -468,7 +468,7 @@ expr      ::=
             | IDENTIFIER:n LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallExp(n, new ArrayList(), currentTable); :}
 
     /* ----- Composite types ----- */
-//             | STRING:e                                   {:RESULT=new StringExp(e);:}
+//             | STRING_V:e                                   {:RESULT=new StringExp(e);:}
 //             | LBRACKET RBRACKET     /*[] empty list*/    {:RESULT=new ListExp();:}
 //             | LBRACET RBRACET   /*{} empty dictionary*/  {:RESULT=new DictExp();:}
 //             | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
