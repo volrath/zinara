@@ -1,0 +1,8 @@
+main:
+/. No END ./
+
+//No elifs
+if True:
+   print(1)
+
+endmain

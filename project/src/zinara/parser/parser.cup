@@ -467,7 +467,7 @@ expr      ::=
             | expr:e1 arithmetic_op:o expr:e2          {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
 	    | expr:e1 relational_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
 	    | expr:e1 logical_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
-            | MINUS:o expr:e        		       {: RESULT = new UnaryExp(sym.UMINUS, e); :}				
+            | MINUS:o expr:e        		       {: RESULT = new UnaryExp(sym.UMINUS, e); :}
             | NOEQ:o expr:e                            {: RESULT = new UnaryExp(sym.NOEQ, e); :}
 
     /* ----- Functions calls ----- */

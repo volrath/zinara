@@ -3,13 +3,13 @@ main:
 
 Bool h = False
 
-for i in True:
+for i in [True,False,True,True]:
    Bool h
    print(h)
    Bool i'=i
 endfor
 
-for i in True:
+for i in [1,2,3,4,5]:
    print(1)
    Int a = 7
 end

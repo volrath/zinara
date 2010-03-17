@@ -1,0 +1,11 @@
+main:
+/. ELIF but no CONDITION ./
+
+//No elifs
+if FALSE:
+   print(1)
+elif:
+   print(1)
+endif
+
+endmain
