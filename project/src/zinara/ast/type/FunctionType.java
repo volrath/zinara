@@ -15,12 +15,15 @@ public class FunctionType extends Type {
 	this.codeBlock = cb;
     }
 
+    public Type getArgument(int i) {
+	return (Type)argsTypes.get(i);
+    }
+
     public String toString() {
-	String ret = "";
+	String ret = "<";
 	for (int i = 0; i < argsTypes.size(); i++)
 	    ret += (Type)argsTypes.get(i) + "->";
-	return (ret + returnType);// + "{" + codeBlock + "}");
-	
+	return (ret + returnType) + ">";// + "{" + codeBlock + "}");
     }
 
     public Type getType() { return this; }

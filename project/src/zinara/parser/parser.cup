@@ -100,7 +100,7 @@ terminal SEMI;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
 terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
-terminal COMMA, DOUBLEDOT, RETURN, RETURNS;
+terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, RETURNS;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal AS, IN;
 terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
@@ -180,7 +180,7 @@ def_decl     ::= DEF IDENTIFIER:id
 		  currentTable.checkDoubleDeclaration(id);
 		  currentTable = currentTable.newTable();
 		 :}
-                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOT
+                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOTTERM
 		 {:
 		     currentTable.addSymbol("return", new SymValue(t,false));
 		 :}
@@ -279,13 +279,13 @@ type         ::=
                | BOOL                       {: RESULT = new BoolType(); :}
 
     /* ----- Composite types ----- */
-//                | STRING                        {: RESULT = new StringType(); :}
-//                | LBRACKET type:t RBRACKET      {: RESULT = new ListType(t); :}
-//                  // list - [type]
-//                | LPAREN type_list:tl RPAREN    {: RESULT = new TupleType(tl); :}
-//                  // tuple - (type0, type1, ..., typen)
-//                | LBRACET dict_types:dt RBRACET {: RESULT = new DictType(dt); :}  
-//                  // dictionary - {ident0:type0,ident1:type1...,identn:typen}
+               | STRING                     {: RESULT = new StringType(); :}
+               | LBRACKET type:t RBRACKET   {: RESULT = new ListType(t); :}
+                 // list - [type]
+               | LPAREN type_list:tl RPAREN {: RESULT = new TupleType(tl); :}
+                 // tuple - (type0, type1, ..., typen)
+               | LBRACET dict_types:dt RBRACET {: RESULT = new DictType(dt); :}  
+                 // dictionary - {ident0:type0,ident1:type1...,identn:typen}
                ;
 
 type_list    ::= type_list:tl COMMA type:t     {:tl.add(t); RESULT = tl;:}
@@ -313,7 +313,8 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :}
-                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: currentTable.containsIdOrDie(id); RESULT = new FunctionCall(id, el); :}
+                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
+                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
                 ;
@@ -326,7 +327,8 @@ code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i
 instruction_loop  ::= asig:a                                      {: RESULT = a; :}
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
-                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: currentTable.containsIdOrDie(id); RESULT = new FunctionCall(id, el); :}
+                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
+                    | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
                     ;
@@ -334,7 +336,7 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
 /* --- Control structures --- */
 ctrl_struct   ::= 
                   /*If*/
-                  IF expr:e DOUBLEDOT
+                  IF expr:e DOUBLEDOTTERM
 		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
                   {: currentTable = currentTable.newTable(); :} 
                       code_block:cb
@@ -343,7 +345,7 @@ ctrl_struct   ::=
                   {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
 
                   /*WHILE*/
-                | WHILE expr:e DOUBLEDOT
+                | WHILE expr:e DOUBLEDOTTERM
 		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
 		  {: currentTable = currentTable.newTable(); :}
                       code_block_loop:cb
@@ -352,13 +354,13 @@ ctrl_struct   ::=
                   {:RESULT = new While(cb,e); :}
 
                   /*FOR*/
-                | FOR IDENTIFIER:id IN expr:e DOUBLEDOT
+                | FOR IDENTIFIER:id IN expr:e DOUBLEDOTTERM
 		{: currentTable = currentTable.newTable(); currentTable.addSymbol(id,new SymValue(e.getType(),false)); :}
 		      code_block_loop:cb rof
 		{: currentTable = currentTable.getFather(); :}
 
                   /*CYCLE - WITH BRANCHES*/
-                | CYCLE DOUBLEDOT
+                | CYCLE DOUBLEDOTTERM
 		  {: currentTable = currentTable.newTable(); :}
                       code_block_loop:cb 
                       cycle_body:cd
@@ -375,34 +377,34 @@ ctrl_struct   ::=
 
 
 // If else/elif clause
-else          ::= elif:el ELSE DOUBLEDOT
-		  {: currentTable = currentTable.newTable();System.out.println("hola1:"+el); :}  
-		     code_block:cb
-                  {: System.out.println("hola2:"+el);currentTable = currentTable.getFather();:} 
-                  {: el.add(new IfCase(cb,new TrueExp())); RESULT = el;:}
-                | elif:el
-		{: RESULT = el; :}
+else          ::= elif:el ELSE DOUBLEDOTTERM 
+                  {: currentTable = currentTable.newTable(); :}
+                       code_block:cb
+                  {: currentTable = currentTable.getFather();
+                     el.add(new IfCase(cb,new TrueExp()));
+                     RESULT = el; :}
+                | elif:el                    {: RESULT = el; :}
                 ;
 
-elif          ::= elif:el 
-		  ELIF expr:e DOUBLEDOT
-		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
-                  {: currentTable = currentTable.newTable(); :}  
-                      code_block:cb
-                  {:currentTable = currentTable.getFather(); :} 
-                  {:el.add(new IfCase(cb,e)); RESULT=el;:}
-                | {: RESULT = new ArrayList();:}
+elif          ::= elif:el ELIF expr:e DOUBLEDOTTERM
+                  {:StaticTypeChecking.checkExpression(e, new BoolType());
+                    currentTable = currentTable.newTable(); :}
+                       code_block:cb
+                  {: el.add(new IfCase(cb,e));
+                     RESULT=el; currentTable = currentTable.getFather();
+                     System.out.println("reducing by elif NOT-lambda, RESULT = " + RESULT); :} 
+                |  {: RESULT = new ArrayList(); :}
                 ;
 
 // Cycle body
-cycle_body  ::= DEFAULT DOUBLEDOT
+cycle_body  ::= DEFAULT DOUBLEDOTTERM
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
                 {:currentTable = currentTable.getFather(); :} 
                 {: RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp())); :}
 
               | cycle_on:co
-                DEFAULT DOUBLEDOT
+                DEFAULT DOUBLEDOTTERM
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
                 {:currentTable = currentTable.getFather(); :} 
@@ -413,14 +415,14 @@ cycle_body  ::= DEFAULT DOUBLEDOT
               ;
 
 cycle_on    ::= cycle_on:co
-                ON expr:e DO DOUBLEDOT
+                ON expr:e DO DOUBLEDOTTERM
 		{:StaticTypeChecking.checkExpression(e, new BoolType());:}
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
                 {:currentTable = currentTable.getFather(); :} 
                 {: co.add(new CycleCase(cb,e)); RESULT = co; :}
 
-              | ON expr:e DO DOUBLEDOT
+              | ON expr:e DO DOUBLEDOTTERM
 	        {:StaticTypeChecking.checkExpression(e, new BoolType());:}
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
@@ -467,16 +469,16 @@ expr      ::=
             | NOEQ:o expr:e                            {: RESULT = new UnaryExp(sym.NOEQ, e); :}
 
     /* ----- Functions calls ----- */
-            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = new CallExp(n, el); :}
-            | IDENTIFIER:n LPAREN RPAREN               {: RESULT = new CallExp(n, new ArrayList()); :}
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallExp(n, el, currentTable); :}
+            | IDENTIFIER:n LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallExp(n, new ArrayList(), currentTable); :}
 
     /* ----- Composite types ----- */
-//             | STRING:e                                   {:RESULT=new StringExp(e);:}
-//             | LBRACKET RBRACKET     /*[] empty list*/    {:RESULT=new ListExp();:}
-//             | LBRACET RBRACET   /*{} empty dictionary*/  {:RESULT=new DictExp();:}
-//             | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
-//             | LBRACET dict_vals:dv RBRACET /*dictionary*/{:RESULT=new DictExp(dv);:}
-//             | LPAREN expr_list:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(e);:}
+            | STRING_V:e                                   {:RESULT=new StringExp(e);:}
+            | LBRACKET RBRACKET     /*[] empty list*/    {:RESULT=new ListExp();:}
+            | LBRACET RBRACET   /*{} empty dictionary*/  {:RESULT=new DictExp();:}
+            | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
+            | LBRACET dict_vals:dv RBRACET /*dictionary*/{:RESULT=new DictExp(dv);:}
+            | LPAREN expr_list:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
     /* ----- Composite types operations ----- */
             | IDENTIFIER LBRACKET expr RBRACKET                 // indexing
             | IDENTIFIER LBRACKET expr DOUBLEDOT expr RBRACKET  // slicing

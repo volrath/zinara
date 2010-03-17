@@ -1,0 +1,9 @@
+main:
+    if True:
+        def fun() returns <Int>:
+            return 0
+    	end
+    end
+
+    fun()
+endmain

@@ -2,19 +2,26 @@ Int k' = 6
 Float hola = .1
 var Bool b = True
 
-main
-    Float x = b
+main:
+    Float x
     k' = 3
     k' = k' + 1
     hola = k' + x
     print(hola)
 
     if x == .2:
-       Bool y
-       print(y)
+        Bool y
+        print(y)
+    else:
+	print("hola!")
     end
 
     def some_function(a as Int, copy b as Float, c as Bool) returns <Float>:
     	Bool z = False
     end
+
+
+    { lista_de_lista: [[Int]], str: String } dict1
+    (Int, String, [[Char]]) tuple1
+    [(Char, Char)] list1
 endmain

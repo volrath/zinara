@@ -14,7 +14,7 @@ public class Operators {
 	int operator; 
 	Type rightType;
 	Type leftType;
-	public OP(int o, Type l, Type r) { this.operator = o; this.rightType = r; this.leftType = l; }
+	public OP(int o, Type l, Type r) { this.operator = o; this.leftType = l; this.rightType = r; }
 
 	//@ requires other != null;
 	public boolean equals(OP other) {
