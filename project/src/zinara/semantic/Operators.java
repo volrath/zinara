@@ -111,7 +111,7 @@ public class Operators {
 	    break;
 	}
 
-	String comp = new OP(om,r,l).toString();
+	String comp = new OP(om,l,r).toString();
 	//@ assume \typeof(table.get(comp)) == \type(Type);
 	Type result = (Type)table.get(comp);
 	if (!table.containsKey(comp)) throw new TypeClashException("Error de tipos con el operador " + o + " en la linea tal..."); // mejorar

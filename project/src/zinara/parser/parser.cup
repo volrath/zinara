@@ -160,7 +160,7 @@ program   ::= main:m               {: RESULT = new Program(currentTable, m);    
             | decl_list:ds main:m  {: RESULT = new Program(currentTable, m, ds); :}
             ;
 
-main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); :} ENDMAIN {: RESULT = new Main(cb); :}
+main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); RESULT = new Main(cb); :} ENDMAIN
             ;
 
 /*
@@ -357,8 +357,11 @@ ctrl_struct   ::=
 
                   /*FOR*/
                 | FOR IDENTIFIER:id IN expr:e DOUBLEDOTTERM
-		{: currentTable = currentTable.newTable();
-                   currentTable.addSymbol(id,new SymValue(e.getType(),false));:}
+		{:
+		 StaticTypeChecking.checkIterable(e);
+		 currentTable = currentTable.newTable();
+		 currentTable.addSymbol(id,new SymValue(e.getType(),false));
+		 :}
 		      code_block_loop:cb rof
 		{: currentTable = currentTable.getFather(); :}
 

@@ -7,6 +7,7 @@ import zinara.ast.expression.CallExp;
 import zinara.ast.instructions.Return;
 import zinara.ast.instructions.CallInst;
 import zinara.ast.type.Type;
+import zinara.ast.type.ListType;
 import zinara.ast.type.FunctionType;
 import zinara.exceptions.IdentifierNotDeclaredException;
 import zinara.exceptions.InvalidInstructionException;
@@ -27,6 +28,28 @@ public class StaticTypeChecking {
 	throws TypeClashException {
 	if (!type.equals(expr.getType()))
 	    throw new TypeClashException("Conflicto de tipos en la expresion " + expr + ". Se espera " + type + " y se obtuvo " + expr.getType());
+    }
+
+    /*
+      Checks if a given expression is instance of a given type
+     */
+    //@ requires expr != null;
+    //@ requires type != null;
+//     public static void checkExpressionSoft(Expression expr, Type type)
+// 	throws TypeClashException {
+// 	if (!( expr.getType() instanceof typeClass ))
+// 	    throw new TypeClashException("Conflicto de tipos en la expresion " + expr + ". Se espera " + type + " y se obtuvo " + expr.getType());
+//     }
+
+    /*
+      Checks if a given expression is instance of a given type
+     */
+    //@ requires expr != null;
+    //@ requires type != null;
+    public static void checkIterable(Expression expr)
+	throws TypeClashException {
+	if (!expr.getType().equals(new ListType()))
+	    throw new TypeClashException("La expresion " + expr + " no es iterable.");
     }
 
     /*
