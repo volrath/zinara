@@ -342,22 +342,26 @@ ctrl_struct   ::=
 		   currentTable = currentTable.newTable();
 		   :} 
                       code_block:cb
-		  {: currentTable = currentTable.getFather(); :} 
                   else:el fi                  
-                  {: el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
+		  {:currentTable = currentTable.getFather();
+                    el.add(0,new IfCase(cb,e)); RESULT = new If(el); :}
 
                   /*WHILE*/
                 | WHILE expr:e DOUBLEDOTTERM
-		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
-		  {: currentTable = currentTable.newTable(); :}
+		  {:StaticTypeChecking.checkExpression(e, new BoolType());
+		    currentTable = currentTable.newTable(); :}
                       code_block_loop:cb
-                  {:currentTable = currentTable.getFather(); :}
                   elihw
-                  {:RESULT = new While(cb,e); :}
+                  {:currentTable = currentTable.getFather();
+                    RESULT = new While(cb,e); :}
 
                   /*FOR*/
                 | FOR IDENTIFIER:id IN expr:e DOUBLEDOTTERM
-		{: StaticTypeChecking.checkIterable(e); currentTable = currentTable.newTable(); currentTable.addSymbol(id,new SymValue(e.getType(),false)); :}
+		{:
+		 StaticTypeChecking.checkIterable(e);
+		 currentTable = currentTable.newTable();
+		 currentTable.addSymbol(id,new SymValue(e.getType(),false));
+		 :}
 		      code_block_loop:cb rof
 		{: currentTable = currentTable.getFather(); :}
 
@@ -366,9 +370,9 @@ ctrl_struct   ::=
 		  {: currentTable = currentTable.newTable(); :}
                       code_block_loop:cb 
                       cycle_body:cd
-                  {:currentTable = currentTable.getFather(); :}
+                  {:currentTable = currentTable.getFather();
+                    RESULT = new Cycle(cd,cb);:}
                   elcyc
-                  {: RESULT = new Cycle(cd,cb);:}
 
                   /*CYCLE - NO BRANCHES*/
                 | CYCLE SEMI
@@ -401,15 +405,15 @@ elif          ::= elif:el ELIF expr:e DOUBLEDOTTERM
 cycle_body  ::= DEFAULT DOUBLEDOTTERM
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
-                {:currentTable = currentTable.getFather(); :} 
-                {: RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp())); :}
+                {:currentTable = currentTable.getFather();
+                  RESULT = new ArrayList(); RESULT.add(new CycleCase(cb,new TrueExp()));:}
 
               | cycle_on:co
                 DEFAULT DOUBLEDOTTERM
                 {: currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
-                {:currentTable = currentTable.getFather(); :} 
-                {: co.add(new CycleCase(cb,new TrueExp())); RESULT = co; :}
+                {:currentTable = currentTable.getFather(); 
+                  co.add(new CycleCase(cb,new TrueExp())); RESULT = co; :}
 
 
               | cycle_on:co  {: RESULT = co; :}
@@ -417,18 +421,18 @@ cycle_body  ::= DEFAULT DOUBLEDOTTERM
 
 cycle_on    ::= cycle_on:co
                 ON expr:e DO DOUBLEDOTTERM
-		{:StaticTypeChecking.checkExpression(e, new BoolType());:}
-                {: currentTable = currentTable.newTable(); :}  
+		{:StaticTypeChecking.checkExpression(e, new BoolType());
+                  currentTable = currentTable.newTable(); :}  
                     code_block_loop:cb
-                {:currentTable = currentTable.getFather(); :} 
-                {: co.add(new CycleCase(cb,e)); RESULT = co; :}
+                {:currentTable = currentTable.getFather();
+                  co.add(new CycleCase(cb,e)); RESULT = co; :}
 
               | ON expr:e DO DOUBLEDOTTERM
-	        {:StaticTypeChecking.checkExpression(e, new BoolType());:}
-                {: currentTable = currentTable.newTable(); :}  
+	        {:StaticTypeChecking.checkExpression(e, new BoolType());
+                  currentTable = currentTable.newTable(); :}
                     code_block_loop:cb
-                {:currentTable = currentTable.getFather(); :} 
-                {: RESULT = (new ArrayList()); RESULT.add(new CycleCase(cb,e)); :}
+                {:currentTable = currentTable.getFather();
+                  RESULT = (new ArrayList()); RESULT.add(new CycleCase(cb,e)); :}
               ;
 
 // Asignation

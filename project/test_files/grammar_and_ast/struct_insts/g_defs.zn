@@ -1,0 +1,19 @@
+def holamundo(string as Char, copy times as Int) returns<Char>:
+    print(string)
+    times = times + 5
+    return string
+end
+
+def goodbye() returns<Int>:
+    Int google = 90
+    print(google)
+    return google
+end
+
+main:
+    Char a = 'g'
+    Int b
+    b = 90
+    holamundo(a,b)
+    goodbye()
+endmain
