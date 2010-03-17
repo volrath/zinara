@@ -227,4 +227,28 @@ public class StaticTypeCheckingTest extends TestCase {
 	    fail("Should raise TypeClashException");
 	}
     }
+
+    public void testStaticTypeChecking19() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "bt19.zn");
+	    fail("Should raise TypeClashException");
+	}
+	catch (TypeClashException success) {}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should raise TypeClashException");
+	}
+    }
+
+    public void testStaticTypeChecking20() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "bt20.zn");
+	    fail("Should raise TypeClashException");
+	}
+	catch (TypeClashException success) {}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should raise TypeClashException");
+	}
+    }
 }

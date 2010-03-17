@@ -48,7 +48,7 @@ public class StaticTypeChecking {
     //@ requires type != null;
     public static void checkIterable(Expression expr)
 	throws TypeClashException {
-	if (!expr.getType().equals(new ListType()))
+	if (!(expr.getType() instanceof ListType))
 	    throw new TypeClashException("La expresion " + expr + " no es iterable.");
     }
 
