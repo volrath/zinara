@@ -9,9 +9,10 @@ import zinara.ast.*;
 import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
 import zinara.ast.type.*;
-import zinara.exceptions.TypeClashException;
 import zinara.exceptions.InvalidDictionaryAccess;
 import zinara.exceptions.InvalidDictionaryDeclaration;
+import zinara.exceptions.TypeClashException;
+import zinara.exceptions.SyntaxErrorException;
 import zinara.symtable.*;
 import zinara.semantic.Operators;
 import zinara.semantic.StaticTypeChecking;
@@ -354,7 +355,7 @@ ctrl_struct   ::=
                 | FOR IDENTIFIER:id IN expr:e DOUBLEDOT
 		{: currentTable = currentTable.newTable(); currentTable.addSymbol(id,new SymValue(e.getType(),false)); :}
 		      code_block_loop:cb rof
-		{:currentTable = currentTable.getFather(); :}
+		{: currentTable = currentTable.getFather(); :}
 
                   /*CYCLE - WITH BRANCHES*/
                 | CYCLE DOUBLEDOT
@@ -372,23 +373,25 @@ ctrl_struct   ::=
                   {: RESULT = new Cycle(cd,null);:}
                 ;
 
+
 // If else/elif clause
 else          ::= elif:el ELSE DOUBLEDOT
-                  {: currentTable = currentTable.newTable(); :}  
-		      code_block:cb
-                  {:currentTable = currentTable.getFather(); :} 
-                  {: el.add(new IfCase(cb,new TrueExp())); RESULT = el; :}
-                | elif:el                                {: RESULT = el; :}
+		  {: currentTable = currentTable.newTable();System.out.println("hola1:"+el); :}  
+		     code_block:cb
+                  {: System.out.println("hola2:"+el);currentTable = currentTable.getFather();:} 
+                  {: el.add(new IfCase(cb,new TrueExp())); RESULT = el;:}
+                | elif:el
+		{: RESULT = el; :}
                 ;
 
 elif          ::= elif:el 
 		  ELIF expr:e DOUBLEDOT
 		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
                   {: currentTable = currentTable.newTable(); :}  
-                      code_block:cb   {:el.add(new IfCase(cb,e)); RESULT=el;:}
+                      code_block:cb
                   {:currentTable = currentTable.getFather(); :} 
-
-                | {: RESULT = new ArrayList(); :}
+                  {:el.add(new IfCase(cb,e)); RESULT=el;:}
+                | {: RESULT = new ArrayList();:}
                 ;
 
 // Cycle body
