@@ -2,6 +2,7 @@ package zinara.tests;
 
 import zinara.Main;
 import zinara.exceptions.InvalidAssignationException;
+import zinara.exceptions.InvalidInstructionException;
 
 import junit.framework.*;
 
@@ -19,6 +20,18 @@ public class MiscConflictTest extends TestCase {
 	catch (Exception e) { // any other exception
 	    e.printStackTrace();
 	    fail("Should raise InvalidAssignationException");
+	}
+    }
+
+    public void testMiscConflict2() {
+	try {
+	    Main.testStaticFail(STATIC_MC_DIR + "mc2.zn");
+	    fail("Should raise InvalidInstructionException");
+	}
+	catch (InvalidInstructionException success) {}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should raise InvalidInstructionException");
 	}
     }
 }

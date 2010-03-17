@@ -179,4 +179,40 @@ public class StaticTypeCheckingTest extends TestCase {
 	    fail("Should raise TypeClashException");
 	}
     }
+
+    public void testStaticTypeChecking15() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "bt15.zn");
+	    fail("Should raise TypeClashException");
+	}
+	catch (TypeClashException success) {}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should raise TypeClashException");
+	}
+    }
+
+    public void testStaticTypeChecking16() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "bt16.zn");
+	    fail("Should raise TypeClashException");
+	}
+	catch (TypeClashException success) {}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should raise TypeClashException");
+	}
+    }
+
+    public void testStaticTypeChecking17() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "bt17.zn");
+	    fail("Should raise TypeClashException");
+	}
+	catch (TypeClashException success) {}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should raise TypeClashException");
+	}
+    }
 }

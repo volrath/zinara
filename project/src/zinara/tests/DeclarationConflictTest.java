@@ -166,4 +166,16 @@ public class DeclarationConflictTest extends TestCase {
 	    fail("Should raise IdentifierAlreadyDeclaredException");
 	}
     }
+
+    public void testDeclarationConflict14() {
+	try {
+	    Main.testStaticFail(STATIC_DC_DIR + "dc14.zn");
+	    fail("Should raise IdentifierNotDeclaredException");
+	}
+	catch (IdentifierNotDeclaredException success) {}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should raise IdentifierNotDeclaredException");
+	}
+    }
 }
