@@ -375,22 +375,12 @@ ctrl_struct   ::=
                 ;
 
 // If else/elif clause
-else          ::= elif:el ELSE DOUBLEDOTTERM
-                  {: currentTable = currentTable.newTable(); :}  
-		      code_block:cb
-                  {:currentTable = currentTable.getFather(); :} 
-                  {: el.add(new IfCase(cb,new TrueExp())); RESULT = el; :}
-                | elif:el                                {: RESULT = el; :}
+else          ::= elif:el ELSE DOUBLEDOTTERM {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); el.add(new IfCase(cb,new TrueExp())); RESULT = el; :}
+                | elif:el                    {: RESULT = el; :}
                 ;
 
-elif          ::= elif:el 
-		  ELIF expr:e DOUBLEDOTTERM
-		  {:StaticTypeChecking.checkExpression(e, new BoolType());:}
-                  {: currentTable = currentTable.newTable(); :}  
-                      code_block:cb   {:el.add(new IfCase(cb,e)); RESULT=el;:}
-                  {:currentTable = currentTable.getFather(); :} 
-
-                | {: RESULT = new ArrayList(); :}
+elif          ::= elif:el ELIF expr:e DOUBLEDOTTERM {:StaticTypeChecking.checkExpression(e, new BoolType()); currentTable = currentTable.newTable(); :} code_block:cb {: el.add(new IfCase(cb,e)); RESULT=el; currentTable = currentTable.getFather(); System.out.println("reducing by elif NOT-lambda, RESULT = " + RESULT); :} 
+                |                            {: RESULT = new ArrayList(); :}
                 ;
 
 // Cycle body

@@ -10,8 +10,10 @@ main:
     print(hola)
 
     if x == .2:
-       Bool y
-       print(y)
+        Bool y
+        print(y)
+    else:
+	print("hola!")
     end
 
     def some_function(a as Int, copy b as Float, c as Bool) returns <Float>:
