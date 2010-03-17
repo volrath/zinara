@@ -11,7 +11,10 @@ public abstract class Type {
 	    (this.getType() instanceof FloatType && other.getType() instanceof FloatType) ||
 	    (this.getType() instanceof CharType && other.getType() instanceof CharType) ||
 	    (this.getType() instanceof BoolType && other.getType() instanceof BoolType) ||
-	    (this.getType() instanceof StringType && other.getType() instanceof StringType))
+	    (this.getType() instanceof StringType && other.getType() instanceof StringType) ||
+	    // Function type.. the comparation will be soft right now,
+	    // reaaaally comparison of types maybe later..
+	    (this.getType() instanceof FunctionType && other.getType() instanceof FunctionType))
 	    return true;
 	else {
 	    /*
