@@ -1,7 +1,5 @@
 package zinara.ast.expression;
 
-//import java.lang.Character;
-
 import zinara.ast.type.Type;
 import zinara.ast.type.CharType;
 

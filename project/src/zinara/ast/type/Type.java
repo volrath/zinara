@@ -21,6 +21,7 @@ public abstract class Type {
 	    if (this.getType() instanceof ListType && other.getType() instanceof ListType) {
 		ListType type1 = (ListType)this.getType();
 		ListType type2 = (ListType)other.getType();
+		if (type1.getInsideType() == null && type2.getInsideType() == null) return true;
 		return type1.getInsideType().equals(type2.getInsideType());
 	    }
 
