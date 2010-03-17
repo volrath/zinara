@@ -21,6 +21,8 @@ public class StaticTypeChecking {
     /*
       Checks if a given expression is of a given type
      */
+    //@ requires expr != null;
+    //@ requires type != null;
     public static void checkExpression(Expression expr, Type type)
 	throws TypeClashException {
 	if (!type.equals(expr.getType()))
@@ -34,6 +36,8 @@ public class StaticTypeChecking {
       2. the expression after the return statement is the same type of
       the defined function
      */
+    //@ requires expr != null;
+    //@ requires st != null;
     public static Return checkReturnValue(Expression expr, SymTable st)
 	throws TypeClashException, InvalidInstructionException {
 	SymValue idSymValue = st.getSymbolRecursively("return");

@@ -62,6 +62,7 @@ public class Main {
 	catch (IdentifierAlreadyDeclaredException e) { System.out.println(e.getMessage()); }
 	catch (InvalidAssignationException e) { System.out.println(e.getMessage()); }
 	catch (TypeClashException e) { System.out.println(e.getMessage()); }
+	catch (SyntaxErrorException e) { System.out.println(e.getMessage()); }
 	catch (Exception e) {
 	    System.out.println("oops...");
 	    e.printStackTrace();

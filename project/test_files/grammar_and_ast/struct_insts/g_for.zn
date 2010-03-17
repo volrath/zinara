@@ -1,0 +1,17 @@
+main:
+/. FORS ./
+
+Bool h = False
+
+for i in True:
+   Bool h
+   print(h)
+   Bool i'=i
+endfor
+
+for i in True:
+   print(1)
+   Int a = 7
+end
+
+endmain

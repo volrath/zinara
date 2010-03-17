@@ -20,7 +20,10 @@ public class SymTable{
     private SymTable father;
     private ArrayList sons;    // ArrayList of symtables
     public String name = "";
-    
+
+    //@invariant table != null;
+    //@invariant sons != null;
+
     public SymTable() {
 	this.sons = new ArrayList();
 	this.father = null;
@@ -46,9 +49,12 @@ public class SymTable{
 	else return false;
     }
 
+    //@ requires decl != null;
     public void addDeclaration(Declaration decl) throws IdentifierAlreadyDeclaredException {
 	SingleDeclaration current_decl;
+
 	if (decl.isSingle()) {
+	    //@ assume \typeof(decl) == \type(SingleDeclaration);
 	    current_decl = (SingleDeclaration)decl;
 	    if (!containsId(current_decl.getId())) {
 		addSymbol(current_decl.getId(),
@@ -56,8 +62,10 @@ public class SymTable{
 	    } else
 		throw new IdentifierAlreadyDeclaredException(((SingleDeclaration)decl).getId());
 	} else {
+	    //@ assume \typeof(decl) == \type(MultipleDeclaration);
 	    for (int i = 0; i < ((MultipleDeclaration)decl).size(); i++) {
 		current_decl = ((MultipleDeclaration)decl).get(i);
+		//@ assume current_decl != null;
 		if (!containsId(current_decl.getId())) {
 		    addSymbol(current_decl.getId(),
 			      new SymValue(current_decl.getType(), current_decl.isVariable()));
@@ -76,6 +84,7 @@ public class SymTable{
     }
 
     public SymValue getSymbol (String id){
+	//@ assume \typeof(table.get(id)) == \type(SymValue);
 	return (SymValue)this.table.get(id);
     }
 
@@ -85,10 +94,17 @@ public class SymTable{
 	else return null;
     }
 
+    //@ ensures \result != null
     public SymValue getSymbolOrDie(String id) throws IdentifierNotDeclaredException {
-	if (table.containsKey(id)) return (SymValue)table.get(id);
-	else if (father != null) return father.getSymbolOrDie(id);
-	else throw new IdentifierNotDeclaredException(id);
+	if (table.containsKey(id)){
+	    //@ assume table.get(id) != null;
+	    //@ assume \typeof(table.get(id)) == \type(SymValue);
+	    return  (SymValue)table.get(id);
+	}
+	else if (father != null)
+	    return father.getSymbolOrDie(id);
+	else
+	    throw new IdentifierNotDeclaredException(id);
     }
 
     public SymTable getFather (){
@@ -112,7 +128,7 @@ public class SymTable{
     public boolean isEmpty (){
 	return this.table.isEmpty();
     }
-
+    
     public String toString() {
 	String ret = "";
 	for (int i = 0; i < sons.size(); i++)
@@ -120,14 +136,18 @@ public class SymTable{
 	if (ret.length() != 0) ret = ret.substring(0, ret.length()-2);
 	return "<" + table.toString() + "[" + ret + "]>";
     }
-
+    
     /*
       Checks two things, if the id of the assignation is declared and
       if the types match.
      */
+
+    //@ requires expr != null;
     public SingleAssignation checkAssignation(String id, Expression expr) 
 	throws IdentifierNotDeclaredException, TypeClashException {
 	SymValue idSymValue = getSymbolOrDie(id);
+
+	//@ assume idSymValue.getType() != null;
 
 	if (idSymValue.getType().equals(expr.getType()))
 	    return new SingleAssignation(id, expr);
@@ -140,10 +160,15 @@ public class SymTable{
       checks the validity of every assignation issuing
       `checkAssignation`.
      */
+    //@ requires ids != null;
+    //@ requires exprs != null;
+    //@ requires (\forall int i; i >=0 && i < ids.size(); \typeof(ids.get(i)) == \type(String));
+    //@ requires (\forall int i; i >=0 && i < ids.size(); \typeof(ids.get(i)) == \type(Expression));
     public Assignation checkMultipleAssignations(ArrayList ids, ArrayList exprs)
 	throws IdentifierNotDeclaredException, TypeClashException, InvalidAssignationException {
 	if (ids.size() != exprs.size())
 	    throw new InvalidAssignationException(); // FIX THIS: same as in MultipleAssignation.java
+
 	if (ids.size() == 1)
 	    return checkAssignation((String)ids.get(0), (Expression)exprs.get(0));
 	else {
