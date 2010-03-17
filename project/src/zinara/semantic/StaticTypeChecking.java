@@ -1,8 +1,13 @@
 package zinara.semantic;
 
+import java.util.ArrayList;
+
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.CallExp;
 import zinara.ast.instructions.Return;
+import zinara.ast.instructions.CallInst;
 import zinara.ast.type.Type;
+import zinara.ast.type.FunctionType;
 import zinara.exceptions.IdentifierNotDeclaredException;
 import zinara.exceptions.InvalidInstructionException;
 import zinara.exceptions.TypeClashException;
@@ -41,7 +46,7 @@ public class StaticTypeChecking {
     public static CallExp checkCallExp(String funcName, ArrayList expr_list, SymTable st)
 	throws TypeClashException, IdentifierNotDeclaredException {
 	SymValue idSymValue = st.getSymbolOrDie(funcName);
-	if (!idSymValue.getType().equals(new FunctionType())) throw new TypeClashException("El identificador " + funcName + " tiene tipo " + idSymValue.getType() + ", no es una funcion");
+	if (!idSymValue.getType().equals(new FunctionType(null, null, null))) throw new TypeClashException("El identificador " + funcName + " tiene tipo " + idSymValue.getType() + ", no es una funcion");
 	FunctionType funcType = (FunctionType)idSymValue.getType();
 
 	// Check every argument
@@ -51,5 +56,22 @@ public class StaticTypeChecking {
 	    if (!currentExpr.getType().equals(funcType.getArgument(i)))
 		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + funcName);
 	}
+	return new CallExp(funcName, expr_list);
+    }
+
+    public static CallInst checkCallInst(String funcName, ArrayList expr_list, SymTable st)
+	throws TypeClashException, IdentifierNotDeclaredException {
+	SymValue idSymValue = st.getSymbolOrDie(funcName);
+	if (!idSymValue.getType().equals(new FunctionType(null, null, null))) throw new TypeClashException("El identificador " + funcName + " tiene tipo " + idSymValue.getType() + ", no es una funcion");
+	FunctionType funcType = (FunctionType)idSymValue.getType();
+
+	// Check every argument
+	Expression currentExpr;
+	for (int i = 0; i < expr_list.size(); i++) {
+	    currentExpr = (Expression)expr_list.get(i);
+	    if (!currentExpr.getType().equals(funcType.getArgument(i)))
+		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + funcName);
+	}
+	return new CallInst(funcName, expr_list);
     }
 }

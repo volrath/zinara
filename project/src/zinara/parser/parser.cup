@@ -307,7 +307,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :}
-                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: currentTable.containsIdOrDie(id); RESULT = new FunctionCall(id, el); :}
+                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
                 ;
@@ -320,7 +320,7 @@ code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i
 instruction_loop  ::= asig:a                                      {: RESULT = a; :}
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
-                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: currentTable.containsIdOrDie(id); RESULT = new FunctionCall(id, el); :}
+                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
                     ;

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import zinara.ast.expression.Expression;
 
-public class FunctionCall extends Instruction{
+public class CallInst extends Instruction{
     private ArrayList expr_list; // arraylist of expressions
     private String func_name;
 
-    public FunctionCall(String fn, ArrayList exl){
+    public CallInst(String fn, ArrayList exl){
 	this.func_name = fn;
 	this.expr_list = exl;
     }
