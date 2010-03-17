@@ -160,7 +160,7 @@ program   ::= main:m               {: RESULT = new Program(currentTable, m);    
             | decl_list:ds main:m  {: RESULT = new Program(currentTable, m, ds); :}
             ;
 
-main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); :} ENDMAIN {: RESULT = new Main(cb); :}
+main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); RESULT = new Main(cb); :} ENDMAIN
             ;
 
 /*
