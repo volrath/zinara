@@ -1,4 +1,4 @@
-main
+main:
     Int x = 1
     if True:
         Float y = 1.

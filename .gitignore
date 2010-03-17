@@ -10,7 +10,7 @@
 tools/jflex/doc
 tools/jflex/examples
 
-zinara/
+*.tar.gz
 
 *.class
 project/src/zinara/parser/parser.java
