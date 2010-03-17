@@ -1,0 +1,70 @@
+main:
+/. IFS ./
+
+//No elifs
+if true:
+   print()
+
+if true:
+   print()
+else:
+   print()
+endif
+
+//Elifs, but no elses
+if true:
+   print()
+elif true:
+   true()
+end
+
+if true:
+   print()
+elif true:
+   print()
+elif true:
+   print()
+endif
+
+if true:
+   print()
+elif true:
+   print()
+elif true:
+   print()
+elif true:
+   print()
+end
+
+//Elifs and elses
+if true:
+   print()
+elif true:
+   print()
+else:
+   print()
+endif	
+
+if true:
+   print()
+elif true:
+   print()
+elif true:
+   print()
+else:
+   print()
+end
+
+if true:
+   print()
+elif true:
+   print()
+elif true:
+   print()
+elif true:
+   print()
+else:
+   print()
+endif
+
+endmain
