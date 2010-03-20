@@ -44,7 +44,7 @@ public abstract class Type {
 		DictType type1 = (DictType)this.getType();
 		DictType type2 = (DictType)other.getType();
 		if (type1.getName() != "" && type2.getName() != "")
-		    if (type1.getName() != type2.getName()) return true;
+		    if (type1.getName() == type2.getName()) return true;
 		    else return false;
 		// Checks internally
 		if (type1.size() != type2.size()) return false;

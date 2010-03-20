@@ -6,18 +6,22 @@ import java.util.Iterator;
 import zinara.ast.type.DictType;
 import zinara.ast.type.Type;
 
-// invariant: value is at least 2 long
 public class DictExp extends Expression {
-    public HashMap value; // arraylist of expressions
+    public HashMap value; // hashmap of string:expr
 
     public DictExp(HashMap v) { value = v; }
     public DictExp() { value = new HashMap(); }
 
-    public Type getType() { 
-// 	if (value.size() > 0)
-// 	    return new ListType(((Expression)value.get(0)).getType());
-// 	else return new ListType(null);
-	return new DictType(null); // typeclashexception handling... heavy
+    public Type getType() {
+	HashMap typemap = new HashMap();
+	Iterator it = value.keySet().iterator();
+	String ckey;
+	while(it.hasNext()) {
+	    ckey = (String)it.next();
+	    if (typemap.put(ckey, ((Expression)value.get(ckey)).getType()))
+		throw new InvalidDictionaryException("La clave " + ckey + " se repite en el diccionario " + this);
+	}
+	return new DictType(typemap);
     }
     // DictType(null) = {} which doesn't exist;
 

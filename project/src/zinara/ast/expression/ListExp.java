@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import zinara.ast.type.ListType;
 import zinara.ast.type.Type;
+import zinara.exceptions.TypeClashException;
 
 // invariant: every element of the value has the same type
 public class ListExp extends Expression {
@@ -11,11 +12,11 @@ public class ListExp extends Expression {
     public ListExp(ArrayList v) { value = v; }
     public ListExp() { value = new ArrayList(); }
 
-    public Type getType() { 
-// 	if (value.size() > 0)
-// 	    return new ListType(((Expression)value.get(0)).getType());
-// 	else return new ListType(null);
-	return new ListType(null); // typeclashexception handling... heavy
+    public Type getType() throws TypeClashException { 
+	if (value.size() > 0)
+	    return new ListType(((Expression)value.get(0)).getType());
+	else return new ListType(null);
+	//return new ListType(null); // typeclashexception handling... heavy
     }
     // ListType(null) = []
 
