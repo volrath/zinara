@@ -10,4 +10,5 @@ public class ConstantType extends Type {
     public Type getRealType() { return type; }
     public String toString() { return type.toString(); }
     public Type getType() { return type; }
+    public boolean equals(Type other) { return (type.equals(other.getType())); }
 }
