@@ -19,6 +19,10 @@ public class FunctionType extends Type {
 	return (Type)argsTypes.get(i);
     }
 
+    public Type getReturnType() { return returnType; }
+
+    public int size() { return argsTypes.size(); }
+
     public String toString() {
 	String ret = "<";
 	for (int i = 0; i < argsTypes.size(); i++)
@@ -27,4 +31,13 @@ public class FunctionType extends Type {
     }
 
     public Type getType() { return this; }
+
+    public boolean equals(Type other) {
+	if (!(other instanceof FunctionType)) return false;
+	FunctionType otherFunction = (FunctionType)other;
+	if (size() != otherFunction.size()) return false;
+	for (int i = 0; i < size(); i++)
+	    if (!getArgument(i).equals(otherFunction.getArgument(i))) return false;
+	return returnType.equals(otherFunction.getReturnType());
+    }
 }

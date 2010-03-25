@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import zinara.ast.type.TupleType;
 import zinara.ast.type.Type;
+import zinara.exceptions.TypeClashException;
 
 // invariant: value is at least 2 long
 public class TupleExp extends Expression {
@@ -12,11 +13,12 @@ public class TupleExp extends Expression {
     public TupleExp(ArrayList v) { value = v; }
     public TupleExp() { value = new ArrayList(); }
 
-    public Type getType() { 
-// 	if (value.size() > 0)
-// 	    return new ListType(((Expression)value.get(0)).getType());
-// 	else return new ListType(null);
-	return new TupleType(null); // typeclashexception handling... heavy
+    public Type getType() throws TypeClashException { 
+	ArrayList types = new ArrayList();
+	for (int i = 0; i < value.size(); i++)
+	    types.add(((Expression)value.get(0)).getType());
+	return new TupleType(types);
+	//return new TupleType(null); // typeclashexception handling... heavy
     }
     // TupleType(null) = (), which in this case, doesn't exist.
 
