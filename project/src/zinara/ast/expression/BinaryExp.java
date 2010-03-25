@@ -16,6 +16,6 @@ public class BinaryExp extends Expression {
     }
 
     public String toString() {
-	return left + " " + operator + " " + right;
+	return "("+left + " " + operator + " " + right+")" ;
     }
 }

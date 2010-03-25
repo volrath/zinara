@@ -2,17 +2,12 @@ main:
 /. FORS ./
 
 Bool h = False
-[Int] x = [1,2,3,4]
+[Int] x
 
 for i in x:
    Bool h
    print(h)
    Bool i'=True
 endfor
-
-for i in [1,2,3,4,5]:
-   print(1)
-   Int a = 7
-end
 
 endmain

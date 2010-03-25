@@ -117,7 +117,7 @@ nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignat
 nonterminal Type type;
 nonterminal ArrayList expr_list;  // arraylist of expressions
 nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
-nonterminal Expression expr;
+nonterminal Expression expr,rela_expr,othe_expr;;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
 nonterminal ArrayList args_list, args_list2; // arraylist of types
@@ -457,29 +457,54 @@ expr_list ::= expr_list:el COMMA expr:e  {: RESULT = el; el.add(e); :}
             | expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
             ;
 
-expr      ::=
+expr  ::= expr:e1 AND expr:e2       {: RESULT = new BinaryExp(sym.AND, e1, e2); :}
+        | expr:e1 SAND expr:e2      {: RESULT = new BinaryExp(sym.SAND, e1, e2); :}
+        | expr:e1 OR expr:e2        {: RESULT = new BinaryExp(sym.OR, e1, e2); :}
+        | expr:e1 SOR expr:e2       {: RESULT = new BinaryExp(sym.SOR, e1, e2); :}
+        | expr:e1 XOR expr:e2       {: RESULT = new BinaryExp(sym.XOR, e1, e2); :}
+        | LPAREN expr:e RPAREN      {: RESULT = (Expression)e; :}
+        | NOEQ:o expr:e             {: RESULT = new UnaryExp(sym.NOEQ, e); :}
+        | rela_expr:re              {: RESULT = re; :}
+        ;
+
+rela_expr  ::= rela_expr:e1 LT rela_expr:e2       {: RESULT = new BinaryExp(sym.LT,  e1, e2); :}
+             | rela_expr:e1 GT rela_expr:e2       {: RESULT = new BinaryExp(sym.GT,  e1, e2); :}
+             | rela_expr:e1 LTE rela_expr:e2      {: RESULT = new BinaryExp(sym.LTE, e1, e2); :}
+             | rela_expr:e1 GTE rela_expr:e2      {: RESULT = new BinaryExp(sym.GTE, e1, e2); :}
+             | rela_expr:e1 SHEQ rela_expr:e2     {: RESULT = new BinaryExp(sym.SHEQ, e1, e2); :}
+             | rela_expr:e1 DEEQ rela_expr:e2     {: RESULT = new BinaryExp(sym.DEEQ, e1, e2); :}
+             | rela_expr:e1 NOEQ rela_expr:e2     {: RESULT = new BinaryExp(sym.NOEQ, e1, e2); :}
+             | LPAREN rela_expr:e RPAREN          {: RESULT = (Expression)e;:}
+             | othe_expr:oe                       {: RESULT = oe;:}
+             ;
+
+othe_expr   ::=
     /* ----- Basic types ----- */
-              CHAR_V:e                                 {: RESULT = new CharExp(e.charValue()); :}
-            | INTEGER_V:e                              {: RESULT = new IntegerExp(e.intValue()); :}
-            | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
-            | TRUE                                     {: RESULT = new TrueExp(); :}
-            | FALSE                                    {: RESULT = new FalseExp(); :}
-            | IDENTIFIER:n                             {: SymTable finded = currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n, finded); :}
-           // tuples and parentitation
-            | LPAREN expr:e RPAREN                     {:RESULT = (Expression)e;:}
+              othe_expr:e1 PLUS othe_expr:e2            {: RESULT = new BinaryExp(sym.PLUS, e1, e2); :}
+            | othe_expr:e1 MINUS othe_expr:e2           {: RESULT = new BinaryExp(sym.MINUS, e1, e2); :}
+            | othe_expr:e1 TIMES othe_expr:e2           {: RESULT = new BinaryExp(sym.TIMES, e1, e2); :}
+            | othe_expr:e1 DIVIDE othe_expr:e2          {: RESULT = new BinaryExp(sym.DIVIDE, e1, e2); :}
+            | othe_expr:e1 MOD othe_expr:e2             {: RESULT = new BinaryExp(sym.MOD, e1, e2); :}
+            | othe_expr:e1 POW othe_expr:e2             {: RESULT = new BinaryExp(sym.POW, e1, e2); :}
+            | CHAR_V:e                                  {: RESULT = new CharExp(e.charValue()); :}
+            | INTEGER_V:e                               {: RESULT = new IntegerExp(e.intValue()); :}
+            | FLOAT_V:e                                 {: RESULT = new FloatExp(e.floatValue()); :}
+            | TRUE                                      {: RESULT = new TrueExp(); :}
+            | FALSE                                     {: RESULT = new FalseExp(); :}
+            | IDENTIFIER:n                              {: SymTable finded = currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n, finded); :}
+           // parentitation
+            | LPAREN othe_expr:e RPAREN                 {: RESULT = (Expression)e; :}
     /* --- Arithmetic, relational and logical operations --- */
-            | expr:e1 arithmetic_op:o expr:e2          {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
-	    | expr:e1 relational_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
-	    | expr:e1 logical_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
-            | MINUS:o expr:e        		       {: RESULT = new UnaryExp(sym.UMINUS, e); :}
-            | NOEQ:o expr:e                            {: RESULT = new UnaryExp(sym.NOEQ, e); :}
+//	    | expr:e1 relational_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+//	    | expr:e1 logical_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
+            | MINUS:o othe_expr:e        		{: RESULT = new UnaryExp(sym.UMINUS, e); :}
 
     /* ----- Functions calls ----- */
             | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallExp(n, el, currentTable); :}
             | IDENTIFIER:n LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallExp(n, new ArrayList(), currentTable); :}
 
     /* ----- Composite types ----- */
-            | STRING_V:e                                   {:RESULT=new StringExp(e);:}
+            | STRING_V:e                                 {:RESULT=new StringExp(e);:}
             | LBRACKET RBRACKET     /*[] empty list*/    {:RESULT=new ListExp();:}
             | LBRACET RBRACET   /*{} empty dictionary*/  {:RESULT=new DictExp();:}
             | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
@@ -488,9 +513,9 @@ expr      ::=
     /* ----- Composite types operations ----- */
             | IDENTIFIER LBRACKET expr RBRACKET                 // indexing
             | IDENTIFIER LBRACKET expr DOUBLEDOT expr RBRACKET  // slicing
-            | expr PLUSPLUS expr                                // plosplos
-            | expr LTLT expr                                    // push
-            | expr GTGT expr                                    // pop
+            | othe_expr PLUSPLUS othe_expr                                // plosplos
+            | othe_expr LTLT othe_expr                                    // push
+            | othe_expr GTGT othe_expr                                    // pop
 
     /* ----- Other expressions ----- */
             | READ                                     {: RESULT = new ReadExp(); :}

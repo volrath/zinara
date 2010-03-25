@@ -58,15 +58,15 @@ public class Main {
 	    System.out.println("oops..., classcastE: " + e.toString());
 	    e.printStackTrace();
 	}
-	catch (IdentifierNotDeclaredException e) { System.out.println(e.getMessage()); }
-	catch (IdentifierAlreadyDeclaredException e) { System.out.println(e.getMessage()); }
-	catch (InvalidAssignationException e) { System.out.println(e.getMessage()); }
-	catch (TypeClashException e) { System.out.println(e.getMessage()); }
-	catch (SyntaxErrorException e) { System.out.println(e.getMessage()); }
+	catch (IdentifierNotDeclaredException e) { System.out.println(e.getMessage());System.exit(1);}
+	catch (IdentifierAlreadyDeclaredException e) { System.out.println(e.getMessage());System.exit(1);}
+	catch (InvalidAssignationException e) { System.out.println(e.getMessage());System.exit(1);}
+	catch (TypeClashException e) { System.out.println(e.getMessage());System.exit(1);}
 	catch (Exception e) {
 	    System.out.println("oops...");
 	    e.printStackTrace();
 	    System.out.println(e.getMessage());
+	    System.exit(1);
 	}
     }
 }

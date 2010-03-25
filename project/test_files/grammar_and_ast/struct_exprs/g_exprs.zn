@@ -1,9 +1,8 @@
 main:
     Int a = 5 + 6*8
     a = (5+6)*8
-    a = -(0-9)
+    a = (0-9)
     a = 7-7
-    a = -7-7
     a = 6-8+9*7/3
     a = 6*8-9/7+3
 
@@ -11,5 +10,5 @@ main:
     bl = (7<9) AND (6>0)
     bl = True & False | a<9
     bl = True | (False & a==a)
-    bl = ((a+8)/3 <= (8/90)*1) OR a<2 AND (a <==> 7)
+    bl = (a+8)*3 <= 90*2 OR a<2 AND a <=> 7
 endmain

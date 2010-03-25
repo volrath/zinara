@@ -42,9 +42,39 @@ public class GrammarGoodTest extends TestCase {
 	}
     }
 
-    public void testCycle() {
+    public void testDefs() {
 	try {
 	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_defs.zn");
+	}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should not raise anything");
+	}
+    }
+
+    public void testProgram() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_program.zn");
+	}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should not raise anything");
+	}
+    }
+
+    public void testCompositeDecl() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_composite_decl.zn");
+	}
+	catch (Exception e) { // any other exception
+	    e.printStackTrace();
+	    fail("Should not raise anything");
+	}
+    }
+
+    public void testExprs() {
+	try {
+	    Main.testStaticFail(STATIC_TC_DIR + "/struct_exprs/g_exprs.zn");
 	}
 	catch (Exception e) { // any other exception
 	    e.printStackTrace();
