@@ -157,6 +157,32 @@ comportamiento de estos tipos.
   ninguna entrada.
 \end{itemize}
 
+\subsection{Tipos definidos por el usuario}
+\label{sec:tiposusuario}
+\emph{\textbf{Zinara}} permite al usurario declarar sus propios tipos,
+de tal manera que pueda abstraer el problema de la manera mas c\'omoda
+posible. Para permitir esto \emph{\textbf{Zinara}} usa un alias profundo
+para ligar un nombre definido por el usuario al sistema de tipos del
+lenguaje.\\
+\indent Los objetos de un tipo \texttt{A} definido por el usuario son
+compatibles \'unicamente con objetos del mismo tipo \texttt{A}.\\
+\indent Un nuevo tipo se puede crear a partir de cualquier tipo b\'asico
+o compuesto del lenguaje. La sintaxis para declarar un tipo nuevo es la
+que sigue:
+\begin{verbatim}
+newtype <tipo_nuevo> <tipo>
+\end{verbatim}
+\texttt{\textless tipo\_nuevo\textgreater} representa el nombre del tipo
+nuevo. Este nombre debe pertenecer al lenguaje regular
+\texttt{[a-zA-Z][a-zA-Z\_0-9]*}. \texttt{\textless tipo\textgreater} representa un
+tipo, b\'asico o compuesto, ya definido por el lenguaje.\\
+Cuando se operan dos tipos definidos por el usuario, el compilador
+revisa que la operaci\'on sea compatible con los tipos subyacentes.\\
+No se puede hacer newtype sobre un tipo definido por el usuario, solo
+sobre tipos definidos por el lenguaje.
+
+ 
+
 \section{Sintaxis y Sem\'antica}
 \label{sec:synsem}
 
@@ -270,7 +296,7 @@ lenguaje:
 \subsection{Identificadores y par\'ametros formales}
 \label{sec:ident}
 Los identificadores y par\'ametros formales son aquellas frases que
-pertenecen al lenguaje regular \texttt{[a-zA-Z]][a-zA-Z0-9\_']+}. Es
+pertenecen al lenguaje regular \texttt{[a-zA-Z]][a-zA-Z0-9\_']*}. Es
 decir, los identificadores deben comenzar por una letra may\'uscula o
 min\'uscula, a partir de ese punto cualquier combinaci\'on de letras
 may\'usculas y min\'usculas, n\'umeros, \texttt{\_} (piso) y
