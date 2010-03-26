@@ -116,8 +116,9 @@ nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignations
 nonterminal Type type;
 nonterminal ArrayList expr_list;  // arraylist of expressions
-nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
+nonterminal ArrayList  ident_list; // arraylist of lvalues
 nonterminal Expression expr;
+nonterminal LValue l_value;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
 nonterminal ArrayList args_list, args_list2; // arraylist of types
@@ -259,16 +260,28 @@ decl         ::= type:t dasig:a               {:
 					      :}         
 
                | type:t ident_list:ids       {:
-		                              if (ids.size() == 1)
-						  RESULT = new SingleDeclaration(new ConstantType(t, null), (String)(ids.get(0)), null, false);
+                     		              ArrayList lids = new ArrayList();
+					      LValue currentId;
+		                              for (int i = 0; i < ids.size(); i++) {
+						  currentId = ids.get(id);
+						  if (!(currentId instanceof LValueIdentifier)) throw new SyntaxErrorException("Declaracion requiere lista de identificadores, sin idexamiento");
+						  lids.add(currentId.getIdentifier());
+                               		      }
+		                              if (lids.size() == 1)
+						  RESULT = new SingleDeclaration(new ConstantType(t, null), (String)(lids.get(0)), null, false);
 					      else
-						  RESULT = new MultipleDeclaration(ids, new ConstantType(t, null));
+						  RESULT = new MultipleDeclaration(lids, new ConstantType(t, null));
 					      :}
                ;
 
-ident_list ::= ident_list:il COMMA IDENTIFIER:id  {: RESULT = il; il.add(id); :}
-             | IDENTIFIER:id                      {: RESULT = new ArrayList(); RESULT.add(id); :}
-             ;
+ident_list   ::= ident_list:il COMMA l_value:id        {: RESULT = il; il.add(id); :}
+               | l_value:id                            {: RESULT = new ArrayList(); RESULT.add(id); :}
+               ;
+
+l_value      ::= IDENTIFIER:id                                {: SymTable finded = currentTable.containsIdOrDie(id); RESULT = new LValueIdentifier(id, finded); :}
+               | l_value:lv LBRACKET expr:e RBRACKET          {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
+               | l_value:lv LBRACKET IDENTIFIER:id RBRACKET   {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, id, currentTable); :}
+               ;
 
 // Types
 type         ::=
@@ -464,7 +477,7 @@ expr      ::=
             | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
             | TRUE                                     {: RESULT = new TrueExp(); :}
             | FALSE                                    {: RESULT = new FalseExp(); :}
-            | IDENTIFIER:n                             {: SymTable finded = currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n, finded); :}
+          //| IDENTIFIER:n                             {: SymTable finded = currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n, finded); :}
            // tuples and parentitation
             | LPAREN expr:e RPAREN                     {:RESULT = (Expression)e;:}
     /* --- Arithmetic, relational and logical operations --- */
@@ -485,8 +498,10 @@ expr      ::=
             | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
             | LBRACET dict_vals:dv RBRACET /*dictionary*/{:RESULT=new DictExp(dv);:}
             | LPAREN expr_list:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
+    /* ----- LVALUE ----- */
+            | l_value
     /* ----- Composite types operations ----- */
-            | IDENTIFIER LBRACKET expr RBRACKET                 // indexing
+//| IDENTIFIER LBRACKET expr RBRACKET                 // indexing
             | IDENTIFIER LBRACKET expr DOUBLEDOT expr RBRACKET  // slicing
             | expr PLUSPLUS expr                                // plosplos
             | expr LTLT expr                                    // push
