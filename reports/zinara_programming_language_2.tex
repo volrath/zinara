@@ -1088,7 +1088,22 @@ correcto en su analizador lexicogr\'afico y su analizador sint\'actico. A
 parte de esto tambiÃ©n construye el \'arbol sint\'actico abstracto y la
 tabla de s\'imbolos de un programa dado. El chequeo de tipos para tipos
 b\'asico esta completo al igual que la mayor\'ia del chequeo de tipos
-para tipos compuestos.
+para tipos compuestos.\\
+\indent En estos momentos existes varias funcionalidades no
+implementadas en el lenguaje, estas son:
+\begin{itemize}
+\item Chequear que no existas returns dentro del cuerpo del main, ya que
+      no tiene sentido hacer return desde el main.
+\item Implementar, tanto en la gram\'atica como en el \'arbol, el manejo
+      de la instrucci\'on newtype para crear tipos de datos definidos
+      por el usuario.
+\item Los l-values estan implementados en el AST y se construyen
+      correctamente. Pero el chequeo de tipos sobre los mismos no
+      funciona correctamente, aunque est\'a muy maduro y avanzado en su
+      desarrollo.
+\item El manejo del tipo de la lista vac\'ia aun no ha sido pensado ni
+      implementado.
+\end{itemize}
 
 \bibliographystyle{plain}
 \bibliography{bibliography}

@@ -4,7 +4,7 @@ main:
 Bool h = False
 [Int] x
 
-for i in x:
+for i in [1,2,3]:
    Bool h
    print(h)
    Bool i'=True

@@ -137,13 +137,18 @@ public class StaticTypeChecking {
 	throw new InvalidAccessException("Diccionarios todavia no estan implementados");
     }
 
+    //@requires lv != null;
+    //@requires id != null;
+    //@requires ct != null;
     public static LValue checkAndReturnLValue(LValue lv, String id, SymTable ct) 
 	throws InvalidAccessException, TypeClashException, KeyErrorException, IdentifierNotDeclaredException {
 	Type lvType = lv.getType();
+	//@assume lv.getType() != null;
 	if (lvType instanceof ListType) {
 	    SymTable st = ct.getSymTableForId(id);
 	    if (st == null) throw new IdentifierNotDeclaredException(id);
 	    SymValue sv = st.getSymValueForId(id);
+	    //@assume sv != null;
 	    if (sv.getType() instanceof IntType)
 		return new LValueList(lv, new Identifier(id, st));
 	    else
