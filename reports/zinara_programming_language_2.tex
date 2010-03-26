@@ -735,8 +735,57 @@ Bool        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & Bool \
     \frac{t_1: List(T_0)\ t_2: T_0}{t_1 < < t_2: List(T_0)}
   \end{equation}
 
+\item Concatenaci\'on:
+  \begin{equation}
+    \frac{t_1: List(T_0)\ t_2: List(T_0)}{t_1 ++ t_2: List(T_0)}
+  \end{equation}
+
+\item Slicing:
+  \begin{equation}
+    \frac{t_1: List(T_0)\ t_2: Int\ t_3: Int}{t_1[t_2:t_3]: List(T_0)}
+  \end{equation}
 \end{itemize}
 
+\emph{Tuple:}
+\begin{itemize}
+\item Indexamiento:
+  \begin{equation}
+    \frac{t_1: Tuple(T_0, ..., T_N)\ t_2: Int}{t_1[t_2]: T_{t_{2}}}
+  \end{equation}
+
+\item Slicing:
+  \begin{equation}
+    \frac{t_1: Tuple(T_0, ..., T_N)\ t_2: Int\ t_3: Int}{t_1[t_2:t_3]: Tuple(T_{t_{2}}, ..., T_{t_{3}})}
+  \end{equation}
+
+\item Concatenaci\'on:
+  \begin{equation}
+    \frac{t_1: Tuple(T_0, ..., T_N)\ t_2: Tuple(T_{N+1}, ..., T_M)}{t_1 ++ t_2: Tuple(T_0, ..., T_N, T_{N+1}, ..., T_M)}
+  \end{equation}
+\end{itemize}
+
+\emph{Dictionary:}
+El tipo de los diccionarios se definir\'a de dos formas, que son an\'alogas:
+\begin{equation}
+  Dict(K_0:V_0, ..., K_N:V_N)
+\end{equation}
+ó
+\begin{equation}
+  Dict(V_{K_0}, ..., V_{K_N})
+\end{equation}
+
+\begin{itemize}
+\item Indexamiento:
+  \begin{equation}
+    \frac{t_1: Dict(V_{K_0}, ..., V_{K_N})\ t_2: <identificador>}{t_1[t_2]: V_{t_{2}}}
+  \end{equation}
+
+\item Items:
+  \begin{equation}
+    \frac{t_1: Dict(K_0:V_0, ..., K_N:V_N)}{t_1.items(): Tuple(V_0, ..., V_N)}
+  \end{equation}
+
+\end{itemize}
 
 \subsection{Expresiones}
 \label{sec:expr}
