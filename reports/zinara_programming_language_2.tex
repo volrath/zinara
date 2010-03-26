@@ -79,10 +79,15 @@ Los tipos b\'asicos del lenguaje son:
 Los tipos compuestos del lenguaje son:
 
 \begin{itemize}
-\item \textbf{Strings}: Cadena de car\'acteres.
-\item \textbf{Lista}: Listas homogenas.
-\item \textbf{Tupla}: Tuplas heterogeneas de tama\~no fijo.
-\item \textbf{Diccionario}: Diccionarios heterogeneos de tama\~no fijo.
+\item \textbf{String}: Cadena de car\'acteres.
+\item \textbf{List}: Listas de tamaño variable de elementos. Los
+  elementos que conforman la lista deben ser del mísmo tipo.
+\item \textbf{Tuple}: Tuplas de tamaño fijo que contienen elementos de
+  cualquier tipo.
+\item \textbf{Dictionary}: Estructuras que contiene pares de
+  \emph{Clave/Valor}, dónde las claves son identificadores con los
+  cuales se puede indexar a los valores guardados en la
+  estructura. Los diccionarios son de tamaño fijo.
 \end{itemize}
 
 A continuaci\'on hablaremos brevemente de la sem\'antica y
@@ -90,47 +95,67 @@ comportamiento de estos tipos.
 
 \subsubsection{Strings}
 \label{sec:strings}
-Los String no estan implementados combinando el tipo b\'asico Char
-con alg\'un tipo compuesto, si no como un tipo aparte del lenguaje,
-con las operaciones b\'asicas para manipularlos implantadas directamente
-en el lenguaje, y no como librerias a parte.
+\begin{itemize}
+\item Al igual que en \emph{Java}, El tipo \emph{String} esta
+  implementado como un tipo totalmente individual del lenguaje, no
+  estando combinando o ligado de alguna forma al tipo b\'asico
+  \emph{Char}. Las operaciones básicas para manipularlos estarán
+  implementadas en el lenguaje.
+\end{itemize}
 
 \subsubsection{Listas}
 \label{sec:lists}
-Las listas son contenedores homogeneos, mutables, de tama\~no variable que pueden
-contener cualquier tipo b\'asico o compuesto del lenguaje.\\
-\indent El lenguaje implementa operadores para hacer slicing de listas, pop y
-push sobre los elementos finales de una lista y concatenaci\'on de listas. Estas
-operaciones est\'an descritas en detalle en la secci\'on \ref{sec:ops}.\\
-\indent Las listas pueden estar vacias.\\
-\indent La indexaci\'on de las listas se hace a trav\'es de \'indices num\'ericos.
+\begin{itemize}
+\item El tipo \emph{List} representa contenedores homogeneos,
+  mutables, de tama\~no variable que pueden contener cualquier tipo
+  b\'asico o compuesto del lenguaje.
+\item El lenguaje implementa operadores para obtener trozos de listas
+  (\emph{slicing}), pop y push sobre los elementos finales de una
+  lista y concatenaci\'on de listas, entre otros. Estas operaciones
+  est\'an descritas en detalle en la secci\'on \ref{sec:ops}.
+\item Las listas pueden estar vacias.
+\item La indexaci\'on de las listas se hace a trav\'es de \'indices
+  num\'ericos.
+\end{itemize}
 
 \subsubsection{Tuplas}
 \label{sec:tuples}
-Las tuplas son contenedores heterogeneos, mutables y de tama\~no fijo
-que pueden contener cualquier tipo compuesto o b\'asico del lenguaje.\\
-\indent No pueden ser accesadas con \'indices no conocidos a tiempo de compilacion debido a que
-el chequeo est\'atico de tipos no lo permite.\\
-\indent Deben tener, por lo menos, dos elementos.\\
-\indent La indexaci\'on de las tuplas se hace a trav\'es de \'indices num\'ericos.
+\begin{itemize}
+\item El tipo \emph{Tuple} representa contenedores heterogeneos,
+  mutables y de tama\~no fijo que pueden contener cualquier tipo
+  b\'asico o compuesto del lenguaje.
+\item Es necesario que cualquier tipo de indexamiento sobre una tupla
+  se realice con indices que puedan ser conocidos a tiempo de
+  compilación, para poder realizar el chequeo estatico de tipos
+  correspondiente.
+\item Deben tener, por lo menos, dos elementos.
+\item La indexaci\'on de las tuplas se hace a trav\'es de \'indices
+  num\'ericos, dónde el número del indice hace referencia al elemento
+  guardado en dicha posición.
+\end{itemize}
 
 \subsubsection{Diccionarios}
 \label{sec:dics}
-Los diccionarios son contenedores heterogeneos, mutables y de tama\~no
-fijo que pueden contener cualquier tipo b\'asico o compuesto del lenguaje.\\
-\indent Para recuperar un valor de un diccionario (indexarlo) se
-utilizan \'indices alfanum\'ericos que pertenecen al lenguaje regular de 
-los identificadores del lenguaje tal como se describen en la secci\'on \ref{sec:ident}.\\
-\indent Durante la declaraci\'on de un diccionario se definen los nombres de las entradas
-y un tipo correspondiente a cada entrada; cada nombre de entrada puede tener un valor
-asociado que se puede asignar despu\'es de declarado el diccionario, ese
-valor debe ser del tipo asociado al nombre de la entrada. Los nombres
-de las entradas deben pertenecer al lenguaje regular de los
-identificadores del lenguaje (Secci\'on \ref{sec:ident}).\\
-\indent No pueden ser consultados con \'indices no conocidos a tiempo de
-compilaci\'on.\\
-\indent Un diccionario no puede ser vacio, es decir, no puede no
-tener ninguna entrada.\\
+\begin{itemize}
+\item El tipo \emph{Dictionary} representa contenedores heterogeneos,
+  mutables y de tama\~no fijo que pueden contener cualquier tipo
+  b\'asico o compuesto del lenguaje.
+\item Para recuperar un valor de un diccionario (indexarlo) se
+  utilizan \'indices alfanum\'ericos que pertenecen al lenguaje
+  regular de los identificadores del lenguaje tal como se describen en
+  la secci\'on \ref{sec:ident}.
+\item Durante la declaraci\'on de un diccionario se definen los
+  nombres de las entradas y el tipo correspondiente a cada una de
+  ellas; cada nombre de entrada puede tener un valor asociado que se
+  puede asignar despu\'es de declarado el diccionario, ese valor debe
+  ser del tipo asociado al nombre de la entrada. Los nombres de las
+  entradas deben pertenecer al lenguaje regular de los identificadores
+  del lenguaje (Secci\'on \ref{sec:ident}).
+\item No pueden ser consultados con \'indices no conocidos a tiempo de
+  compilaci\'on.
+\item Un diccionario no puede ser vacio, es decir, no puede no tener
+  ninguna entrada.
+\end{itemize}
 
 \section{Sintaxis y Sem\'antica}
 \label{sec:synsem}
@@ -139,96 +164,117 @@ Como se menciona anteriormente, \emph{\textbf{Zinara}} trata de ser un
 lenguaje que sea facilmente le\'ible, por lo tanto su sintaxis est\'a
 pensada para ser simple y minimalista, buscando tener la menor
 cantidad de adornos posibles, a diferencia de los lenguajes de
-programaci\'on tradicionales\footnote{C/C++, Java, Pascal, entre otros}
-que cuentan con una gran cantidad de signos de puntuaci\'on como
-delimitadores de instrucciones o declaraciones.\\
+programaci\'on tradicionales\footnote{C/C++, Java, Pascal, entre
+  otros} que cuentan con una gran cantidad de signos de puntuaci\'on
+como delimitadores de instrucciones o declaraciones.\\
 
 Para conseguir este objetivo se tomaron las siguientes decisiones en
 cuanto a la sintaxis del lenguaje:
 
 \begin{itemize}
 \item Las instrucciones de un programa estar\'an delimitadas por un
-  salto de l\'inea, sin ning\'un tipo de signo de puntuaci\'on divisorio.
+  salto de l\'inea, sin ning\'un tipo de signo de puntuaci\'on
+  divisorio.
 
-\item Las estructuras de control (que ser\'an detalladas m\'as adelante)
-  estar\'an delimitadas \'unicamente por una palabra clave que representa
-  dicha estructura, condiciones extras si son requeridas, y la palabra
-  clave de finalizaci\'on de estructura de control: ``end''.
+\item Las estructuras de control (que ser\'an detalladas m\'as
+  adelante) estar\'an delimitadas \'unicamente por una palabra clave
+  que representa dicha estructura, condiciones extras si son
+  requeridas, y la palabra clave de finalizaci\'on de estructura de
+  control: ``end''.
 
-\item Cuando sea posible y tenga sentido hacerlo, se dar\'a preferencia
-  a usar palabras del idioma ingl\'es como palabras clave en donde los
-  lenguajes de programaci\'on tradicionales utilizan signos de
-  puntuaci\'on.
+\item Cuando sea posible y tenga sentido hacerlo, se dar\'a
+  preferencia a usar palabras del idioma ingl\'es como palabras clave
+  en donde los lenguajes de programaci\'on tradicionales utilizan
+  signos de puntuaci\'on.
 \end{itemize}
 
-A continuaci\'on se describe como estan dise\~nadas las partes principales
-de la sintaxis del lenguaje. Para facilitar la explicaci\'on se
-establecen los siguientes lineamientos para describir la sintaxis del
-lenguaje. Note que algunas de las definiciones que se dan a
-continuaci\'on no son descripciones precisas de elementos del lenguaje,
-si no herramientas que usaremos para definir la sintaxis del lenguaje:
+A continuaci\'on se describe como estan dise\~nadas las partes
+principales de la sintaxis del lenguaje. Para facilitar la
+explicaci\'on se establecen los siguientes lineamientos para
+describirla. Note que algunas de las definiciones que se dan a
+continuaci\'on no son descripciones precisas de elementos del
+lenguaje, si no herramientas que usaremos para definir la sintaxis del
+lenguaje:
 
 \begin{itemize}
- \item Una \texttt{secuencia de car\'acteres v\'alida} es aquella que pertenece al
-       lenguaje regular \texttt{[a-zA-Z0-9():\_\textbackslash n]+}.
-       
- \item Un \texttt{elemento} es una \texttt{secuencia de car\'acteres v\'alida} encerrada
-       entre corchetes, entre \texttt{<} y \texttt{>}, entre numerales o
-       no encerrada.
-       
- \item Toda \texttt{secuencia de car\'acteres v\'alida} se tomar\'a como literal a menos
-       que est\'e encerrada entre \texttt{<} y \texttt{>} o entre corchetes.
 
- \item Todo car\'acter que este precedido por un \textbackslash se
-       tomar\'a como literal, a\'un cuando no pretenezca al lenguaje de
-       las \texttt{secuencias de car\'acteres v\'alidas}.
+\item Una \texttt{secuencia de car\'acteres v\'alida} es aquella que
+  pertenece al lenguaje regular \texttt{[a-zA-Z0-9():\_\textbackslash
+    n]+}.
        
- \item Uno o m\'as \texttt{elementos} pueden estar encerrados entre corchetes,
-       esto querr\'a decir que ese grupo de \texttt{elementos}, en ese order, es
-       opcional.
+\item Un \texttt{elemento} es una \texttt{secuencia de car\'acteres
+    v\'alida} encerrada entre corchetes, entre \texttt{<} y
+  \texttt{>}, entre numerales o no encerrada.
        
- \item Si uno o m\'as \texttt{elementos} est\'an encerrados entre numerales,
-       quiere decir que esos \texttt{elementos} deben ser considerados un solo 
-       \texttt{elemento}.
+\item Toda \texttt{secuencia de car\'acteres v\'alida} se tomar\'a
+  como literal a menos que est\'e encerrada entre \texttt{<} y
+  \texttt{>} o entre corchetes.
+
+\item Todo car\'acter que este precedido por un \textbackslash se
+  tomar\'a como literal, a\'un cuando no pretenezca al lenguaje de las
+  \texttt{secuencias de car\'acteres v\'alidas}.
        
- \item Si dos \texttt{elementos} est\'an separados por \texttt{|} indica que uno y
-       solo uno de esos \texttt{elementos} puede aparecer en ese punto.
+\item Uno o m\'as \texttt{elementos} pueden estar encerrados entre
+  corchetes, esto querr\'a decir que ese grupo de \texttt{elementos},
+  en ese order, es opcional en el contexto en el que se encuentra
+  especificado.
        
- \item \texttt{<tipo>} representa un tipo cualquiera del lenguaje,
-       explicados anteriormente en la secci\'on \ref{sec:tipos}.
+% CHECK THIS!!
+\item Si uno o m\'as \texttt{elementos} est\'an encerrados entre
+  numerales, quiere decir que esos \texttt{elementos} deben ser
+  considerados un solo \texttt{elemento}.
        
- \item \texttt{<identificador>}, \texttt{<id1>}, \texttt{<id2>}...
-       \texttt{<idN>} representan identificadores del lenguaje. El
-       lenguaje de los identificadores est\'a explicado en la secci\'on \ref{sec:ident}
+\item Si dos \texttt{elementos} est\'an separados por \texttt{|}
+  indica que uno y solo uno de esos \texttt{elementos} puede aparecer
+  en ese contexto. El \texttt{|} actúa como un \emph{OR} lógico.
        
- \item \texttt{<expresion>}, \texttt{<expr1>}, \texttt{<expr2>}...
-       \texttt{exprN} representan expresiones cualquiera del lenguaje, como
-       son explicadas en la secci\'on \ref{sec:expr}.
+\item \texttt{<tipo>} representa un tipo cualquiera del lenguaje,
+  explicados anteriormente en la secci\'on \ref{sec:tipos}.
        
- \item \texttt{<code\_block>}, \texttt{<code\_block1>}, \texttt{<code\_block2>}...
-       \texttt{code\_blockN} representan bloques de c\'odigo del lenguaje,
-       estos bloques de c\'odigo se contruyen secuenciado intrucciones y
-       estructuras de control del lenguaje. La secuenciaci\'on esta 
-       explicada en la secci\'on \ref{sec:instr}.
+\item \texttt{<identificador>}, \texttt{<id1>}, \texttt{<id2>}...
+  \texttt{<idN>} representan identificadores del lenguaje. El lenguaje
+  de los identificadores est\'a explicado en la secci\'on
+  \ref{sec:ident}
        
- \item \texttt{<lista\_de\_argumentos>}, \texttt{<arg1>}, \texttt{<arg2>}...
-       \texttt{argN} representan par\'ametros formales para las definiciones de
-       funciones del lenguaje. El lenguaje de los par\'ametros formales
-       est\'a explicado en la secci\'on \ref{sec:ident}, las funciones
-       est\'an descritas con detalle en la secci\'on \ref{sec:func}.
+\item \texttt{<expresion>}, \texttt{<expr1>}, \texttt{<expr2>}...
+  \texttt{exprN} representan expresiones cualquiera del lenguaje, como
+  son explicadas en la secci\'on \ref{sec:expr}.
+
+\item Note que los números representan índices sobre las listas
+  explicadas en los dos puntos anteriores. Si existen dos listas que
+  tiene índices iguales al comienzo y al final, asuma que ambas listas
+  tienen la mísma cantidad de elementos.
        
- \item La cantidad de espacios que deben separar a dos palabras clave es
-       arbitraria, pero siempre mayor a cero. Por comodidad, en este
-       documento se usa un solo espacio.
+\item \texttt{<code\_block>}, \texttt{<code\_block1>},
+  \texttt{<code\_block2>}...  \texttt{code\_blockN} representan
+  bloques de c\'odigo del lenguaje, estos bloques de c\'odigo se
+  contruyen secuenciado intrucciones y estructuras de control del
+  lenguaje. La secuenciaci\'on esta explicada en la secci\'on
+  \ref{sec:instr}.
+       
+\item \texttt{<lista\_de\_argumentos>}, \texttt{<arg1>},
+  \texttt{<arg2>}...  \texttt{argN} representan par\'ametros formales
+  para las definiciones de funciones del lenguaje. El lenguaje de los
+  par\'ametros formales est\'a explicado en la secci\'on
+  \ref{sec:ident}, las funciones est\'an descritas con detalle en la
+  secci\'on \ref{sec:func}. Al igual que con los
+  \texttt{identificadores} y \texttt{expresiones}, note la posibilidad
+  de que la lista de argumentos lleve índices para hacer referencia a
+  su tamaño de forma abstracta.
+       
+\item La cantidad de espacios que deben separar a dos palabras clave
+  es arbitraria, pero siempre mayor a cero. Por comodidad, en este
+  documento se usa un solo espacio.
 \end{itemize}
 
 \subsection{Identificadores y par\'ametros formales}
 \label{sec:ident}
-Los identificadores y par\'ametros formales son aquellas frases que pertenecen al lenguaje
-regular \texttt{[a-zA-Z]][a-zA-Z0-9\_']+}. Es decir, los identificadores
-deben comenzar por una letra may\'uscula o min\'uscula, a partir de ese punto cualquier
-combinaci\'on de letras may\'usculas y min\'usculas, n\'umeros,
-\texttt{\_} (piso) y \texttt{'} (comillas simples) es v\'alida. 
+Los identificadores y par\'ametros formales son aquellas frases que
+pertenecen al lenguaje regular \texttt{[a-zA-Z]][a-zA-Z0-9\_']+}. Es
+decir, los identificadores deben comenzar por una letra may\'uscula o
+min\'uscula, a partir de ese punto cualquier combinaci\'on de letras
+may\'usculas y min\'usculas, n\'umeros, \texttt{\_} (piso) y
+\texttt{'} (comillas simples) es v\'alida.
 
 \subsection{Declaraciones}
 \label{sec:decl}
@@ -247,11 +293,12 @@ Las declaraciones se pueden realizar de dos formas:\\
 
 La palabra clave \texttt{var} denota si el identificador, o los
 indentificadores, que estan siendo declarados se comportar\'an como
-variables en el lenguaje de programaci\'on. Si \texttt{var} se omite, el
-identificador (o identificadores) ser\'a declarado como constante, y una
-vez que le sea asignado un valor de una expresi\'on, \'este ser\'a
-inmutable. Las palabras reservadas que pueden ir en el lugar de
+variables en el lenguaje de programaci\'on. Si \texttt{var} se omite,
+el identificador (o identificadores) ser\'a declarado como constante,
+y una vez que le sea asignado un valor de una expresi\'on, \'este
+ser\'a inmutable. Las palabras reservadas que pueden ir en el lugar de
 \textless tipo\textgreater son, para tipos b\'asicos y los String:
+
 \begin{itemize}
 \item Int
 \item Float
@@ -265,35 +312,41 @@ inmutable. Las palabras reservadas que pueden ir en el lugar de
 A continuaci\'on describimos la manera en que se especifican los tipos
 de los tipos compuestos durante su declaraci\'on. La sintaxis de la
 declaraci\'on es exactamente igual a la anterior, lo que se especifica
-aqu\'i es la forma en que se indica el tipo al lenguaje.\\
+aqu\'i es la forma en que se indica el tipo compuesto a usar.\\
 
-\textbf{Listas:} se declara el tipo lista encerrando entre corchetes el
-tipo de la lista, as\'i, una lista de Int seria \texttt{[Int]}, una lista de
-listas de Strings ser\'ia \texttt{[[String]]}.\\
+\textbf{List:}\\
+Se declara encerrando entre corchetes el tipo de la
+lista. De esta forma una lista de Int seria \texttt{[Int]}, una lista
+de listas de Strings ser\'ia \texttt{[[String]]}.\\
+
 La sintaxis es:
 \begin{verbatim}
 \[<tipo>\]
 \end{verbatim}
 
-\textbf{Tuplas:} para declarar una tupla se cierra entre par\'entesis
-una lista de tipos separados por comas, uno por cada elemento que la
-tupla vaya a contener; el orden es importante. Una tupla de tres
-elementos donde el primero es una lista de Int, el segundo un Bool y el
-tercero una tupla de dos Int se escribir\'ia: \texttt{([Int],Bool,(Int,Int))}.\\
+\textbf{Tuple:}\\
+Para declarar una tupla se cierra entre par\'entesis una lista de
+tipos separados por comas, uno por cada elemento que la tupla vaya a
+contener; el orden es importante. Una tupla de tres elementos donde el
+primero es una lista de Int, el segundo un Bool y el tercero una tupla
+de dos Int se escribir\'ia de la siguiente forma:
+\texttt{([Int],Bool,(Int,Int))}.\\
+
 La sintaxis es:
 \begin{verbatim}
 (<tipo1>,<tipo2>,...,<tipoN>)
 \end{verbatim}
 
+\textbf{Diccionarios:}\\
+Para los diccionarios se deben declarar los nombres de las entradas y
+los tipos asociados. Una entrada de diccionario se declara escribiendo
+el nombre de la entrada, luego dos puntos, y luego el tipo
+asociado. Un diccionario se declara encerrando entre llaves una lista
+de declaraciones de entradas de diccionario separadas por
+comas. As\'i, un diccionario con una entrada \texttt{carro} del tipo
+String y otra entrada \texttt{color} del tipo Int se declarar\'ia
+\texttt{\{carro:String, color:Int\}}\\
 
-\textbf{Diccionarios:} Para los diccionarios se deben declarar los
-nombres de las entradas y los tipos asociados. Una entrada de
-diccionario se declara escribiendo el nombre de la entrada, luego dos
-puntos, y luego el tipo asociado. Un diccionario se declara encerrando
-entre llaves una lista de declaraciones de entradas de diccionario
-separadas por comas. As\'i, un diccionario con una entrada
-\texttt{carro} del tipo String y otra entrada \texttt{color} del tipo
-Int se declarar\'ia \texttt{\{carro:String, color:Int\}}\\
 La sintaxis es:
 \begin{verbatim}
 {<id1>:<tipo1> , <id2>:<tipo2> ,..., <idN>:<tipoN>}
