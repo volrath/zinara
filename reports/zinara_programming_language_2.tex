@@ -621,7 +621,10 @@ Todos los operadores asocian a la izquierda. Sus precedencias son:
 \item \texttt{\^}
 \item \texttt{*} ,  \texttt{/}, \texttt{\%}
 \item \texttt{+}, \texttt{-} (Binario)
+\item \texttt{Pop},\texttt{Push},\texttt{Slicing},\texttt{Indexaci\'on} 
 \end{itemize}
+Nota: Todas las operaciones sobre tipos compuestos tienen la minima precedencia.
+
 
 \subsubsection{Compatiblidad de tipos}
 \label{subsec:comp-tipos}
@@ -1131,6 +1134,8 @@ $> ./allTests.sh
 
 Los archivos de prueba se encuentran en la carpeta
 \texttt{Zinara-Barreto-Jaber/test\_files/}.
+Para que el script pueda correr adecuadamente, se deben tener las clases
+de JUnit en el classpath. 
 
 \subsection{ESC/Java2}
 \label{sec:escjava}
