@@ -121,14 +121,16 @@ public class StaticTypeChecking {
     public static LValue checkAndReturnLValue(LValue lv, Expression expr)
 	throws InvalidAccessException, TypeClashException, KeyErrorException {
 	Type lvType = lv.getType();
-	if (!(lvType instanceof ListType) && !(lvType instanceof TupleType))
+	ListType emptyList = new ListType();
+	TupleType emptyTuple = new TupleType();
+	if (!(lvType.equals(emptyList)) && !(lvType.equals(emptyTuple)))
 	    throw new InvalidAccessException("La expresion " + lv + " no es del tipo lista o tupla y no puede ser indexada con una expresion. ");
-	if (lvType instanceof ListType)
+	if (lvType.equals(emptyList))
 	    if (!(expr.getType() instanceof IntType))
-		throw new InvalidAccessException("La expresion " + lv + " es del tipo List y la expresion " + expr + " debe ser del tipo Int para poder realizar el indexamiento");
+		throw new InvalidAccessException("La expresion " + lv + " es del tipo " + lvType + " y la expresion " + expr + " debe ser del tipo Int para poder realizar el indexamiento");
 	    else
 		return new LValueList(lv, expr);
-	if (lvType instanceof TupleType)
+	if (lvType.equals(emptyTuple))
 	    if (!(expr instanceof IntegerExp))
 		throw new InvalidAccessException("La expresion " + lv + " es del tipo Tuple y debe ser indexada unicamente por enteros literales");
 	    else
