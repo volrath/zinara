@@ -942,6 +942,63 @@ script allTests.sh que se encuentra en la carpeta \texttt{project}.
 
 \subsection{ESC/Java2}
 \label{sec:escjava}
+A continuaci\'on presentamos los resultados de la herramienta
+ESC/Java2. Los resultados se muestran para los archivos mas importantes
+y complejos del analizador sint\'actico.\\
+
+\subsubsection{Pruebas antes de especificar los programas}
+\begin{tabular}{|c||cc|}
+\hline
+Archivo                 & Warnings & Cautions  \\
+\hline \hline
+SymTable.java           & 30  & 33 \\
+SymValue.java           & 0   & 2  \\
+Operators.java          & 5   & 21 \\
+StaticTypeChecking.java & 9   & 30 \\
+	\hline
+\end{tabular}\\
+
+\subsubsection{Pruebas despu\'es de especificar los programas}
+\begin{tabular}{|c||cc|}
+\hline
+Archivo                 & Warnings & Cautions  \\
+\hline \hline
+SymTable.java           & 5   & 33 \\
+SymValue.java           & 0   & 2  \\
+Operators.java          & 2   & 21 \\
+StaticTypeChecking.java & 1   & 30 \\
+	\hline
+\end{tabular}\\
+
+\subsubsection{Diferencias entre el n\'umero de errores antes de especificar
+   los programas y despu\'es de especificar los programas}
+\begin{tabular}{|c||cc|}
+\hline
+Archivo                 & Warnings & Cautions  \\
+\hline \hline
+SymTable.java           & -25 & 0 \\
+SymValue.java           & 0   & 0 \\
+Operators.java          & -3  & 0 \\
+StaticTypeChecking.java & -8  & 0 \\
+	\hline
+\end{tabular}\\
+
+Podemos apreciar un cosiderable n\'umero de posibles errores que
+detectados por la herramienta, adem\'as de una considerable 
+reducci\'on en el n\'umero de advertencias despu\'es de especificar los
+programas.\\
+\indent Sin embargo, no conseguimos una forma de hacer que la
+herramienta revisara los archivos de los que depend\'ia el archivo
+analizado, por lo gran parte de los warnings lanzados correspond\'ian a
+posibles errores de referencias nulas que no pudieron ser
+especificados sin usar \texttt{assert} ya que no fuimos
+capaces, y a\'un no sabemos si es de hecho posible, que la herramienta
+revisara especificaci\'ones de archivos de clases importadas.\\
+\indent Tampoco fue \'util la herramienta a la hora de encontrar errores
+que de hecho sucedieran, ninguno de los posibles errores detectados eran
+amenazas reales para la estabilidad del programa. Sin embargo, opinamos
+que esta condici\'on es inherente a la naturaleza y alcanze pr\'actico
+de este tipo de herramientas. 
 
 
 \chapter{Estado actual del lenguaje}
