@@ -12,6 +12,7 @@ import zinara.ast.type.*;
 import zinara.exceptions.InvalidDictionaryException;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
+import zinara.exceptions.SyntaxErrorException;
 import zinara.symtable.*;
 import zinara.semantic.Operators;
 import zinara.semantic.StaticTypeChecking;
@@ -116,9 +117,9 @@ nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignations
 nonterminal Type type;
 nonterminal ArrayList expr_list;  // arraylist of expressions
-nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
-nonterminal Expression expr,rela_expr,othe_expr;
-nonterminal Integer arithmetic_op, relational_op, logical_op;
+nonterminal ArrayList  ident_list, decl_ident_list; // arraylist of lvalues
+nonterminal Expression expr, relational_expr,other_expr;
+nonterminal LValue l_value;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
 nonterminal ArrayList args_list, args_list2; // arraylist of types
 nonterminal Type arg;
@@ -164,7 +165,6 @@ main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {
 /*
       DECLARATIONS
  */
-
 /* --- Basic structure --- */
 decl_list    ::= decl_list:ds const_decl:d SEMI  {: RESULT = ds; RESULT.add(d);:}
                | decl_list:ds def_decl:d SEMI    {: RESULT = ds; RESULT.add(d);:}
@@ -251,12 +251,12 @@ const_decl   ::= VAR decl:d                   {:
 
 decl         ::= type:t dasig:a               {:
 					      if (a.isSingle())
-					          RESULT = new SingleDeclaration(new ConstantType(t, ((SingleAssignation)a).getExpression()), ((SingleAssignation)a).getId(), ((SingleAssignation)a).getExpression(), false);
+					          RESULT = new SingleDeclaration(new ConstantType(t, ((SingleAssignation)a).getExpression()), ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false);
 					      else
 					          RESULT = new MultipleDeclaration(((MultipleAssignation)a),t);
-					      :}         
+					      :}
 
-               | type:t ident_list:ids       {:
+               | type:t decl_ident_list:ids       {:
 		                              if (ids.size() == 1)
 						  RESULT = new SingleDeclaration(new ConstantType(t, null), (String)(ids.get(0)), null, false);
 					      else
@@ -264,9 +264,19 @@ decl         ::= type:t dasig:a               {:
 					      :}
                ;
 
-ident_list ::= ident_list:il COMMA IDENTIFIER:id  {: RESULT = il; il.add(id); :}
-             | IDENTIFIER:id                      {: RESULT = new ArrayList(); RESULT.add(id); :}
-             ;
+decl_ident_list ::= decl_ident_list:il COMMA IDENTIFIER:id   {: RESULT = il; il.add(id); :}
+                  | IDENTIFIER:id                            {: RESULT = new ArrayList(); RESULT.add(id); :}
+                  ;
+
+ident_list   ::= ident_list:il COMMA l_value:id        {: RESULT = il; il.add(id); :}
+               | l_value:id                            {: RESULT = new ArrayList(); RESULT.add(id); :}
+               ;
+
+l_value      ::= IDENTIFIER:id                                                      {: SymTable finded = currentTable.getSymTableForIdOrDie(id); RESULT = new Identifier(id, finded); :}
+               | l_value:lv LBRACKET other_expr:e RBRACKET                          {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
+               | l_value:lv LBRACKET other_expr:e DOUBLEDOT other_expr RBRACKET     {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
+//               | l_value:lv LBRACKET IDENTIFIER:id RBRACKET                         {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, id, currentTable); :}
+               ;
 
 // Types
 type         ::=
@@ -437,7 +447,7 @@ cycle_on    ::= cycle_on:co
               ;
 
 // Asignation
-dasig     ::= ident_list:il ASIG expr_list:el {: RESULT = new MultipleAssignation(il, el); :};
+dasig     ::= decl_ident_list:il ASIG expr_list:el {: RESULT = new MultipleAssignation(il, el); :};
 asig      ::= ident_list:il ASIG expr_list:el {: RESULT = currentTable.checkMultipleAssignations(il, el); :};
 // No, it doesn't generate valid asignations only,
 // that's checked while building the AST.
@@ -464,40 +474,40 @@ expr  ::= expr:e1 AND expr:e2       {: RESULT = new BinaryExp(sym.AND, e1, e2); 
         | expr:e1 XOR expr:e2       {: RESULT = new BinaryExp(sym.XOR, e1, e2); :}
         | LPAREN expr:e RPAREN      {: RESULT = (Expression)e; :}
         | NOEQ:o expr:e             {: RESULT = new UnaryExp(sym.NOEQ, e); :}
-        | rela_expr:re              {: RESULT = re; :}
+        | relational_expr:re              {: RESULT = re; :}
         ;
 
-rela_expr  ::= rela_expr:e1 LT rela_expr:e2       {: RESULT = new BinaryExp(sym.LT,  e1, e2); :}
-             | rela_expr:e1 GT rela_expr:e2       {: RESULT = new BinaryExp(sym.GT,  e1, e2); :}
-             | rela_expr:e1 LTE rela_expr:e2      {: RESULT = new BinaryExp(sym.LTE, e1, e2); :}
-             | rela_expr:e1 GTE rela_expr:e2      {: RESULT = new BinaryExp(sym.GTE, e1, e2); :}
-             | rela_expr:e1 SHEQ rela_expr:e2     {: RESULT = new BinaryExp(sym.SHEQ, e1, e2); :}
-             | rela_expr:e1 DEEQ rela_expr:e2     {: RESULT = new BinaryExp(sym.DEEQ, e1, e2); :}
-             | rela_expr:e1 NOEQ rela_expr:e2     {: RESULT = new BinaryExp(sym.NOEQ, e1, e2); :}
-             | LPAREN rela_expr:e RPAREN          {: RESULT = (Expression)e;:}
-             | othe_expr:oe                       {: RESULT = oe;:}
+relational_expr  ::= relational_expr:e1 LT relational_expr:e2       {: RESULT = new BinaryExp(sym.LT,  e1, e2); :}
+             | relational_expr:e1 GT relational_expr:e2       {: RESULT = new BinaryExp(sym.GT,  e1, e2); :}
+             | relational_expr:e1 LTE relational_expr:e2      {: RESULT = new BinaryExp(sym.LTE, e1, e2); :}
+             | relational_expr:e1 GTE relational_expr:e2      {: RESULT = new BinaryExp(sym.GTE, e1, e2); :}
+             | relational_expr:e1 SHEQ relational_expr:e2     {: RESULT = new BinaryExp(sym.SHEQ, e1, e2); :}
+             | relational_expr:e1 DEEQ relational_expr:e2     {: RESULT = new BinaryExp(sym.DEEQ, e1, e2); :}
+             | relational_expr:e1 NOEQ relational_expr:e2     {: RESULT = new BinaryExp(sym.NOEQ, e1, e2); :}
+             | LPAREN relational_expr:e RPAREN          {: RESULT = (Expression)e;:}
+             | other_expr:oe                       {: RESULT = oe;:}
              ;
 
-othe_expr   ::=
+other_expr   ::=
     /* ----- Basic types ----- */
-              othe_expr:e1 PLUS othe_expr:e2            {: RESULT = new BinaryExp(sym.PLUS, e1, e2); :}
-            | othe_expr:e1 MINUS othe_expr:e2           {: RESULT = new BinaryExp(sym.MINUS, e1, e2); :}
-            | othe_expr:e1 TIMES othe_expr:e2           {: RESULT = new BinaryExp(sym.TIMES, e1, e2); :}
-            | othe_expr:e1 DIVIDE othe_expr:e2          {: RESULT = new BinaryExp(sym.DIVIDE, e1, e2); :}
-            | othe_expr:e1 MOD othe_expr:e2             {: RESULT = new BinaryExp(sym.MOD, e1, e2); :}
-            | othe_expr:e1 POW othe_expr:e2             {: RESULT = new BinaryExp(sym.POW, e1, e2); :}
-            | CHAR_V:e                                  {: RESULT = new CharExp(e.charValue()); :}
-            | INTEGER_V:e                               {: RESULT = new IntegerExp(e.intValue()); :}
-            | FLOAT_V:e                                 {: RESULT = new FloatExp(e.floatValue()); :}
-            | TRUE                                      {: RESULT = new TrueExp(); :}
-            | FALSE                                     {: RESULT = new FalseExp(); :}
-            | IDENTIFIER:n                              {: SymTable finded = currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n, finded); :}
+              other_expr:e1 PLUS other_expr:e2            {: RESULT = new BinaryExp(sym.PLUS, e1, e2); :}
+            | other_expr:e1 MINUS other_expr:e2           {: RESULT = new BinaryExp(sym.MINUS, e1, e2); :}
+            | other_expr:e1 TIMES other_expr:e2           {: RESULT = new BinaryExp(sym.TIMES, e1, e2); :}
+            | other_expr:e1 DIVIDE other_expr:e2          {: RESULT = new BinaryExp(sym.DIVIDE, e1, e2); :}
+            | other_expr:e1 MOD other_expr:e2             {: RESULT = new BinaryExp(sym.MOD, e1, e2); :}
+            | other_expr:e1 POW other_expr:e2             {: RESULT = new BinaryExp(sym.POW, e1, e2); :}
+            | CHAR_V:e                                 {: RESULT = new CharExp(e.charValue()); :}
+            | INTEGER_V:e                              {: RESULT = new IntegerExp(e.intValue()); :}
+            | FLOAT_V:e                                {: RESULT = new FloatExp(e.floatValue()); :}
+            | TRUE                                     {: RESULT = new TrueExp(); :}
+            | FALSE                                    {: RESULT = new FalseExp(); :}
+          //| IDENTIFIER:n                             {: SymTable finded = currentTable.containsIdOrDie(n); RESULT = new IdentifierExp(n, finded); :}
            // parentitation
-            | LPAREN othe_expr:e RPAREN                 {: RESULT = (Expression)e; :}
+            | LPAREN other_expr:e RPAREN                 {: RESULT = (Expression)e; :}
     /* --- Arithmetic, relational and logical operations --- */
 //	    | expr:e1 relational_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
 //	    | expr:e1 logical_op:o expr:e2	       {: RESULT = new BinaryExp(o.intValue(), e1, e2); :}
-            | MINUS:o othe_expr:e        		{: RESULT = new UnaryExp(sym.UMINUS, e); :}
+            | MINUS:o other_expr:e        		{: RESULT = new UnaryExp(sym.UMINUS, e); :}
 
     /* ----- Functions calls ----- */
             | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallExp(n, el, currentTable); :}
@@ -510,12 +520,14 @@ othe_expr   ::=
             | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
             | LBRACET dict_vals:dv RBRACET /*dictionary*/{:RESULT=new DictExp(dv);:}
             | LPAREN expr_list:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
+    /* ----- LVALUE ----- */
+            | l_value:lv                                 {: RESULT = lv; :}
     /* ----- Composite types operations ----- */
-            | IDENTIFIER LBRACKET expr RBRACKET                 // indexing
-            | IDENTIFIER LBRACKET expr DOUBLEDOT expr RBRACKET  // slicing
-            | othe_expr PLUSPLUS othe_expr                                // plosplos
-            | othe_expr LTLT othe_expr                                    // push
-            | othe_expr GTGT othe_expr                                    // pop
+//| IDENTIFIER LBRACKET expr RBRACKET                 // indexing
+//| IDENTIFIER LBRACKET other_expr DOUBLEDOT other_expr RBRACKET  // slicing
+            | other_expr PLUSPLUS other_expr                                // plosplos
+            | other_expr LTLT other_expr                                    // push
+            | other_expr GTGT other_expr                                    // pop
 
     /* ----- Other expressions ----- */
             | READ                                     {: RESULT = new ReadExp(); :}
@@ -531,43 +543,3 @@ dict_vals       ::= dict_vals:dv COMMA dict_val:v      {:
                   ;
 dict_val        ::= IDENTIFIER:id DOUBLEDOT expr:e   {: RESULT = new ArrayList(2); RESULT.add(id); RESULT.add(e);:}
                   ;
-
-arithmetic_op ::= PLUS:o                            {: RESULT = new Integer(sym.PLUS); :}
-                | MINUS:o                           {: RESULT = new Integer(sym.MINUS); :}
-                | TIMES:o                           {: RESULT = new Integer(sym.TIMES); :}
-                | DIVIDE:o                          {: RESULT = new Integer(sym.DIVIDE); :}
-                | MOD:o                             {: RESULT = new Integer(sym.MOD); :}
-                | POW:o                             {: RESULT = new Integer(sym.POW); :}
-                ;
-
-relational_op ::= LT:o                              {: RESULT = new Integer(sym.LT); :}
-                | GT:o                              {: RESULT = new Integer(sym.GT); :}
-                | LTE:o                             {: RESULT = new Integer(sym.LTE); :}
-                | GTE:o                             {: RESULT = new Integer(sym.GTE); :}
-                | SHEQ:o                            {: RESULT = new Integer(sym.SHEQ); :}
-                | DEEQ:o                            {: RESULT = new Integer(sym.DEEQ); :}
-                | NOEQ:o                            {: RESULT = new Integer(sym.NOEQ); :}
-                ;
-
-logical_op    ::= AND:o                             {: RESULT = new Integer(sym.AND); :}
-                | SAND:o /* & -- no short-circuit*/ {: RESULT = new Integer(sym.SAND); :}  // &
-                | OR:o                              {: RESULT = new Integer(sym.OR); :}
-                | SOR:o  /* | -- no short-circuit*/ {: RESULT = new Integer(sym.SOR); :}  // |
-                | XOR:o                             {: RESULT = new Integer(sym.XOR); :}
-                ;
-
-/*
-      USELESS STUFF
-
-number       ::= INTEGER_V
-               | FLOAT_V
-               ;
-
-// Useless comentary. It really feels like it belongs here ... :) ... GJ
-
-bool         ::= TRUE | FALSE;
-
-s_ident_list ::= s_ident_list IDENTIFIER
-               | IDENTIFIER
-               ;
-*/

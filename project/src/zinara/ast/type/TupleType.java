@@ -6,6 +6,7 @@ public class TupleType extends Type {
     private ArrayList types; // arraylist of types
 
     public TupleType(ArrayList ts) { types = ts; }
+    public TupleType() { types = null; }
 
     public int size() { return types.size(); }
 
@@ -23,6 +24,7 @@ public class TupleType extends Type {
     public boolean equals(Type other) {
 	if (!(other instanceof TupleType)) return false;
 	TupleType otherTuple = (TupleType)other;
+	if (otherTuple.size() == 0) return true;
 	if (size() != otherTuple.size()) return false;
 	for (int i = 0; i < size(); i++)
 	    if (!get(i).equals(otherTuple.get(i))) return false;

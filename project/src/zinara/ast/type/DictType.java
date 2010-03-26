@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
 
+import zinara.exceptions.KeyErrorException;
+
 public class DictType extends Type {
     private String name;
     private HashMap table;
@@ -25,6 +27,13 @@ public class DictType extends Type {
     public int size() { return table.size(); }
 
     public Type get(String key) { return (Type)table.get(key); }
+
+    public Type getOrDie(String key) throws KeyErrorException {
+	Type type = (Type)table.get(key);
+	if (type == null)
+	    throw new KeyErrorException("La clave " + key + " no se encuentra definida en el tipo de diccionario " + toString());
+	return type;
+    }
 
     public String toString() {
 	String ret = "<" + ((name == "") ? "{" : "<" + name + ">{");

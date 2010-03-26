@@ -1,6 +1,7 @@
 package zinara.ast;
 
 import zinara.ast.type.Type;
+import zinara.ast.expression.Identifier;
 
 public class SingleDeclaration extends Declaration {
     private Type type;
@@ -11,6 +12,11 @@ public class SingleDeclaration extends Declaration {
     public SingleDeclaration(Type t, String id, Object v, boolean var) {
 	this.type = t;
 	this.identifier = id; this.value = v; this.variable = var;
+    }
+
+    public SingleDeclaration(Type t, Identifier id, Object v, boolean var) {
+	this.type = t;
+	this.identifier = id.getIdentifier(); this.value = v; this.variable = var;
     }
 
     public boolean isSingle(){
