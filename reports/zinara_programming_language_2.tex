@@ -353,29 +353,31 @@ La sintaxis es:
 \end{verbatim}
  % PORQUE?!
 
-Existe un tercer tipo de declaraci\'on: \emph{Declaraci\'on de funciones},
-el cual es explicado en la secci\'on \ref{sec:func}.
+Existe un tercer tipo de declaraci\'on: \emph{Declaraci\'on de
+  funciones}, el cual es explicado en la secci\'on \ref{sec:func}.
 
 \subsection{Estructuras de control}
 \label{sec:ecntrl}
 \emph{\textbf{Zinara}} tiene 4 estructuras de control
 \begin{itemize}
-\item If: para ramificar el flujo del programa
-\item While: para ciclos gen\'ericos
-\item Cycle: tambi\'en para ciclos gen\'ericos
-\item For: para iterar sobre listas y tuplas
+\item \texttt{if}: para ramificar el flujo del programa
+\item \texttt{while}: para ciclos gen\'ericos
+\item \texttt{cycle}: tambi\'en para ciclos gen\'ericos
+\item \texttt{for}: para iterar sobre listas del lenguaje
 \end{itemize}
 
-Los bloques de las estructuras de control son finalizados
-con `end`. Opcionalmente, pueden ser finalizados con un terminador
-espec\'ifico a ese bloque. Esto es \'util cuando existen bloques de
-estructuras de control m\'as grandes que una pantalla, ya que permite
+Los bloques de las estructuras de control son finalizados con la
+palabra clave \texttt{end}. Opcionalmente, pueden ser finalizados con
+un terminador espec\'ifico a ese bloque. Esto es \'util cuando existen
+muchos bloques de estructuras de control anidados, ya que permite
 saber exactamente que tipo de estructura se esta cerrando.\\
-\indent Estas dos opciones le permiten al programador elegir entre darle m\'as
+
+Estas dos opciones le permiten al programador elegir entre darle m\'as
 legibilidad al c\'odigo, o simplemente tipear menos car\'acteres para
 finalizar sus bloques de control de flujo.\\
-\indent Ahora se revisar\'a la sintaxis de las estructuras de control,
-la notaci\'on para escribir la sintaxis es la misma que se defini\'o al
+
+Ahora se revisar\'a la sintaxis de las estructuras de control, la
+notaci\'on para escribir la sintáxis es la misma que fué definida al
 principio de la secci\'on \ref{sec:synsem}.
 
 \subsubsection{If}
@@ -392,6 +394,9 @@ Sintaxis:
        <code_blockN>]
    end|endif
 \end{verbatim}
+
+El conjunto de elementos \texttt{[elif <expr> : <code_block>]} puede
+estar repetido cero, una o mas veces.
 
 \subsubsection{While}
 Sintaxis:
@@ -419,14 +424,15 @@ Sintaxis:
          <code_blockN> #
    end|endcycle
 \end{verbatim}
-Esta estructura de control iterativa recorrera cada una de las clausulas
-\texttt{on} probando el valor de la expresi\'on, tomar\'a la primera que sea cierta
-y cuando termine la ejecuci\'on del bloque de c\'odigo asociado a esa
-clausula volver\'a a recorrerlas. La estructura se detiene cuando ninguna
-clausula se cumple. Opcionalmente se puede agregar un bloque de c\'odigo
-al pricipio de todas las clausulas \texttt{on} que se ejecutar\'a al
-pricipio de todos los ciclos.
 
+Esta estructura de control iterativa recorrera cada una de las
+clausulas \texttt{on} probando el valor de la expresi\'on, tomar\'a la
+primera que sea cierta y cuando termine la ejecuci\'on del bloque de
+c\'odigo asociado a esa clausula volver\'a a recorrerlas. La
+estructura se detiene cuando ninguna clausula se cumple. Opcionalmente
+se puede agregar un bloque de c\'odigo al pricipio de todas las
+clausulas \texttt{on} que se ejecutar\'a al pricipio de todos los
+ciclos.
 
 \subsubsection{For}
 Sintaxis:
@@ -437,7 +443,7 @@ Sintaxis:
 \end{verbatim}
 
 Esta estructura esta dise\~nada para recorrer listas del lenguaje, 
-por lo que el valor de \texttt{expr} s\'olo puede ser una lista. 
+por lo que el valor de \texttt{expr} s\'olo puede ser una lista.
 El elemento actual de la iteraci\'on solo se puede accesar a trav\'es 
 del identificador \texttt{id} dentro del ciclo. Ni el elemento iterado 
 \texttt{expr} ni el \'indice \texttt{id} pueden ser modificados dentro
@@ -448,8 +454,8 @@ de esta estructura de control.\\
 \label{sec:instr}
 
 Las instrucciones del lenguaje que se pueden realizar sobre los tipos
-definidos en la secci\'on \ref{sec:tipos} y dentro de las estructuras de
-control definidas en la secci\'on pasada son las siguientes:
+definidos en la secci\'on \ref{sec:tipos} y dentro de las estructuras
+de control definidas en la secci\'on pasada son las siguientes:
 
 \begin{itemize}
 \item Secuenciaci\'on
@@ -462,13 +468,13 @@ control definidas en la secci\'on pasada son las siguientes:
 \end{itemize}
 
 Adicionalmente, las declaraciones de identificadores o funciones
-tambi\'en cuentan como instrucciones del lenguaje y pueden ir en cualquier
-lugar donde pueda ir una instrucci\'on.
+tambi\'en cuentan como instrucciones del lenguaje y pueden ir en
+cualquier lugar donde pueda ir una instrucci\'on.
 
 \subsubsection{Secuenciaci\'on}
-Se secuenci\'an varias instrucciones y estructuras de control separandolas con saltos
-de l\'inea. No importa que la \'ultima instrucci\'on tenga
-tambi\'en un salto de l\'inea.
+Se secuenci\'an varias instrucciones y estructuras de control
+separandolas con saltos de l\'inea. No importa que la \'ultima
+instrucci\'on tenga tambi\'en un salto de l\'inea.
 
 \subsubsection{Asignaci\'on}
 Sintaxis:
@@ -493,7 +499,9 @@ return <expr>
 
 Esta instrucci\'on solo puede ser usada dentro de una funci\'on. Lo
 que hace es detener el flujo de la funci\'on y hacer que esta devuelva
-la expresi\'on \texttt{<expr>}.
+la expresi\'on \texttt{<expr>}. Es importante destacar que el chequeo
+de tipos asegura que el tipo inferido de la expresión \texttt{expr}
+sea igual al tipo de retorno de la función en la que se encuentra.
 
 \subsubsection{Break}
 \label{sec:return}
@@ -504,7 +512,7 @@ break
 
 Esta instrucci\'on solo puede ser usada dentro de una
 iteraci\'on. Ocasiona que la iteraci\'on deje de ejecutarse.
-Si la estructura est\'a anidada dentro de otra iteraci\'on, 
+Si la estructura est\'a anidada dentro de otra iteraci\'on,
 solo la estructura de control m\'as interna termina.
 
 \subsubsection{Continue}
@@ -517,10 +525,10 @@ continue
 Esta instrucci\'on solo puede ser usada dentro de una
 iteraci\'on. Ocasiona que las instrucciones pertenecientes a la
 iteraci\'on y posteriores a esta instrucci\'on sean ignoradas y se
-comienza un nuevo ciclo en la estructura de control iterativa.
-Al igual que la instrucci\'on \texttt{break}, si la iteraci\'on est\'a
-anidada dentro de otra iteraci\'on, solo la estructura m\'as interna se
-ve afectada por esta instrucci\'on.
+comienza un nuevo ciclo en la estructura de control iterativa.  Al
+igual que la instrucci\'on \texttt{break}, si la iteraci\'on est\'a
+anidada dentro de otra iteraci\'on, solo la estructura m\'as interna
+se ve afectada por esta instrucci\'on.
 
 \subsubsection{Impresi\'on}
 Sintaxis:
@@ -528,15 +536,13 @@ Sintaxis:
 print ( <expr> )
 \end{verbatim}
 
-Imprime la expresion entre par\'entesis a la salida est\'andar. \texttt{expr}
-puede tener cualquier tipo del lenguaje, pero no un tipo definido por el usuario.
-
+Imprime la expresion entre par\'entesis a la salida
+est\'andar. \texttt{expr} puede tener cualquier tipo del lenguaje.
 
 \subsection{Operadores}
 \label{sec:ops}
-
 Los siguientes son operadores definidos en \emph{\textbf{Zinara}} para
-interactuar con los tipos definidos en la secci\'on \ref{sec:tipos}.
+interactuar con los tipos definidos en la secci\'on \ref{sec:tipos}. Su precedencia será indicada más adelante.
 
 \subsubsection{Operadores Aritm\'eticos}
 \begin{itemize}
@@ -555,18 +561,17 @@ interactuar con los tipos definidos en la secci\'on \ref{sec:tipos}.
 \item Menor         (\texttt{<})
 \item Mayor o igual (\texttt{>=})
 \item Menor o igual (\texttt{<=})
-\item Igual (superficial) (\texttt{==})
-\item Igual (profunda)    (\texttt{<=>})
+\item Igual (\texttt{==})
 \item Negaci\'on      (\texttt{!})
 \end{itemize}
 
 \subsubsection{Operadores L\'ogicos}
 \begin{itemize}
-\item And con corto-circuito (\texttt{AND})
+\item And con corto-circuito (\texttt{and})
 \item And sin corto-circuito (\texttt{\&})
-\item Or con corto-circuito  (\texttt{OR})
+\item Or con corto-circuito  (\texttt{or})
 \item Or sin corto-circuito  (\texttt{|})
-\item Xor (\texttt{XOR})
+\item Xor (\texttt{xor})
 \end{itemize}
 
 \subsubsection{Operadores sobre listas}
@@ -596,10 +601,12 @@ Todos los operadores asocian a la izquierda. Sus precedencias son:
 \end{itemize}
 
 \subsubsection{Compatiblidad de tipos}
+\label{subsec:comp-tipos}
 Se decidi\'o no usar un n\'umero elevado de coerciones para hacer el
 sistema de tipos m\'as \'util al momento de prevenir el uso incorrecto
 de variables y para ayudar al programador escribir una abstracci\'on del
 problema m\'as precisa.\\
+
 \indent A continuaci\'on presentamos las tablas de compatibilidad de
 tipos. Estas muestran el resultado de usar un operador binario o unario sobre
 todas las posibles combinaciones de tipos b\'asicos del lenguaje m\'as
@@ -677,39 +684,48 @@ Bool        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & Bool \
 \subsection{Expresiones}
 \label{sec:expr}
 
-Las expresiones tienen un valor y un tipo asociado. tanto el valor
-como el tipo de una expresi\'on pueden ser determinados en funci\'on de
-los elementos que formen parte de la misma.
-Se detallan a continuaci\'on:
+Las expresiones tienen un tipo asociado. El tipo de una expresi\'on es
+inferido o determinado en funci\'on de los elementos que formen parte
+de la misma. Se detallan a continuaci\'on:
 
 \begin{itemize}
 \item \textbf{Expresi\'on Binaria:} Es una expresion que est\'a
-      determinada por dos expresiones cualquiera y un operador que las
-      relaciona. El operador puede ser cualquiera de los operadores
-      binarios detallados en la secci\'on \ref{sec:ops}.
+  determinada por dos expresiones cualquiera y un operador que las
+  relaciona. El operador puede ser cualquiera de los operadores
+  binarios detallados en la secci\'on \ref{sec:ops}. El tipo
+  resultante de una expresión binaria es obtenido utilizando las
+  tablas de coerción explicadas en la sección \ref{subsec:comp-tipos}.
       
- \item \textbf{Expresi\'on Unaria:} Es una expresi\'on que se encuentra
-       formada por alg\'una otra expresi\'on cualquiera y un operador que act\'ua
-       sobre ella. An\'alogamente que con las expresiones binarias, el
-       operador puede ser cualquiera de los operadores unarios detallados
-       en la secci\'on \ref{sec:ops}.
+\item \textbf{Expresi\'on Unaria:} Es una expresi\'on que se encuentra
+  formada por alg\'una otra expresi\'on cualquiera y un operador que
+  act\'ua sobre ella. An\'alogamente que con las expresiones binarias,
+  el operador puede ser cualquiera de los operadores unarios
+  detallados en la secci\'on \ref{sec:ops}. Una operación bien
+  definida con el operador de ``negación'' tiene como tipo asociado
+  \emph{Bool} mientras que el tipo de una expresión con el operador
+  ``menos unitario'' es \emph{Int} si la expresión asociada tiene tipo
+  \emph{Int} ó \emph{Float} si la expresión asociada tiene tipo
+  \emph{Float}.
        
- \item Cualquier literal de los tipos b\'asicos del lenguaje es una
-       expresi\'on. Por ejemplo \texttt{42} en el caso de los enteros,
-       \texttt{3.5} en el caso de los flotantes, \texttt{'a'} en el caso de
-       los caracteres y \texttt{True} en el caso de los booleanos.
+\item Cualquier literal de los tipos b\'asicos del lenguaje es una
+  expresi\'on. Por ejemplo \texttt{42} en el caso de los \emph{Int},
+  \texttt{3.5} en el caso de los \emph{Float}, \texttt{'a'} en el caso
+  de los \emph{Char}, \texttt{True} en el caso de los \emph{Bool},
+  \texttt{``cadena de caracteres''} en el caso de los \emph{String},
+  \texttt{[1, 2, 3]} en el caso de los \emph{List}, \texttt{(True, [1,
+    2], 'a')} en el caso de los \emph{Tuple} y \texttt{{carro:
+      ``mazda'', id: 6}} en el caso de los \emph{Dictionary}.
        
- \item Cualquier identificador ya declarado de un programa puede ser
-       usado como una expresi\'on que tiene el mismo tipo de la declaraci\'on
-       del identificador y su valor es el valor que almacene dicho
-       identificador. El comportamiento del lenguaje si se usa un
-       identificador al cual no se le ha asignado ning\'un valor esta,
-       por los momentos, indefinido.
+\item Cualquier identificador ya declarado de un programa puede ser
+  usado como una expresi\'on que tiene el mismo tipo de la
+  declaraci\'on del identificador y su valor es el valor que almacene
+  dicho identificador. El comportamiento del lenguaje si se usa un
+  identificador al cual no se le ha asignado ning\'un valor esta, por
+  los momentos, indefinido.
        
- \item Cualquier llamada a una funci\'on ya declarada es una expresi\'on
-       que tiene como valor resultante el valor devuelto por la funci\'on, y
-       su tipo es el tipo de retorno de la funci\'on.
-       %CHEQUEARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+\item Cualquier llamada a una funci\'on ya declarada es una
+  expresi\'on que tiene como valor resultante el valor devuelto por la
+  funci\'on, y su tipo es el tipo de retorno de la funci\'on.
 \end{itemize}
 
 \subsection{Funciones}
@@ -741,10 +757,12 @@ copia del valor de dicho argumento y no modificar su referencia
 durante la ejecuci\'on del c\'odigo de la funci\'on.\\
 
 Las funciones invocan de la siguiente forma:
+
 \begin{verbatim}
 <identificador>(<expr1>, ..., <exprN>)
 \end{verbatim}
-Las llamadas a funciones puedes ser usadas como expresiones y como
+
+Las llamadas a funciones pueden ser usadas como expresiones y como
 instrucciones (para el caso en que tengan efectos de borde).
 
 \chapter{Implementaci\'on}
@@ -768,9 +786,9 @@ sido utilizadas en todo el desarrollo del lenguaje.
 
 \item Para el analizador sint\'actico se utiliz\'o la herramienta
   \emph{JavaCUP}\cite{javacup}, un generador de \emph{parsers} LALR(1)
-  que recibe una especificaci\'on de gram\'atica con sintaxis similar al
-  conocido \emph{YACC} y genera el aut\'omata encargado en reconocer
-  dicha gram\'atica en c\'odigo \emph{Java}.\\
+  que recibe una especificaci\'on de gram\'atica con sintaxis similar
+  al conocido \emph{YACC} y genera el aut\'omata encargado en
+  reconocer dicha gram\'atica en c\'odigo \emph{Java}.\\
 
   Ambas herramientas est\'an bien documentadas y ofrecen facilidades
   para interactuar y comunicarse entre ellas, lo cual tuvo un gran
@@ -783,12 +801,13 @@ sido utilizadas en todo el desarrollo del lenguaje.
 
 \item Para el manejo colaborativo del c\'odigo se utiliza
   \emph{GIT}\cite{git}, un controlador de versiones distribuido
-  dise\~nado para manejar grandes y peque\~nos proyectos de forma r\'apida.
+  dise\~nado para manejar grandes y peque\~nos proyectos de forma
+  r\'apida.
 
 \item Para la realizaci\'on de pruebas utilizamos framework de pruebas
-      JUnit, un framework en Java y para programas en Java que nos
-      permite correr de forma r\'apida, ordenada y automatizada todos
-      los casos de prueba que creemos.
+  \emph{JUnit}, un framework en Java que permite correr de forma
+  r\'apida, ordenada y automatizada un conjunto de pruebas unitarias
+  definido.
 \end{itemize}
 
 \section{Requerimientos}
@@ -801,51 +820,51 @@ los siguientes requerimientos m\'inimos:
 \item M\'aquina virtual y kit de desarrollo de \emph{Java 1.4.2}.
 \item Instalaci\'on est\'andar de \emph{JFlex}.
 \item Instalaci\'on est\'andar de \emph{JavaCup}.
-\item Instalaci\'on est\'andar de \emph{Apache Ant} (Ãºnicamente para
+\item Instalaci\'on est\'andar de \emph{Apache Ant} (Únicamente para
   compilaci\'on).
 \end{itemize}
 
 \section{Detalles de implementaci\'on}
 \label{sec:codigo}
 
-Para la realizaci\'on del proyecto se organiz\'o el c\'odigo fuente en un
-paquete de java llamado \texttt{zinara} el cual esta estructurado de
-la siguiente manera:
+Para la realizaci\'on del proyecto se organiz\'o el c\'odigo fuente en
+un paquete de java llamado \texttt{zinara} el cual esta estructurado
+de la siguiente manera:
 
 \begin{itemize}
- \item \texttt{zinara.ast}: Paquete d\'onde se encuentran las clases
-       necesarias para representar el \'arbol sint\'actico abstracto y la tabla
-       de s\'imbolos. Estas clases son explicadas con m\'as detalle a
-       continuaci\'on en las secciones \ref{sec:ast} y \ref{sec:st}.
+\item \texttt{zinara.ast}: Paquete d\'onde se encuentran las clases
+  necesarias para representar el \'arbol sint\'actico abstracto y la
+  tabla de s\'imbolos. Estas clases son explicadas con m\'as detalle a
+  continuaci\'on en las secciones \ref{sec:ast} y \ref{sec:st}.
        
- \item \texttt{zinara.lexer}: Paquete d\'onde se encuentra el archivo
-       \texttt{lexer.flex}, que representa la descripci\'on lexicogr\'afica de
-       los \emph{tokens} de \emph{\textbf{Zinara}}. En este paquete se
-       guarda un archivo llamado \texttt{Scanner.java} que contiene el
-       c\'odigo generado por la herramienta \emph{JFlex} al ser aplicada
-       sobre el archivo \texttt{lexer.flex}.
+\item \texttt{zinara.lexer}: Paquete d\'onde se encuentra el archivo
+  \texttt{lexer.flex}, que representa la descripci\'on lexicogr\'afica
+  de los \emph{tokens} de \emph{\textbf{Zinara}}. En este paquete se
+  guarda un archivo llamado \texttt{Scanner.java} que contiene el
+  c\'odigo generado por la herramienta \emph{JFlex} al ser aplicada
+  sobre el archivo \texttt{lexer.flex}.
        
- \item \texttt{zinara.parser}: Paquete que contiene el archivo
-       \texttt{parser.cup} que describe la gram\'atica de
-       \emph{\textbf{Zinara}}. An\'alogamente al paquete
-       \texttt{zinara.lexer}, en \texttt{zinara.parser} se guardan los
-       archivos \texttt{parser.java} y \texttt{sym.java} que son generados
-       por la aplicaci\'on de la herramienta \emph{JavaCUP} sobre el archivo
-       \texttt{parser.cup}.
+\item \texttt{zinara.parser}: Paquete que contiene el archivo
+  \texttt{parser.cup} que describe la gram\'atica de
+  \emph{\textbf{Zinara}}. An\'alogamente al paquete
+  \texttt{zinara.lexer}, en \texttt{zinara.parser} se guardan los
+  archivos \texttt{parser.java} y \texttt{sym.java} que son generados
+  por la aplicaci\'on de la herramienta \emph{JavaCUP} sobre el
+  archivo \texttt{parser.cup}.
        
- \item \texttt{zinara.tests}: Paquete con las clases que creamos para
-       JUnit. Se encuentran separadas por categorias y cada una ataca un
-       aspecto espec\'ifico del lenguaje.
+\item \texttt{zinara.tests}: Paquete con las clases que creamos para
+  JUnit. Se encuentran separadas por categorias y cada una ataca un
+  aspecto espec\'ifico del lenguaje.
        
- \item \texttt{zinara.symtable}: Paquete con las clases que permiten
-       crear, consultar y llenar las tablas de s\'imbolos del lenguaje.
+\item \texttt{zinara.symtable}: Paquete con las clases que permiten
+  crear, consultar y llenar las tablas de s\'imbolos del lenguaje.
 
- \item \texttt{zinara.exceptions}: Paquete con las clases que de las
-       excepciones espec\'ificas al problema que se crearon para
-       controlar de forma correcta la aparici\'on de errores.
+\item \texttt{zinara.exceptions}: Paquete con las clases que de las
+  excepciones espec\'ificas al problema que se crearon para controlar
+  de forma correcta la aparici\'on de errores.
 
- \item \texttt{zinara.semantic}: Paquete con las clases que realizan el
-       chequeo de tipos.
+\item \texttt{zinara.semantic}: Paquete con las clases que realizan
+  las partes más sensibles del chequeo de tipos.
 
 
 \end{itemize}
@@ -856,7 +875,7 @@ un archivo de texto que contenga c\'odigo escrito para
 \emph{\textbf{Zinara}}. Esta clase se encarga de invocar tanto al
 analizador lexicogr\'afico como al analizador sint\'actico y ejecutarlos
 adecuadamente sobre el contenido del archivo recibido. Actualmente
-Ã©sta clase principal no realiza ningÃºn tipo de chequeo extra a parte
+ésta clase principal no realiza ningún tipo de chequeo extra a parte
 de los mencionados.
 
 \subsection{\'Arbol sint\'actico abstracto}
@@ -877,25 +896,28 @@ En el conjunto \emph{types} se encuentran clases que representan los 4
 tipos b\'asicos mencionados en la secci\'on \ref{sec:tiposbasicos}, los 4
 tipos compuestos mencionados en la secci\'on \ref{sec:tiposcompuestos} y una
 clase para representar el tipo de una funci\'on que es compuesto entre
-los tipos de sus argumentos y su tipo de retorno.
+los tipos de sus argumentos y su tipo de retorno.\\
+
+La clase \emph{Type} modela una estructura en forma de árbol para
+poder representar los tipos compuestos. En dicho árbol, los tipos
+básicos se representan como hojas y los tipos compuestos como nodos.
 
 \subsection{Tabla de s\'imbolos}
 \label{sec:st}
 
 Las clases que manejan la tabla de s\'imbolos estan en los archivos
 \texttt{Symtable.java} y \texttt{SymValue.java}, y se encuentran en el paquete
-\texttt{zinara.ast} 
+\texttt{zinara.symtable}
 
 \begin{itemize}
-\item \texttt{Symtable.java}: es un wrapper para HashTable. Simplemente
-  da nombres semanticamente mas coherentes con el manejo de s\'imbolos
-  que los de HashTable. Los pares key/value guardados en la tabla de
-  hash son del tipo String/SymValue.
+\item \texttt{Symtable.java}: es un encapsulador(\emph{wrapper}) para
+  HashTable. Simplemente da nombres semanticamente mas coherentes con
+  el manejo de s\'imbolos que los de HashTable. Los pares clave/valor
+  guardados en la tabla de hash son del tipo String/SymValue.
 
-\item \texttt{SymValue.java}: es un contenedor que guarda un Object,
-  un Type y un boolean. El Object es el valor del s\'imbolo, el Type
-  simplemente indica el tipo del objeto y el boolean indica si el
-  s\'imbolo es variable o no.
+\item \texttt{SymValue.java}: es un contenedor que guarda un Type y un
+  boolean. El Type simplemente indica el tipo del objeto y el boolean
+  indica si el s\'imbolo es variable o no.
 \end{itemize}
 
 \section{C\'odigo adjunto del proyecto}
@@ -905,7 +927,7 @@ Este proyecto tiene adjunto un archivo comprimido llamado\\
 
 \texttt{zinara-barreto-jaber-entrega1.tar.gz}\\
 
-y dentro de Ã©ste archivo se encuentra una Ãºnica carpeta llamada
+y dentro de éste archivo se encuentra una única carpeta llamada
 \textbf{Zinara-Barreto-Jaber/}. Una vez descomprimido el archivo se
 encontrar\'a la siguiente estructura de directorios:
 
@@ -931,38 +953,40 @@ encontrar\'a la siguiente estructura de directorios:
        del presente informe, as\'i como su versi\'on en \emph{pdf}.
 \end{itemize}
 
-  \subsection{Ejecuci\'on}
-  \label{sec:zejecucion}
-  Los pasos para ejecutar el proyecto en una consola UNIX son los
-  siguientes:
+\subsection{Ejecuci\'on}
+\label{sec:zejecucion}
+Los pasos para ejecutar el proyecto en una consola UNIX son los
+siguientes:
   
-\begin{verbatim}
-$> cd Zinara-Barreto-Jaber/project/bin/
-$> java	-jar zinara.jar archivo_de_prueba.zn
-\end{verbatim}
-
-Opcionalmente se puede ejecutar el proyecto desde el directorio
-\texttt{project/classes/}, realizando los siguientes pasos:
-
 \begin{verbatim}
 $> cd Zinara-Barreto-Jaber/project/classes/
 $> java zinara.Main archivo_de_prueba.zn
 \end{verbatim}
 
+Opcionalmente se puede ejecutar el proyecto desde el un archivo
+\emph{jar} realizando los siguientes pasos:
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/bin/
+$> java -jar zinara.jar archivo_de_prueba.zn
+\end{verbatim}
+
+
 Es importante recordar que para la ejecuci\'on del proyecto, dada la
-elecci\'on de cualquiera de los dos mÃ©todos de ejecuci\'on explicados
+elecci\'on de cualquiera de los dos métodos de ejecuci\'on explicados
 anteriormente, es necesario tener bien establecidas las variables de
-ambiente requeridas por las herramientas utilizadas. Ir a
+ambiente requeridas por las herramientas utilizadas. Referirse a
 \cite{javacup} y \cite{jflex} para m\'as informaci\'on.
 
 \subsection{Compilaci\'on}
 \label{sec:compilacion}
 Para compilar \emph{\textbf{Zinara}}, una vez que haya sido editado
-algÃºn archivo del c\'odigo fuente, se ejecutan las siguientes l\'ineas de
+algún archivo del c\'odigo fuente, se ejecutan las siguientes l\'ineas de
 comando en una consola UNIX.
 
 \begin{verbatim}
 $> cd Zinara-Barreto-Jaber/project/
+[$> ant clean # para limpiar la compilación anterior]
 $> ant dist
 \end{verbatim}
 
@@ -977,8 +1001,8 @@ segÃºn sea el caso, para poder generar los archivos \texttt{.java}
 correspondientes.\\
 
 La ejecuci\'on de las herramientas \emph{JavaCUP} y \emph{JFlex} no ser\'a
-documentada en este informe puÃ©s existen formas diversas de hacerlo, y
-var\'ian segÃºn el sistema operativo donde se ejecute y la instalaci\'on
+documentada en este informe pués existen formas diversas de hacerlo, y
+var\'ian según el sistema operativo donde se ejecute y la instalaci\'on
 que se haya realizado de ellas en cada computadora. Para m\'as
 informaci\'on referirse a \cite{javacup} y \cite{jflex}.\\
 
@@ -987,11 +1011,20 @@ fuente adjunto (posiblemente m\'as actualizado) y el c\'odigo fuente de
 las herramientas que estan siendo utilizadas para el desarrollo de
 \emph{\textbf{Zinara}}.
 
-\subsection{Prueba}
+\subsection{Corrida de Pruebas}
 \label{sec:pruebas}
 Para probar la efectividad del programa tenemos varios casos de
 prueba. Para correr todos los casos de prueba solo se debe ejecutar el
-script allTests.sh que se encuentra en la carpeta \texttt{project}.
+script \texttt{allTests.sh} (asegurandose que tenga permisos de
+ejecución) que se encuentra en la carpeta \texttt{project}.
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/
+$> ./allTests.sh
+\end{verbatim}
+
+Los archivos de prueba se encuentran en la carpeta
+\texttt{Zinara-Barreto-Jaber/test_files/}.
 
 \subsection{ESC/Java2}
 \label{sec:escjava}
