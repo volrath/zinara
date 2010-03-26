@@ -81,11 +81,11 @@ Los tipos compuestos del lenguaje son:
 \begin{itemize}
 \item \textbf{String}: Cadena de car\'acteres.
 \item \textbf{List}: Listas de tamaño variable de elementos. Los
-  elementos que conforman la lista deben ser del mísmo tipo.
+  elementos que conforman la lista deben ser del m\'ismo tipo.
 \item \textbf{Tuple}: Tuplas de tamaño fijo que contienen elementos de
   cualquier tipo.
 \item \textbf{Dictionary}: Estructuras que contiene pares de
-  \emph{Clave/Valor}, dónde las claves son identificadores con los
+  \emph{Clave/Valor}, d\'onde las claves son identificadores con los
   cuales se puede indexar a los valores guardados en la
   estructura. Los diccionarios son de tamaño fijo.
 \end{itemize}
@@ -99,7 +99,7 @@ comportamiento de estos tipos.
 \item Al igual que en \emph{Java}, El tipo \emph{String} esta
   implementado como un tipo totalmente individual del lenguaje, no
   estando combinando o ligado de alguna forma al tipo b\'asico
-  \emph{Char}. Las operaciones básicas para manipularlos estarán
+  \emph{Char}. Las operaciones b\'asicas para manipularlos estar\'an
   implementadas en el lenguaje.
 \end{itemize}
 
@@ -126,12 +126,12 @@ comportamiento de estos tipos.
   b\'asico o compuesto del lenguaje.
 \item Es necesario que cualquier tipo de indexamiento sobre una tupla
   se realice con indices que puedan ser conocidos a tiempo de
-  compilación, para poder realizar el chequeo estatico de tipos
+  compilaci\'on, para poder realizar el chequeo estatico de tipos
   correspondiente.
 \item Deben tener, por lo menos, dos elementos.
 \item La indexaci\'on de las tuplas se hace a trav\'es de \'indices
-  num\'ericos, dónde el número del indice hace referencia al elemento
-  guardado en dicha posición.
+  num\'ericos, d\'onde el n\'umero del indice hace referencia al elemento
+  guardado en dicha posici\'on.
 \end{itemize}
 
 \subsubsection{Diccionarios}
@@ -252,7 +252,7 @@ lenguaje:
        
 \item Si dos \texttt{elementos} est\'an separados por \texttt{|}
   indica que uno y solo uno de esos \texttt{elementos} puede aparecer
-  en ese contexto. El \texttt{|} actúa como un \emph{OR} lógico.
+  en ese contexto. El \texttt{|} act\'ua como un \emph{OR} l\'ogico.
        
 \item \texttt{<tipo>} representa un tipo cualquiera del lenguaje,
   explicados anteriormente en la secci\'on \ref{sec:tipos}.
@@ -266,10 +266,10 @@ lenguaje:
   \texttt{exprN} representan expresiones cualquiera del lenguaje, como
   son explicadas en la secci\'on \ref{sec:expr}.
 
-\item Note que los números representan índices sobre las listas
+\item Note que los n\'umeros representan \'indices sobre las listas
   explicadas en los dos puntos anteriores. Si existen dos listas que
-  tiene índices iguales al comienzo y al final, asuma que ambas listas
-  tienen la mísma cantidad de elementos.
+  tiene \'indices iguales al comienzo y al final, asuma que ambas listas
+  tienen la m\'isma cantidad de elementos.
        
 \item \texttt{<code\_block>}, \texttt{<code\_block1>},
   \texttt{<code\_block2>}...  \texttt{code\_blockN} representan
@@ -285,7 +285,7 @@ lenguaje:
   \ref{sec:ident}, las funciones est\'an descritas con detalle en la
   secci\'on \ref{sec:func}. Al igual que con los
   \texttt{identificadores} y \texttt{expresiones}, note la posibilidad
-  de que la lista de argumentos lleve índices para hacer referencia a
+  de que la lista de argumentos lleve \'indices para hacer referencia a
   su tamaño de forma abstracta.
        
 \item La cantidad de espacios que deben separar a dos palabras clave
@@ -403,7 +403,7 @@ legibilidad al c\'odigo, o simplemente tipear menos car\'acteres para
 finalizar sus bloques de control de flujo.\\
 
 Ahora se revisar\'a la sintaxis de las estructuras de control, la
-notaci\'on para escribir la sintáxis es la misma que fué definida al
+notaci\'on para escribir la sint\'axis es la misma que fu\'e definida al
 principio de la secci\'on \ref{sec:synsem}.
 
 \subsubsection{If}
@@ -523,8 +523,8 @@ return <expr>
 Esta instrucci\'on solo puede ser usada dentro de una funci\'on. Lo
 que hace es detener el flujo de la funci\'on y hacer que esta devuelva
 la expresi\'on \texttt{<expr>}. Es importante destacar que el chequeo
-de tipos asegura que el tipo inferido de la expresión \texttt{expr}
-sea igual al tipo de retorno de la función en la que se encuentra.
+de tipos asegura que el tipo inferido de la expresi\'on \texttt{expr}
+sea igual al tipo de retorno de la funci\'on en la que se encuentra.
 
 \subsubsection{Break}
 \label{sec:return}
@@ -565,7 +565,7 @@ est\'andar. \texttt{expr} puede tener cualquier tipo del lenguaje.
 \subsection{Operadores}
 \label{sec:ops}
 Los siguientes son operadores definidos en \emph{\textbf{Zinara}} para
-interactuar con los tipos definidos en la secci\'on \ref{sec:tipos}. Su precedencia será indicada más adelante.
+interactuar con los tipos definidos en la secci\'on \ref{sec:tipos}. Su precedencia ser\'a indicada m\'as adelante.
 
 \subsubsection{Operadores Aritm\'eticos}
 \begin{itemize}
@@ -750,18 +750,18 @@ de la misma. Se detallan a continuaci\'on:
   determinada por dos expresiones cualquiera y un operador que las
   relaciona. El operador puede ser cualquiera de los operadores
   binarios detallados en la secci\'on \ref{sec:ops}. El tipo
-  resultante de una expresión binaria es obtenido utilizando las
-  tablas de coerción explicadas en la sección \ref{subsec:comp-tipos}.
+  resultante de una expresi\'on binaria es obtenido utilizando las
+  tablas de compatibilidad explicadas en la secci\'on \ref{subsec:comp-tipos}.
       
 \item \textbf{Expresi\'on Unaria:} Es una expresi\'on que se encuentra
   formada por alg\'una otra expresi\'on cualquiera y un operador que
   act\'ua sobre ella. An\'alogamente que con las expresiones binarias,
   el operador puede ser cualquiera de los operadores unarios
-  detallados en la secci\'on \ref{sec:ops}. Una operación bien
-  definida con el operador de ``negación'' tiene como tipo asociado
-  \emph{Bool} mientras que el tipo de una expresión con el operador
-  ``menos unitario'' es \emph{Int} si la expresión asociada tiene tipo
-  \emph{Int} ó \emph{Float} si la expresión asociada tiene tipo
+  detallados en la secci\'on \ref{sec:ops}. Una operaci\'on bien
+  definida con el operador de ``negaci\'on'' tiene como tipo asociado
+  \emph{Bool} mientras que el tipo de una expresi\'on con el operador
+  ``menos unitario'' es \emph{Int} si la expresi\'on asociada tiene tipo
+  \emph{Int} \'o \emph{Float} si la expresi\'on asociada tiene tipo
   \emph{Float}.
        
 \item Cualquier literal de los tipos b\'asicos del lenguaje es una
@@ -877,7 +877,7 @@ los siguientes requerimientos m\'inimos:
 \item M\'aquina virtual y kit de desarrollo de \emph{Java 1.4.2}.
 \item Instalaci\'on est\'andar de \emph{JFlex}.
 \item Instalaci\'on est\'andar de \emph{JavaCup}.
-\item Instalaci\'on est\'andar de \emph{Apache Ant} (Únicamente para
+\item Instalaci\'on est\'andar de \emph{Apache Ant} (\'Unicamente para
   compilaci\'on).
 \end{itemize}
 
@@ -921,7 +921,7 @@ de la siguiente manera:
   de forma correcta la aparici\'on de errores.
 
 \item \texttt{zinara.semantic}: Paquete con las clases que realizan
-  las partes más sensibles del chequeo de tipos.
+  las partes m\'as sensibles del chequeo de tipos.
 
 
 \end{itemize}
@@ -932,7 +932,7 @@ un archivo de texto que contenga c\'odigo escrito para
 \emph{\textbf{Zinara}}. Esta clase se encarga de invocar tanto al
 analizador lexicogr\'afico como al analizador sint\'actico y ejecutarlos
 adecuadamente sobre el contenido del archivo recibido. Actualmente
-ésta clase principal no realiza ningún tipo de chequeo extra a parte
+\'esta clase principal no realiza ning\'un tipo de chequeo extra a parte
 de los mencionados.
 
 \subsection{\'Arbol sint\'actico abstracto}
@@ -955,9 +955,9 @@ tipos compuestos mencionados en la secci\'on \ref{sec:tiposcompuestos} y una
 clase para representar el tipo de una funci\'on que es compuesto entre
 los tipos de sus argumentos y su tipo de retorno.\\
 
-La clase \emph{Type} modela una estructura en forma de árbol para
-poder representar los tipos compuestos. En dicho árbol, los tipos
-básicos se representan como hojas y los tipos compuestos como nodos.
+La clase \emph{Type} modela una estructura en forma de \'arbol para
+poder representar los tipos compuestos. En dicho \'arbol, los tipos
+b\'asicos se representan como hojas y los tipos compuestos como nodos.
 
 \subsection{Tabla de s\'imbolos}
 \label{sec:st}
@@ -984,7 +984,7 @@ Este proyecto tiene adjunto un archivo comprimido llamado\\
 
 \texttt{zinara-barreto-jaber-entrega1.tar.gz}\\
 
-y dentro de éste archivo se encuentra una única carpeta llamada
+y dentro de \'este archivo se encuentra una \'unica carpeta llamada
 \textbf{Zinara-Barreto-Jaber/}. Una vez descomprimido el archivo se
 encontrar\'a la siguiente estructura de directorios:
 
@@ -1030,7 +1030,7 @@ $> java -jar zinara.jar archivo_de_prueba.zn
 
 
 Es importante recordar que para la ejecuci\'on del proyecto, dada la
-elecci\'on de cualquiera de los dos métodos de ejecuci\'on explicados
+elecci\'on de cualquiera de los dos m\'etodos de ejecuci\'on explicados
 anteriormente, es necesario tener bien establecidas las variables de
 ambiente requeridas por las herramientas utilizadas. Referirse a
 \cite{javacup} y \cite{jflex} para m\'as informaci\'on.
@@ -1038,12 +1038,12 @@ ambiente requeridas por las herramientas utilizadas. Referirse a
 \subsection{Compilaci\'on}
 \label{sec:compilacion}
 Para compilar \emph{\textbf{Zinara}}, una vez que haya sido editado
-algún archivo del c\'odigo fuente, se ejecutan las siguientes l\'ineas de
+alg\'un archivo del c\'odigo fuente, se ejecutan las siguientes l\'ineas de
 comando en una consola UNIX.
 
 \begin{verbatim}
 $> cd Zinara-Barreto-Jaber/project/
-[$> ant clean # para limpiar la compilación anterior]
+[$> ant clean # para limpiar la compilaci\'on anterior]
 $> ant dist
 \end{verbatim}
 
@@ -1058,8 +1058,8 @@ segÃºn sea el caso, para poder generar los archivos \texttt{.java}
 correspondientes.\\
 
 La ejecuci\'on de las herramientas \emph{JavaCUP} y \emph{JFlex} no ser\'a
-documentada en este informe pués existen formas diversas de hacerlo, y
-var\'ian según el sistema operativo donde se ejecute y la instalaci\'on
+documentada en este informe pu\'es existen formas diversas de hacerlo, y
+var\'ian seg\'un el sistema operativo donde se ejecute y la instalaci\'on
 que se haya realizado de ellas en cada computadora. Para m\'as
 informaci\'on referirse a \cite{javacup} y \cite{jflex}.\\
 
@@ -1073,7 +1073,7 @@ las herramientas que estan siendo utilizadas para el desarrollo de
 Para probar la efectividad del programa tenemos varios casos de
 prueba. Para correr todos los casos de prueba solo se debe ejecutar el
 script \texttt{allTests.sh} (asegurandose que tenga permisos de
-ejecución) que se encuentra en la carpeta \texttt{project}.
+ejecuci\'on) que se encuentra en la carpeta \texttt{project}.
 
 \begin{verbatim}
 $> cd Zinara-Barreto-Jaber/project/
