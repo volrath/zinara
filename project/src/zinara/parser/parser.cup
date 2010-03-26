@@ -103,6 +103,7 @@ terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, RETURNS;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal AS, IN;
 terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
+terminal CONTINUE, BREAK;
 
 
 /* Non-terminals */
@@ -328,6 +329,8 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
                     | IDENTIFIER:id LPAREN RPAREN                 {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
+                    | CONTINUE                                    {: RESULT = new Continue(); :}
+                    | BREAK                                       {: RESULT = new Break(); :}
                     ;
 
 /* --- Control structures --- */
@@ -503,7 +506,7 @@ othe_expr   ::=
     /* ----- Composite types ----- */
             | STRING_V:e                                 {:RESULT=new StringExp(e);:}
             | LBRACKET RBRACKET     /*[] empty list*/    {:RESULT=new ListExp();:}
-            | LBRACET RBRACET   /*{} empty dictionary*/  {:RESULT=new DictExp();:}
+//            | LBRACET RBRACET   /*{} empty dictionary*/  {:RESULT=new DictExp();:}
             | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
             | LBRACET dict_vals:dv RBRACET /*dictionary*/{:RESULT=new DictExp(dv);:}
             | LPAREN expr_list:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}

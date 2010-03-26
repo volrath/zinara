@@ -111,6 +111,8 @@ Number      = {Digit}+
  "else"                          { return symbol(sym.ELSE);}
  "endif"                         { return symbol(sym.ENDIF);}
  "end"                           { return symbol(sym.END);}
+ "continue"                      { return symbol(sym.CONTINUE);}
+ "break"                         { return symbol(sym.BREAK);}
 
  "<<"                            { return symbol(sym.LTLT);}
  ">>"                            { return symbol(sym.GTGT);}
