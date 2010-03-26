@@ -1,0 +1,11 @@
+main:
+/. No expression ./
+
+Int a
+Int b
+
+while :
+    print(1)
+endwhile
+
+endmain

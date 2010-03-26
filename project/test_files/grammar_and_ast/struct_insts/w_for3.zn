@@ -1,0 +1,8 @@
+main:
+/. No EXPR ./
+
+for i in:
+   print(1)
+endfor
+
+endmain

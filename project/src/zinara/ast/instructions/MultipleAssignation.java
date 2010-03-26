@@ -3,6 +3,7 @@ package zinara.ast.instructions;
 import java.util.ArrayList;
 
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.Identifier;
 import zinara.exceptions.InvalidAssignationException;
 
 public class MultipleAssignation extends Assignation {
@@ -19,7 +20,7 @@ public class MultipleAssignation extends Assignation {
 	ArrayList asigs = new ArrayList();
 	for (int i = 0 ; i < ids.size() ; ++i){
 	    // FIX THIS: it should check types first!!
-	    asigs.add(new SingleAssignation(((String)ids.get(i)),((Expression)expressions.get(i))));
+	    asigs.add(new SingleAssignation(new Identifier((String)ids.get(i), null), (Expression)expressions.get(i)));
 	}
 	this.assignations = asigs;
     }

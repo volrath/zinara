@@ -1,0 +1,11 @@
+main:
+/. No while ./
+
+Int a
+Int b
+
+a<b :
+    print(1)
+end
+
+endmain

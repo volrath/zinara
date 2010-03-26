@@ -1,8 +1,7 @@
 main:
 /. No END ./
 
-//No elifs
-if True:
+for i in:
    print(1)
 
 endmain

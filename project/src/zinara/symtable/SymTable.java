@@ -7,6 +7,7 @@ import zinara.ast.Declaration;
 import zinara.ast.SingleDeclaration;
 import zinara.ast.MultipleDeclaration;
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.LValue;
 import zinara.ast.instructions.Assignation;
 import zinara.ast.instructions.SingleAssignation;
 import zinara.ast.instructions.MultipleAssignation;
@@ -56,7 +57,7 @@ public class SymTable{
 	if (decl.isSingle()) {
 	    //@ assume \typeof(decl) == \type(SingleDeclaration);
 	    current_decl = (SingleDeclaration)decl;
-	    if (!containsId(current_decl.getId())) {
+	    if (!currentTableContainsId(current_decl.getId())) {
 		addSymbol(current_decl.getId(),
 			  new SymValue(current_decl.getType(), current_decl.isVariable()));
 	    } else
@@ -66,9 +67,8 @@ public class SymTable{
 	    for (int i = 0; i < ((MultipleDeclaration)decl).size(); i++) {
 		current_decl = ((MultipleDeclaration)decl).get(i);
 		//@ assume current_decl != null;
-		if (!containsId(current_decl.getId())) {
-		    addSymbol(current_decl.getId(),
-			      new SymValue(current_decl.getType(), current_decl.isVariable()));
+		if (!currentTableContainsId(current_decl.getId())) {
+		    addSymbol(current_decl.getId(), new SymValue(current_decl.getType(), current_decl.isVariable()));
 		} else
 		    throw new IdentifierAlreadyDeclaredException(current_decl.getId());
 	    }
@@ -88,36 +88,41 @@ public class SymTable{
 	return (SymValue)this.table.get(id);
     }
 
-    public SymValue getSymbolRecursively(String id) {
-	if (containsId(id)) return this.getSymbol(id);
-	else if (father != null) return father.getSymbol(id);
-	else return null;
-    }
-
-    //@ ensures \result != null
-    public SymValue getSymbolOrDie(String id) throws IdentifierNotDeclaredException {
-	if (table.containsKey(id)){
-	    //@ assume table.get(id) != null;
-	    //@ assume \typeof(table.get(id)) == \type(SymValue);
-	    return  (SymValue)table.get(id);
-	}
-	else if (father != null)
-	    return father.getSymbolOrDie(id);
-	else
-	    throw new IdentifierNotDeclaredException(id);
-    }
-
     public SymTable getFather (){
 	return this.father;
     }
 
-    public boolean containsId (String id){
+    public boolean currentTableContainsId(String id){
 	return this.table.containsKey(id);
     }
 
-    public SymTable containsIdOrDie(String id) throws IdentifierNotDeclaredException {
-	if (containsId(id)) return this;
-	else if (father != null) return father.containsIdOrDie(id);
+    public boolean containsId(String id) {
+	if (this.table.containsKey(id)) return true;
+	else if (father != null) return father.containsId(id);
+	else return false;
+    }
+
+    public SymTable getSymTableForId(String id) {
+	if (this.table.containsKey(id)) return this;
+	else if (father != null) return father.getSymTableForId(id);
+	else return null;
+    }
+
+    public SymTable getSymTableForIdOrDie(String id) throws IdentifierNotDeclaredException {
+	SymTable t = getSymTableForId(id);
+	if (t != null) return t;
+	else throw new IdentifierNotDeclaredException(id);
+    }
+
+    public SymValue getSymValueForId(String id) {
+	if (this.table.containsKey(id)) return (SymValue)this.table.get(id);
+	else if (father != null) return father.getSymValueForId(id);
+	else return null;
+    }
+
+    public SymValue getSymValueForIdOrDie(String id) throws IdentifierNotDeclaredException {
+	SymValue sv = getSymValueForId(id);
+	if (sv != null) return sv;
 	else throw new IdentifierNotDeclaredException(id);
     }
 
@@ -143,16 +148,16 @@ public class SymTable{
      */
 
     //@ requires expr != null;
-    public SingleAssignation checkAssignation(String id, Expression expr) 
+    public SingleAssignation checkAssignation(LValue lv, Expression expr) 
 	throws IdentifierNotDeclaredException, TypeClashException {
-	SymValue idSymValue = getSymbolOrDie(id);
+	//SymValue idSymValue = getSymValueForIdOrDie(id);
 
 	//@ assume idSymValue.getType() != null;
 
-	if (idSymValue.getType().equals(expr.getType()))
-	    return new SingleAssignation(id, expr);
+	if (lv.getType().equals(expr.getType()))
+	    return new SingleAssignation(lv, expr);
 	else
-	    throw new TypeClashException("Conflicto de tipos entre el identificador " + id + idSymValue.getType() +" y la expresion " + expr + expr.getType());
+	    throw new TypeClashException("Conflicto de tipos entre el identificador " + lv + lv.getType() +" y la expresion " + expr + expr.getType());
     }
 
     /*
@@ -162,7 +167,7 @@ public class SymTable{
      */
     //@ requires ids != null;
     //@ requires exprs != null;
-    //@ requires (\forall int i; i >=0 && i < ids.size(); \typeof(ids.get(i)) == \type(String));
+    //@ requires (\forall int i; i >=0 && i < ids.size(); \typeof(ids.get(i)) == \type(LValue));
     //@ requires (\forall int i; i >=0 && i < ids.size(); \typeof(ids.get(i)) == \type(Expression));
     public Assignation checkMultipleAssignations(ArrayList ids, ArrayList exprs)
 	throws IdentifierNotDeclaredException, TypeClashException, InvalidAssignationException {
@@ -170,11 +175,11 @@ public class SymTable{
 	    throw new InvalidAssignationException(); // FIX THIS: same as in MultipleAssignation.java
 
 	if (ids.size() == 1)
-	    return checkAssignation((String)ids.get(0), (Expression)exprs.get(0));
+	    return checkAssignation((LValue)ids.get(0), (Expression)exprs.get(0));
 	else {
 	    ArrayList assignations = new ArrayList();
 	    for (int i = 0; i < ids.size(); i++)
-		assignations.add(checkAssignation((String)ids.get(i), (Expression)exprs.get(i)));
+		assignations.add(checkAssignation((LValue)ids.get(i), (Expression)exprs.get(i)));
 	    return new MultipleAssignation(assignations);
 	}
     }

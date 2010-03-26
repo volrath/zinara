@@ -1,22 +1,23 @@
 package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.LValue;
 
 public class SingleAssignation extends Assignation {
-    private String id;
+    private LValue lvalue;
     private Expression expr;
 
     public boolean isSingle(){
 	return true;
     }
 
-    public SingleAssignation(String name, Expression ex){
-	this.id = name;
+    public SingleAssignation(LValue lv, Expression ex){
+	this.lvalue = lv;
 	this.expr = ex;
     }
 
-    public String getId(){
-	return this.id;
+    public LValue getLValue() {
+	return this.lvalue;
     }
 
     public Expression getExpression(){
@@ -24,6 +25,6 @@ public class SingleAssignation extends Assignation {
     }
 
     public String toString() {
-	return "<" + id + " = " +  expr + ">";
+	return "<" + lvalue + " = " +  expr + ">";
     }
 }

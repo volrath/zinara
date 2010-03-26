@@ -1,0 +1,13 @@
+main:
+/. FORS ./
+
+Bool h = False
+[Int] x
+
+for i in x:
+   Bool h
+   print(h)
+   Bool i'=True
+endfor
+
+endmain

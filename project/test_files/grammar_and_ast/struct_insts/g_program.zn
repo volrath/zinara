@@ -1,0 +1,14 @@
+def hola () returns<Int>:
+    return 1
+enddef
+
+Bool cierto = True
+Bool falso = False
+
+def hola' () returns<Int>:
+    return 2
+enddef
+
+main:
+   print(1)
+endmain

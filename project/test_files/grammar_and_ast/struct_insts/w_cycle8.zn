@@ -1,0 +1,10 @@
+main:
+/. empty body ./
+
+Int a
+Int b
+
+cycle:
+end
+
+endmain

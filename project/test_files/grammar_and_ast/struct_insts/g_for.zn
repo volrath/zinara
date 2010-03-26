@@ -1,5 +1,5 @@
 main:
-/. FORS ./
+/. No FOR ./
 
 Bool h = False
 
