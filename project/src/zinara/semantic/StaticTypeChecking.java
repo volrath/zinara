@@ -33,8 +33,8 @@ public class StaticTypeChecking {
     /*
       Checks if a given expression is instance of a given type
      */
-    //@ requires expr != null;
-    //@ requires type != null;
+    // requires expr != null;
+    // requires type != null;
 //     public static void checkExpressionSoft(Expression expr, Type type)
 // 	throws TypeClashException {
 // 	if (!( expr.getType() instanceof typeClass ))
@@ -45,7 +45,6 @@ public class StaticTypeChecking {
       Checks if a given expression is instance of a given type
      */
     //@ requires expr != null;
-    //@ requires type != null;
     public static void checkIterable(Expression expr)
 	throws TypeClashException {
 	if (!(expr.getType() instanceof ListType))

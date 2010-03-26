@@ -94,7 +94,7 @@ public class SymTable{
 	else return null;
     }
 
-    //@ ensures \result != null
+    //@ ensures \result != null;
     public SymValue getSymbolOrDie(String id) throws IdentifierNotDeclaredException {
 	if (table.containsKey(id)){
 	    //@ assume table.get(id) != null;
@@ -130,11 +130,11 @@ public class SymTable{
     }
     
     public String toString() {
-	String ret = "";
-	for (int i = 0; i < sons.size(); i++)
-	    ret += (SymTable)sons.get(i) + ", ";
-	if (ret.length() != 0) ret = ret.substring(0, ret.length()-2);
-	return "<" + table.toString() + "[" + ret + "]>";
+    	String ret = "";
+    	for (int i = 0; i < sons.size(); i++)
+    	    ret += (SymTable)sons.get(i) + ", ";
+    	if (ret.length() != 0) ret = ret.substring(0, ret.length()-2);
+    	return "<" + table.toString() + "[" + ret + "]>";
     }
     
     /*
@@ -185,6 +185,7 @@ public class SymTable{
 	return son;
     }
 
+    //@requires son != null;
     public void addSon(SymTable son){
 	this.sons.add(son);
     }
