@@ -347,7 +347,7 @@ de listas de Strings ser\'ia \texttt{[[String]]}.\\
 
 La sintaxis es:
 \begin{verbatim}
-\[<tipo>\]
+[<tipo>]
 \end{verbatim}
 
 \textbf{Tuple:}\\
@@ -420,9 +420,6 @@ Sintaxis:
        <code_blockN>]
    end|endif
 \end{verbatim}
-
-El conjunto de elementos \texttt{[elif <expr> : <code_block>]} puede
-estar repetido cero, una o mas veces.
 
 \subsubsection{While}
 Sintaxis:
@@ -638,6 +635,7 @@ tipos. Estas muestran el resultado de usar un operador binario o unario sobre
 todas las posibles combinaciones de tipos b\'asicos del lenguaje m\'as
 el tipo compuesto String.\\
 
+\textbf{Tipos B\'asicos:}
 \begin{itemize}
 \item
 \begin{tabular}{|c||ccccc|}
@@ -706,6 +704,39 @@ Bool        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & Bool \
 	\hline
 \end{tabular}
 \end{itemize}
+
+
+\textbf{Tipos Compuestos:}
+
+\emph{List:}
+\begin{itemize}
+\item Indexamiento: 
+  \begin{equation}
+    \frac{t_1: List(T_0)\ t_2: Int}{t_1[t_2]: T_0}
+  \end{equation}
+
+\item Añadir un elemento: 
+  \begin{equation}
+    \frac{t_1: List(T_0)\ t_2: T_0\ t_3: Int}{t_1.append(t_2, t_3): Bool}
+  \end{equation}
+
+\item Contar elementos:
+  \begin{equation}
+    \frac{t_1: List(T_0)}{t_1.count(): Int}
+  \end{equation}
+
+\item Pop:
+  \begin{equation}
+    \frac{t_1: List(T_0)\ t_2: Int}{t_1 >> t_2: List(T_0)}
+  \end{equation}
+
+\item Push:
+  \begin{equation}
+    \frac{t_1: List(T_0)\ t_2: T_0}{t_1 < < t_2: List(T_0)}
+  \end{equation}
+
+\end{itemize}
+
 
 \subsection{Expresiones}
 \label{sec:expr}
@@ -1050,7 +1081,7 @@ $> ./allTests.sh
 \end{verbatim}
 
 Los archivos de prueba se encuentran en la carpeta
-\texttt{Zinara-Barreto-Jaber/test_files/}.
+\texttt{Zinara-Barreto-Jaber/test\_files/}.
 
 \subsection{ESC/Java2}
 \label{sec:escjava}
