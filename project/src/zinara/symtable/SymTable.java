@@ -115,6 +115,7 @@ public class SymTable{
     }
 
     public SymValue getSymValueForId(String id) {
+	//@ assume \typeof(this.table.get(id)) == \type(SymValue);
 	if (this.table.containsKey(id)) return (SymValue)this.table.get(id);
 	else if (father != null) return father.getSymValueForId(id);
 	else return null;
@@ -148,11 +149,12 @@ public class SymTable{
      */
 
     //@ requires expr != null;
+    //@ requires lv != null;
     public SingleAssignation checkAssignation(LValue lv, Expression expr) 
 	throws IdentifierNotDeclaredException, TypeClashException {
 	//SymValue idSymValue = getSymValueForIdOrDie(id);
 
-	//@ assume idSymValue.getType() != null;
+	//@ assume lv.getType() != null;
 
 	if (lv.getType().equals(expr.getType()))
 	    return new SingleAssignation(lv, expr);

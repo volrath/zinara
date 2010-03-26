@@ -116,7 +116,7 @@ nonterminal Assignation asig, dasig;                 // (just one assignation, m
 nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignations
 nonterminal Type type;
-nonterminal ArrayList expr_list;  // arraylist of expressions
+nonterminal ArrayList expr_list, expr_tuple;  // arraylist of expressions
 nonterminal ArrayList  ident_list, decl_ident_list; // arraylist of lvalues
 nonterminal Expression expr, relational_expr,other_expr;
 nonterminal LValue l_value;
@@ -467,6 +467,10 @@ expr_list ::= expr_list:el COMMA expr:e  {: RESULT = el; el.add(e); :}
             | expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
             ;
 
+expr_tuple ::= expr_tuple:el COMMA expr:e  {: RESULT = el; el.add(e); :}
+             | expr:e1 COMMA expr:e2       {: RESULT = new ArrayList(); RESULT.add(e1);RESULT.add(e2);:}
+             ;
+
 expr  ::= expr:e1 AND expr:e2       {: RESULT = new BinaryExp(sym.AND, e1, e2); :}
         | expr:e1 SAND expr:e2      {: RESULT = new BinaryExp(sym.SAND, e1, e2); :}
         | expr:e1 OR expr:e2        {: RESULT = new BinaryExp(sym.OR, e1, e2); :}
@@ -519,7 +523,7 @@ other_expr   ::=
 //            | LBRACET RBRACET   /*{} empty dictionary*/  {:RESULT=new DictExp();:}
             | LBRACKET expr_list:e RBRACKET   /*list*/   {:RESULT=new ListExp(e);:}
             | LBRACET dict_vals:dv RBRACET /*dictionary*/{:RESULT=new DictExp(dv);:}
-            | LPAREN expr_list:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
+            | LPAREN expr_tuple:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
     /* ----- LVALUE ----- */
             | l_value:lv                                 {: RESULT = lv; :}
     /* ----- Composite types operations ----- */
