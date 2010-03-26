@@ -6,6 +6,6 @@ do
     then
 	echo "Error para la instancia $i, deberia fallar"
     else
-	echo "Fallo la instancia $i"
+	echo "Fallo exitosamente la instancia ${i} (deberia fallar)"
     fi
 done
