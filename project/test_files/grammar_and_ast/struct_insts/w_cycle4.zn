@@ -1,0 +1,15 @@
+main:
+/. No end ./
+
+Int a
+Int b
+
+cycle:
+    on a<b do:
+        print(1)
+    on false do:
+        a=b
+    on a+8<9 do:
+        print('h')
+
+endmain

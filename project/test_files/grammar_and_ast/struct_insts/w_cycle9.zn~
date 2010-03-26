@@ -1,0 +1,16 @@
+main:
+/. No expr nor doubledot on ON ./
+
+Int a
+Int b
+
+cycle:
+    on a<b do:
+        print(1)
+    on false do:
+        a=b
+    on
+        print('h')
+end
+
+endmain

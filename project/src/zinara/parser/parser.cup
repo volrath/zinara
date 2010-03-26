@@ -12,7 +12,6 @@ import zinara.ast.type.*;
 import zinara.exceptions.InvalidDictionaryException;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
-import zinara.exceptions.SyntaxErrorException;
 import zinara.symtable.*;
 import zinara.semantic.Operators;
 import zinara.semantic.StaticTypeChecking;
@@ -117,7 +116,7 @@ nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignat
 nonterminal Type type;
 nonterminal ArrayList expr_list;  // arraylist of expressions
 nonterminal ArrayList  ident_list; // arraylist of identifiers (Strings)
-nonterminal Expression expr,rela_expr,othe_expr;;
+nonterminal Expression expr,rela_expr,othe_expr;
 nonterminal Integer arithmetic_op, relational_op, logical_op;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
 nonterminal ArrayList args_list, args_list2; // arraylist of types
@@ -135,8 +134,6 @@ nonterminal ArrayList dict_type;
 
 
 /* Precedences */
-precedence left SEMI;
-
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE, MOD;
 precedence left POW;
@@ -376,7 +373,7 @@ ctrl_struct   ::=
                   elcyc
 
                   /*CYCLE - NO BRANCHES*/
-                | CYCLE SEMI
+                | CYCLE DOUBLEDOTTERM
                       cycle_body:cd
                   elcyc
                   {: RESULT = new Cycle(cd,null);:}

@@ -1,0 +1,11 @@
+main:
+/. No doubledot ./
+
+Int a
+Int b
+
+while a<b
+    print(1)
+end
+
+endmain

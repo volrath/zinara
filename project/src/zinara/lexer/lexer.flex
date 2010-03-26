@@ -78,7 +78,7 @@ Number      = {Digit}+
  "*"                             { return symbol(sym.TIMES); }
  "/"                             { return symbol(sym.DIVIDE);}
  "%"                             { return symbol(sym.MOD);}
- "**"                            { return symbol(sym.POW);}
+ "^"                             { return symbol(sym.POW);}
 
  ">"                             { return symbol(sym.GT);}
  "<"                             { return symbol(sym.LT);}
@@ -104,12 +104,13 @@ Number      = {Digit}+
  "cycle"                         { return symbol(sym.CYCLE);}
  "on"                            { return symbol(sym.ON);}
  "do"                            { return symbol(sym.DO);}
+ "default"                       { return symbol(sym.DEFAULT);}
  "endcycle"                      { return symbol(sym.ENDCYCLE);}
  "if"                            { return symbol(sym.IF);}
  "elif"                          { return symbol(sym.ELIF);}
  "else"                          { return symbol(sym.ELSE);}
  "endif"                         { return symbol(sym.ENDIF);}
- "end"                           { return symbol(sym.END); }
+ "end"                           { return symbol(sym.END);}
 
  "<<"                            { return symbol(sym.LTLT);}
  ">>"                            { return symbol(sym.GTGT);}
