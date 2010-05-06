@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
 
@@ -15,5 +16,9 @@ public class Return extends Instruction{
 
     public String toString() {
 	return "<Return " + expr + ">";
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

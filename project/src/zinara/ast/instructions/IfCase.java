@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
 
@@ -20,4 +21,8 @@ public class IfCase extends Instruction {
     }
 
     public String toString() { return "<If " + expr + ": " + code + ">"; }
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }

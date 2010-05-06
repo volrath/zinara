@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import java.util.ArrayList;
 
@@ -39,5 +40,9 @@ public class MultipleAssignation extends Assignation {
 	for (int i = 0; i < assignations.size(); i++)
 	    ret += " " + assignations.get(0);
 	return "<MultipleAssignation:" + ret + ">";
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

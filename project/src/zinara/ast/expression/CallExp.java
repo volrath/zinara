@@ -1,4 +1,5 @@
 package zinara.ast.expression;
+import zinara.code_generator.*;
 
 import java.util.ArrayList;
 
@@ -17,4 +18,8 @@ public class CallExp extends Expression {
     public Type getType() { return new IntType(); }
 
     public String toString() { return name + "(" + arguments + ")"; }
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }

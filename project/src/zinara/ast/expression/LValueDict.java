@@ -1,4 +1,5 @@
 package zinara.ast.expression;
+import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.DictType;
@@ -23,4 +24,8 @@ public class LValueDict extends LValue {
 	return ((DictType)constructor.getType()).get(identifier);
     }
     public String toString() { return constructor + "[" + identifier + "]"; }
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }

@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
 import java.util.ArrayList;
@@ -19,5 +20,9 @@ public class If extends Instruction{
 	for (int i = 0; i < cases.size(); i++)
 	    ret += (Instruction)cases.get(i);
 	return (ret + ">");
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

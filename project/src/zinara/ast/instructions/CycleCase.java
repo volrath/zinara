@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
 
@@ -17,5 +18,9 @@ public class CycleCase{
 
     public Expression getExpression(){
 	return this.expr;
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

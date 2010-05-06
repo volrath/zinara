@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import java.util.ArrayList;
 
@@ -26,5 +27,9 @@ public class CallInst extends Instruction{
 	for (int i = 0; i < expr_list.size(); i++)
 	    ret += (Expression)expr_list.get(i) + ", ";
 	return (ret.substring(0, ret.length()-2) + ")>");
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

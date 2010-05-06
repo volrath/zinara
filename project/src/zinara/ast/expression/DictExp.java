@@ -1,4 +1,5 @@
 package zinara.ast.expression;
+import zinara.code_generator.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,5 +37,9 @@ public class DictExp extends Expression {
 	    ret += ckey + ": " + (Expression)value.get(ckey) + ", ";
 	}
 	return ret.substring(0, ret.length()-2) + "}";
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

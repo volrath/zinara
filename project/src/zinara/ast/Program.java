@@ -1,8 +1,11 @@
 package zinara.ast;
-
 import java.util.ArrayList;
 
+import zinara.code_generator.*;
 import zinara.symtable.SymTable;
+import zinara.symtable.SymValue;
+
+import java.io.IOException;
 
 public class Program {
     private SymTable symtable;
@@ -27,4 +30,46 @@ public class Program {
 
     public String toString() { return "(Program: " + main + ")"; }
 
+    public String tox86(Genx86 generate) throws IOException{
+	String code = "";
+	int len;
+	
+	Object[] symbols = symtable.getSymbols();
+	len = symbols.length-1;
+	String symName;
+	SymValue symVal;
+
+	int total_size = 0;
+
+	//Calculo de la cantidad de espacio para las variables globales
+	//Se le asignan los offset a cada varaible global
+	while (len >= 0){
+	    symName = (String)symbols[len];
+	    //Actualizacion del valor (lo remuevo, modifico y vuelvo a insertar)
+	    symVal = (SymValue)symtable.deleteSymbol(symName);
+	    symVal.setDesp(total_size);
+	    total_size += symVal.getSize();
+	    symtable.addSymbol(symName,symVal);
+
+	    --len;
+	}
+	
+	//HEADER DEL .ASM
+	//  El espacio para variables, texto de las funciones
+	//  y el comienzo del texto del main se crean aca  
+	code += generate.global_data(total_size);
+	code += generate.main_text_header();
+	generate.write(code);
+
+	//Codigo del main
+	this.main.tox86(generate);
+
+	//El programa termina con codigo de terminacion 0 (exito)
+	code = generate.exit_syscall(0);
+	generate.write(code);
+
+	generate.closeFile();
+
+	return "";
+    }
 }

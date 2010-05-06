@@ -1,4 +1,5 @@
 package zinara.ast.expression;
+import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.TupleType;
@@ -24,4 +25,8 @@ public class LValueTuple extends LValue {
 	return ((TupleType)constructor.getType()).get(index);
     }
     public String toString() { return constructor + "[" + index + "]"; }
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }

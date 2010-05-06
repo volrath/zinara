@@ -1,7 +1,8 @@
 package zinara.symtable;
 
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import zinara.ast.Declaration;
 import zinara.ast.SingleDeclaration;
@@ -79,8 +80,8 @@ public class SymTable{
 	this.table.put(id,v);
     }
 
-    public void deleteSymbol (String id){
-	this.table.remove(id);
+    public SymValue deleteSymbol (String id){
+	return (SymValue)this.table.remove(id);
     }
 
     public SymValue getSymbol (String id){
@@ -195,5 +196,9 @@ public class SymTable{
     //@requires son != null;
     public void addSon(SymTable son){
 	this.sons.add(son);
+    }
+
+    public Object[] getSymbols(){
+	return (Object[])this.table.keySet().toArray();
     }
 }

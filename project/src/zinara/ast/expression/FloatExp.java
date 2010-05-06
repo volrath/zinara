@@ -1,4 +1,5 @@
 package zinara.ast.expression;
+import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.FloatType;
@@ -8,4 +9,8 @@ public class FloatExp extends Expression {
     public FloatExp ( float n ) { value=n; }
     public Type getType() { return new FloatType(); }
     public String toString() { return Float.toString(value); }
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }

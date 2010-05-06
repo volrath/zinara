@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
 import zinara.symtable.SymTable;
@@ -8,7 +9,7 @@ import zinara.ast.type.Type;
 public class For extends Instruction{
     private Expression expr;
     public CodeBlock code;
-    private String i;
+    private String i; //Iteration variable name
 
     public For(String i, Expression ex, CodeBlock cb){
 	this.i = i;
@@ -31,4 +32,8 @@ public class For extends Instruction{
     public String toString() {
 	return "<For " + i + " in " + expr + ": " + code + ">";
     }   
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }
