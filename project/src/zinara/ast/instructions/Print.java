@@ -21,10 +21,10 @@ public class Print extends Instruction{
     }
 
     public String tox86(Genx86 generate) throws IOException{
-	//Por ahora se asume que todas las expresiones son numeros enteros
-	// de un solo digito.
+	// Por ahora se asume que todas las expresiones son numeros enteros
+	//de un solo digito.
 	String code = "";
-	String expReg = generate.free_reg();
+	String expReg = generate.current_reg();
 
 	code += expr.tox86(generate);
 
@@ -33,7 +33,7 @@ public class Print extends Instruction{
 
 	code += generate.save_print_regs();
 
-	code += generate.mov("["+generate.stack_pointer()+"]",expReg,"");
+	code += generate.mov("["+generate.stack_pointer()+"]",expReg);
 	//Pongo el valor de la expresion en la pila.
 	
 	code += generate.setup_print(generate.stack_pointer(),"1","4");

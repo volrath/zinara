@@ -1,6 +1,6 @@
 #!/bin/bash
-set -o verbose
-set -o xtrace
+#set -o verbose
+#set -o xtrace
 
 bits=$2
 file=$1

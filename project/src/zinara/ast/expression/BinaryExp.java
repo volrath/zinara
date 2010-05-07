@@ -31,7 +31,7 @@ public class BinaryExp extends Expression {
 	String code = "";
 	int regs_used = 1;
 	
-	String exp1Reg = generate.free_reg();
+	String exp1Reg = generate.current_reg();
 	String exp2Reg;
 	
 	code += left.tox86(generate);

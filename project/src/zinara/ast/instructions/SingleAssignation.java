@@ -38,14 +38,14 @@ public class SingleAssignation extends Assignation {
 	String lvalueDir;
 	String expReg;
 	
-	expReg = generate.free_reg();
+	expReg = generate.current_reg();
 	code += expr.tox86(generate);
 
        	lvalueDir = lvalue.tox86(generate);
-	//Puede q el calculo del lvalue ocupe registros o puede que no.
-	//El se encarga de reservar sus registro en caso de ser necesario.
+	//Puede que el calculo del lvalue ocupe registros o puede que no.
+	//El se encarga de reservar sus registros en caso de ser necesario.
 
-	code += generate.mov("["+lvalueDir+"]",expReg,"");
+	code += generate.mov("["+lvalueDir+"]",expReg);
 
 	//Falta: Liberar registro del lvalue si lo uso
 
@@ -54,6 +54,7 @@ public class SingleAssignation extends Assignation {
 	return "";
     }
 
+    //Funcion que falta implementar.
     //Por si el calculo del lvalue ocupo un registro
     //private boolean isRegister(String)
 }

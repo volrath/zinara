@@ -56,8 +56,8 @@ public class Program {
 	
 	//HEADER DEL .ASM
 	//  El espacio para variables, texto de las funciones
-	//  y el comienzo del texto del main se crean aca  
-	code += generate.global_data(total_size);
+	//  y el comienzo del texto del main se crean aca
+	code += generate.data(generate.data_offset(),total_size);
 	code += generate.main_text_header();
 	generate.write(code);
 

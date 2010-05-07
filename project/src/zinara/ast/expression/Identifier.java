@@ -25,6 +25,6 @@ public class Identifier extends LValue {
     public String toString() { return identifier; }
 
     public String tox86(Genx86 generate){
-	return "glob+"+getSymValue().getDesp();
+	return generate.data_offset()+"+"+getSymValue().getDesp();
     }
 }
