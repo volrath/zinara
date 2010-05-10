@@ -1,4 +1,5 @@
 package zinara.ast.instructions;
+import zinara.code_generator.*;
 
 import zinara.ast.Declaration;
 
@@ -11,4 +12,8 @@ public class DecInst extends Instruction {
     public void setDeclaration(Declaration d) { this.declaration = d; }
 
     public String toString() { return "<" + declaration + ">"; }
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }

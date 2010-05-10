@@ -1,4 +1,5 @@
 package zinara.ast.expression;
+import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.parser.parser;
@@ -16,5 +17,9 @@ public class UnaryExp extends Expression {
 
     public String toString() {
 	return operator + " " + operand;
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

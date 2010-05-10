@@ -1,6 +1,7 @@
 package zinara;
 
 import zinara.ast.Program;
+import zinara.code_generator.Genx86;
 import zinara.exceptions.*;
 import zinara.lexer.*;
 import zinara.parser.*;
@@ -47,17 +48,23 @@ public class Main {
 	try {
 	    parser p = new parser(new Scanner(new FileReader(argv[0])));
 	    Program root;
+	    String filename = argv[0];
+	    Genx86 codeG = new Genx86(Integer.parseInt(argv[1]),new File("../x86.asm"));
+		
 	    if (debug_parsing)
 		root = (Program)p.debug_parse().value;
 	    else
 		root = (Program)p.parse().value;
+
 	    System.out.println("AST:      " + root + "\n");
 	    System.out.println("SYMTABLE: " + root.getSymTable() + "\n");
+	    root.tox86(codeG);
 	} 
 	catch (ClassCastException e) {
 	    System.out.println("oops..., classcastE: " + e.toString());
 	    e.printStackTrace();
 	}
+	catch (InvalidArchitectureException e) { System.out.println(e.getMessage());System.exit(1);}
 	catch (IdentifierNotDeclaredException e) { System.out.println(e.getMessage());System.exit(1);}
 	catch (IdentifierAlreadyDeclaredException e) { System.out.println(e.getMessage());System.exit(1);}
 	catch (InvalidAssignationException e) { System.out.println(e.getMessage());System.exit(1);}

@@ -1,4 +1,5 @@
 package zinara.ast;
+import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.expression.Identifier;
@@ -44,5 +45,9 @@ public class SingleDeclaration extends Declaration {
 
     public String toString() {
 	return "(Declaration: " + type + " " + identifier + " [" + (variable ? "VAR" : "CONST") + (value != null ? "="+value : "") +  "])";
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }

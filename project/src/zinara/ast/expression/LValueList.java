@@ -1,4 +1,5 @@
 package zinara.ast.expression;
+import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.ListType;
@@ -19,4 +20,12 @@ public class LValueList extends LValue {
 	return ((ListType)constructor.getType()).getInsideType();
     }
     public String toString() { return constructor + "[" + index + "]"; }
+
+    public String/*void*/ tox86(/*FileHandle*/){
+        return "";
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
+    }
 }

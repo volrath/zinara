@@ -1,4 +1,5 @@
 package zinara.ast;
+import zinara.code_generator.*;
 
 import java.util.ArrayList;
 
@@ -45,5 +46,9 @@ public class MultipleDeclaration extends Declaration {
 	for (int i = 0; i < declarations.size(); i++)
 	    ret += " " + declarations.get(0);
 	return "MultipleDeclaration:" + ret;
+    }
+
+    public String tox86(Genx86 generate){
+        return "";
     }
 }
