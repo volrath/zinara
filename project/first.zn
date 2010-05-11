@@ -1,14 +1,14 @@
 Int a
-Int b
+Float b
 Int c
 
 main:
    a = 0
-   b = 0
+   b = 567.12
    c = 6
 
-   a = 5+9*3
-   b = 2*(c*2+3)/2
+   b = b+9.0*367.89/3.
+//   b = 2*(c*2+3)/2
 
    print(c)
 endmain   

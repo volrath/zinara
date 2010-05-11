@@ -6,6 +6,9 @@
 *.url
 *.bbl
 *.blg
+*.o
+*.asm
+x86
 
 tools/jflex/doc
 tools/jflex/examples

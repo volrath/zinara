@@ -3,9 +3,9 @@ package zinara.code_generator;
 import zinara.ast.*;
 import zinara.ast.instructions.*;
 import zinara.ast.expression.*;
-import zinara.symtable.*;
 import zinara.exceptions.InvalidArchitectureException;
 import zinara.parser.sym;
+import zinara.symtable.*;
 
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -25,6 +25,9 @@ public class Genx86{
     private int bits;
 
     private BufferedWriter file;
+
+    private String save;
+    private String restore;
 
     public Genx86(int bits, File file) throws InvalidArchitectureException, IOException{
 	if (bits == 64){
@@ -72,9 +75,13 @@ public class Genx86{
 
 	next_reg = 0;
 	this.bits = bits;
+	this.save = null;
+	this.restore = null;
 
 	this.file = new BufferedWriter(new FileWriter(file));
 
+	this.file.write("%include \"asm_io.inc\"\n");
+	    
 	if (this.bits == 64)
 	    this.file.write("BITS 64\n");
     }
@@ -104,24 +111,44 @@ public class Genx86{
 	return this.data_offset;
     }
 
+    public String save(){
+	String save;
+
+	if (this.save != null){
+	    save = this.save;
+	    this.save = null;
+	    return save;
+	}
+	else
+	    return "";
+    }
+
+    public String restore(){
+	String restore;
+
+	if (this.restore != null){
+	    restore = this.restore;
+	    this.restore = null;
+	    return restore;
+	}
+	else
+	    return "";
+    }
+
     public String get_reg(int reg){
 	return regs[reg%n_regs];
     }
 
     //Suma 1 a next_reg y devuelve el string correspondiente.
     public String next_reg() {
-	this.next_reg += 1;
-	// if (next_reg >= n_regs){
-	//     if (this.bits == 32){
-	// 	save = "push "+get_reg(next_reg)+"\n";
-	// 	restore = "pop "+get_reg(next_reg)+"\n";
-	//     }
-	//     else {
-	// 	save = "mov [rsp],"+get_reg(next_reg)+"\nsub rsp,8\n";
-	// 	restore = "mov "+get_reg(next_reg)+",[rsp]\nadd rsp,8\n";
-	//     }	    
-	// }
-	
+	this.next_reg += 1;	
+
+	//Seteo save y restore si es necesario
+    	if (next_reg >= n_regs){
+	    this.save = pushw(get_reg(next_reg));
+	    this.restore = pop(get_reg(next_reg));
+	}
+
 	return regs[next_reg%n_regs];
     }
 
@@ -139,7 +166,20 @@ public class Genx86{
     }
 
     public String main_text_header(){
-	return "section .text\n   global _start\n   _start:\n";
+	return "section .text\n   global main\nmain:\n";
+    }
+
+    //Push
+    public String push (String thing){
+	String code = "";
+
+	if (this.bits == 32)
+	    return "push "+thing+"\n";
+	else{
+	    code += mov("[rsp]",thing);
+	    code += sub("rsp",stackAlig);
+	    return code;
+	}
     }
 
     //Push de 32 bits (word)
@@ -150,8 +190,7 @@ public class Genx86{
 	    return "push "+thing+"\n";
 	else{
 	    code += mov("[rsp]",thing);
-	    code += mov("[rsp+4]","0h","dword");
-	    code += sub("rsp",stackAlig);
+	    code += sub("rsp",Integer.toString(Integer.parseInt(stackAlig)/2));
 	    return code;
 	}
     }
@@ -199,6 +238,48 @@ public class Genx86{
 	return code;
     }
 
+    public String pushInt (String in){
+	if (this.bits == 32)
+	    return push(in);
+	else
+	    return pushw(in);
+    }
+
+    public String pushReal (String real){
+	if (this.bits == 32)
+	    return pushFloat(real);
+	else
+	    return pushDouble(real);
+    }
+
+    public String pushFloat (String flo){
+	if (this.bits == 32)
+	    return push(flo);
+	else
+	    return pushw(flo);
+    }
+
+    public String pushDouble (String dou){
+	if (this.bits == 64)
+	    return push(dou);
+	else{
+	    System.out.println("pushDouble en 32 bits");
+	    System.exit(1);
+	}
+	return "";
+    }
+
+    public String pushChar (String ch){
+	if (this.bits == 32)
+	    return push(ch)+mov("["+this.stackp+"-4]","0h","byte");
+	else
+	    return pushw(ch)+mov("["+this.stackp+"-4]","0h","byte");
+    }
+
+    public String pushAddr (String addr){
+	return push(addr);
+    }
+
     // Usando este mov, nasm deducira la cantidad de
     //bytes a mover a partir del contexto.
     public String mov(String dst, String orig){
@@ -209,6 +290,46 @@ public class Genx86{
     //a nasm la cantidad de bytes (byte,word,dword o qword).
     public String mov(String dst, String orig, String size_mod){
 	return "mov "+size_mod+" "+dst+","+orig+"\n";
+    }
+
+    public String fst(String dst, String size){
+	return "fst "+size+" "+dst+"\n";
+    }
+
+    public String fstp(String dst, String size){
+	return "fstp "+size+" "+dst+"\n";
+    }
+
+    public String fld(String orig, String size){
+	return "fld "+size+" "+orig+"\n";
+    }
+
+    public String fst(String dst){
+	return "fst "+dst+"\n";
+    }
+
+    public String fstp(String dst){
+	return "fstp "+dst+"\n";
+    }
+
+    public String fld(String orig){
+	return "fld "+orig+"\n";
+    }
+
+    public String fxch(){
+	return "fxch\n";
+    }
+
+    public String fxchR(String st){
+	return "fxch "+st+"\n";
+    }
+
+    public String ffree(String st){
+	return "ffree "+st+"\n";
+    }
+
+    public String fninit(){
+	return "fninit\n";
     }
 
     //Suma de enteros
@@ -255,6 +376,127 @@ public class Genx86{
 	    code += mov(dividend,"eax");
 	    code += pop("eax");
 	}
+	return code;
+    }
+
+    //Modulo de enteros, el resultado queda en dividend
+    public String imod(String dividend, String diviser){
+	String code = "";
+
+	code += pushw("eax"); //Parte baja del dividendo
+	code += pushw("ebx"); //Divisor
+	code += pushw("edx"); //Parte alta del dividendo
+
+	//Aqui pongo los argumentos en los registros
+	code += pushw(dividend);
+	code += pushw(diviser);
+	code += pop("ebx");
+	code += pop("eax");
+
+	code += mov("edx","0h","dword");
+	//Limpio la parte alta porque no se va a usar
+
+	code += "idiv ebx\n";
+	code += pop("edx");//Restauro registros 
+	code += pop("ebx");//Restauro registros 
+
+	//If en caso de que el registro donde debe quedar la division
+	//esa el mismo eax, no lo puedo sobreescribir
+	if (dividend.compareTo("edx") == 0)
+	    code += add(this.stackp,this.stackAlig);
+	else{
+	    code += mov(dividend,"edx");
+	    code += pop("edx");
+	}
+	return code;
+    }
+
+    //Suma de flotantes
+    //Para que esto funcione dst y op2 deben ser registros
+    public String fadd(String dst, String op2){
+	String code = "";
+	String size;
+	
+	if (this.bits == 32)
+	    size = "dword";
+	else
+	    size = "dword";
+	
+	code += mov("["+this.stackp+"]",dst);
+	code += fld("["+this.stackp+"]",size);
+	code += mov("["+this.stackp+"]",op2);
+	code += fld("["+this.stackp+"]",size);
+	code += "fadd st0,st1\n";
+	code += fstp("["+this.stackp+"]",size);
+	code += mov(dst,"["+this.stackp+"]");
+	code += fninit();
+	
+	return code;
+    }
+
+    //Resta de flotantes
+    public String fsub(String dst, String op2){
+	String code = "";
+	String size;
+	
+	if (this.bits == 32)
+	    size = "dword";
+	else
+	    size = "dword";
+	
+	code += mov("["+this.stackp+"]",dst);
+	code += fld("["+this.stackp+"]",size);
+	code += mov("["+this.stackp+"]",op2);
+	code += fld("["+this.stackp+"]",size);
+	code += "fsub st0,st1\n";
+	code += fstp("["+this.stackp+"]",size);
+	code += mov(dst,"["+this.stackp+"]");
+	code += fninit();
+	
+	return code;
+    }
+    
+    //Multiplicacion de flotantes
+    public String fmul(String dst, String op2){
+	String code = "";
+	String size;
+	
+	if (this.bits == 32)
+	    size = "dword";
+	else
+	    size = "dword";
+	
+	code += mov("["+this.stackp+"]",dst);
+	code += fld("["+this.stackp+"]",size);
+	code += mov("["+this.stackp+"]",op2);
+	code += fld("["+this.stackp+"]",size);
+	code += "fmul st0,st1\n";
+	code += fstp("["+this.stackp+"]",size);
+	code += mov(dst,"["+this.stackp+"]");
+	code += fninit();
+	
+	return code;
+    }
+
+    //Multiplicacion de flotantes
+    public String fdiv(String dst, String op2){
+	String code = "";
+	String size;
+	
+	if (this.bits == 32)
+	    size = "dword";
+	else
+	    size = "dword";
+	
+	code += mov("["+this.stackp+"]",dst);
+	code += fld("["+this.stackp+"]",size);
+	code += mov("["+this.stackp+"]",op2);
+	code += fld("["+this.stackp+"]",size);
+	code += "fdiv st0,st1\n";
+	code += fstp("["+this.stackp+"]",size);
+	code += mov(dst,"["+this.stackp+"]");
+	code += fninit();
+	
 	return code;
     }
 
@@ -337,5 +579,20 @@ public class Genx86{
 	    return "int 80h\n";
 	else
 	    return "syscall\n";
+    }
+
+    public String toASCII(char C){
+	return DataTranslator.toASCII(C);
+    }
+
+    public String toReal(double F){
+	if (bits == 32)
+	    return DataTranslator.toReal((float)F);
+	else
+	    return DataTranslator.toReal(F);
+    }
+
+    public String toReal(float F){
+	return DataTranslator.toReal(F);
     }
 }

@@ -1,7 +1,7 @@
 package zinara.ast.expression;
 import zinara.code_generator.*;
 
-import zinara.ast.type.Type;
+import zinara.ast.type.*;
 import zinara.exceptions.TypeClashException;
 import zinara.parser.sym;
 import zinara.parser.parser;
@@ -27,17 +27,43 @@ public class BinaryExp extends Expression {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public String tox86(Genx86 generate) throws IOException{
+    public String tox86(Genx86 generate) throws IOException, TypeClashException{
 	String code = "";
 	int regs_used = 1;
+	Type type = getType();
 	
+	String save;
+	String restore;
+
 	String exp1Reg = generate.current_reg();
 	String exp2Reg;
 	
 	code += left.tox86(generate);
 
 	exp2Reg = generate.next_reg();
+	save = generate.save();
+	restore = generate.restore();
+	
+	code += save;
 	code += right.tox86(generate);
+
+	if (type instanceof IntType)
+	    code += intOps(generate,exp1Reg,exp2Reg);
+	else if (type instanceof FloatType)
+	    code += realOps(generate,exp1Reg,exp2Reg);
+	else{
+	    System.out.println("Tipo no implementado: "+operator);
+	    System.exit(1);
+	}
+
+	generate.prevs_regs(regs_used);
+
+	code += restore;
+        return code;
+    }
+
+    private String intOps(Genx86 generate, String exp1Reg, String exp2Reg){
+	String code = "";
 
 	if (operator == sym.PLUS){
 	    code += generate.add(exp1Reg,exp2Reg);
@@ -51,12 +77,37 @@ public class BinaryExp extends Expression {
 	else if (operator == sym.DIVIDE){
 	    code += generate.idiv(exp1Reg,exp2Reg);
 	}
+	else if (operator == sym.MOD){
+	    code += generate.imod(exp1Reg,exp2Reg);
+	}
 	else{
-	    System.out.println("Operacion no implementada: "+operator);
+	    System.out.println("Operacion no implementada para enteros: "+operator);
 	    System.exit(1);
 	}
+	
+	return code;
+    }
 
-	generate.prevs_regs(regs_used);
-        return code;
+    private String realOps(Genx86 generate, String exp1Reg, String exp2Reg){
+	String code = "";
+
+	if (operator == sym.PLUS){
+	    code += generate.fadd(exp1Reg,exp2Reg);
+	}
+	else if (operator == sym.MINUS){
+	    code += generate.fsub(exp1Reg,exp2Reg);
+	}
+	else if (operator == sym.TIMES){
+	    code += generate.fmul(exp1Reg,exp2Reg);
+	}
+	else if (operator == sym.DIVIDE){
+	    code += generate.fdiv(exp1Reg,exp2Reg);
+	}
+	else{
+	    System.out.println("Operacion no implementada para reales: "+operator);
+	    System.exit(1);
+	}
+	
+	return code;
     }
 }

@@ -1,7 +1,7 @@
 package zinara;
 
 import zinara.ast.Program;
-import zinara.code_generator.Genx86;
+import zinara.code_generator.*;
 import zinara.exceptions.*;
 import zinara.lexer.*;
 import zinara.parser.*;
@@ -45,7 +45,7 @@ public class Main {
     }
 
     public static void main(String argv[]) {
-	try {
+	try {	
 	    parser p = new parser(new Scanner(new FileReader(argv[0])));
 	    Program root;
 	    String filename = argv[0];

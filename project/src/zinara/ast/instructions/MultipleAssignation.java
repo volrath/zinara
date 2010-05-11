@@ -1,8 +1,9 @@
 package zinara.ast.instructions;
-import zinara.code_generator.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import zinara.code_generator.*;
 import zinara.ast.expression.Expression;
 import zinara.ast.expression.Identifier;
 import zinara.exceptions.InvalidAssignationException;
@@ -38,11 +39,13 @@ public class MultipleAssignation extends Assignation {
 	String ret = "";
 	SingleAssignation currentAssignation;
 	for (int i = 0; i < assignations.size(); i++)
-	    ret += " " + assignations.get(0);
+	    ret += " " + assignations.get(i);
 	return "<MultipleAssignation:" + ret + ">";
     }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public String tox86(Genx86 generate) throws IOException{
+	for (int i = 0; i < assignations.size(); i++)
+	    ((SingleAssignation)assignations.get(i)).tox86(generate);
+	return "";
     }
 }

@@ -48,6 +48,6 @@ public class SingleDeclaration extends Declaration {
     }
 
     public String tox86(Genx86 generate){
-        return "";
+	return "SingleDeclaration NO IMPLEMENTADA";
     }
 }
