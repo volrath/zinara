@@ -115,7 +115,7 @@ nonterminal Declaration const_decl, decl, def_decl;  // (just one declaration, m
 nonterminal Assignation asig, dasig;                 // (just one assignation, multiple or single)
 nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignations
-nonterminal Type type;
+nonterminal Type type, cast;
 nonterminal ArrayList expr_list, expr_tuple;  // arraylist of expressions
 nonterminal ArrayList  ident_list, decl_ident_list; // arraylist of lvalues
 nonterminal Expression expr, relational_expr,other_expr;
@@ -178,7 +178,8 @@ def_decl     ::= DEF IDENTIFIER:id
 		  currentTable.checkDoubleDeclaration(id);
 		  currentTable = currentTable.newTable();
 		 :}
-                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOTTERM
+//                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOTTERM
+                   LPAREN args_list:al RPAREN RETURNS cast:t DOUBLEDOTTERM
 		 {:
 		     currentTable.addSymbol("return", new SymValue(t,false));
 		 :}
@@ -463,8 +464,13 @@ fed       ::= END | ENDDEF;
 /*
       EXPRESIONS
  */
+cast ::= LT type:t GT {: RESULT = t; :}
+       |
+       ;
+
 expr_list ::= expr_list:el COMMA expr:e  {: RESULT = el; el.add(e); :}
-            | expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
+//| expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
+            | cast expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
             ;
 
 expr_tuple ::= expr_tuple:el COMMA expr:e  {: RESULT = el; el.add(e); :}
