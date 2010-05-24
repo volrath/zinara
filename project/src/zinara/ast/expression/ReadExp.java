@@ -5,8 +5,8 @@ import zinara.ast.type.Type;
 import zinara.ast.type.IntType;
 
 public class ReadExp extends Expression {
-    public ReadExp () {}
-    public Type getType() { return new IntType(); }
+    public ReadExp () { type = new StringType(); }
+    public Type getType() { return type; }
     public String toString() { return "READ"; }
 
     public String tox86(Genx86 generate){

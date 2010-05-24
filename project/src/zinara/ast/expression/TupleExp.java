@@ -15,11 +15,12 @@ public class TupleExp extends Expression {
     public TupleExp() { value = new ArrayList(); }
 
     public Type getType() throws TypeClashException { 
+	if (type != null) return type;
 	ArrayList types = new ArrayList();
 	for (int i = 0; i < value.size(); i++)
 	    types.add(((Expression)value.get(0)).getType());
-	return new TupleType(types);
-	//return new TupleType(null); // typeclashexception handling... heavy
+	type = new TupleType(types);
+	return type;
     }
     // TupleType(null) = (), which in this case, doesn't exist.
 

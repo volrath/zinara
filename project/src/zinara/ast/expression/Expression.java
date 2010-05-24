@@ -7,6 +7,7 @@ import zinara.exceptions.TypeClashException;
 import java.io.IOException;
 
 public abstract class Expression {
+    private Type type;
     //@ ensures \result != null
     public abstract Type getType() throws TypeClashException;
     public abstract String toString();

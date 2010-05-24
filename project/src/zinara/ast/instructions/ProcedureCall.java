@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 import zinara.ast.expression.Expression;
 
-public class CallInst extends Instruction{
+public class ProcedureCall extends Instruction{
     private ArrayList expr_list; // arraylist of expressions
     private String func_name;
 
-    public CallInst(String fn, ArrayList exl){
+    public ProcedureCall(String fn, ArrayList exl){
 	this.func_name = fn;
 	this.expr_list = exl;
     }

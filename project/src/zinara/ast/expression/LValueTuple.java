@@ -22,7 +22,9 @@ public class LValueTuple extends LValue {
     }
 
     public Type getType() throws TypeClashException {
-	return ((TupleType)(constructor.getType().getType())).get(index);
+	if (type != null) return type;
+	type = ((TupleType)(constructor.getType().getType())).get(index);
+	return type;
     }
     public String toString() { return constructor + "[" + index + "]"; }
 

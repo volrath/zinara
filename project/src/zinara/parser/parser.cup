@@ -322,8 +322,8 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
                 | def_decl:dd                               {: RESULT = new DecInst(dd); :}
-                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
-                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
+                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
+                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
                 ;
@@ -336,8 +336,8 @@ code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i
 instruction_loop  ::= asig:a                                      {: RESULT = a; :}
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
-                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkCallInst(id, el, currentTable); :}
-                    | IDENTIFIER:id LPAREN RPAREN                 {: RESULT = StaticTypeChecking.checkCallInst(id, new ArrayList(), currentTable); :}
+                    | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
+                    | IDENTIFIER:id LPAREN RPAREN                 {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
                     | CONTINUE                                    {: RESULT = new Continue(); :}
@@ -520,8 +520,8 @@ other_expr   ::=
             | MINUS:o other_expr:e        	          {: RESULT = new UnaryExp(sym.UMINUS, e); :}
 
     /* ----- Functions calls ----- */
-            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkCallExp(n, el, currentTable); :}
-            | IDENTIFIER:n LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkCallExp(n, new ArrayList(), currentTable); :}
+            | IDENTIFIER:n LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkFunctionCall(n, el, currentTable); :}
+            | IDENTIFIER:n LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkFunctionCall(n, new ArrayList(), currentTable); :}
 
     /* ----- Composite types ----- */
             | STRING_V:e                                  {:RESULT=new StringExp(e);:}

@@ -11,6 +11,7 @@ public class Identifier extends LValue {
     public Identifier (String id, SymTable st) {
 	identifier = id;
 	symtable = st;
+	type = symtable.getSymValueForId(identifier).getType();
     }
 
     public String getIdentifier() { return identifier; }
@@ -20,7 +21,7 @@ public class Identifier extends LValue {
     }
 
     public Type getType() {
-	return symtable.getSymValueForId(identifier).getType();
+	return type;
     }
     public String toString() { return identifier; }
 

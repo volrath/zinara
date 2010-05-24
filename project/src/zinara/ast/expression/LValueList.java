@@ -17,7 +17,9 @@ public class LValueList extends LValue {
     }
 
     public Type getType() throws TypeClashException {
-	return ((ListType)constructor.getType().getType()).getInsideType();
+	if (type != null) return type;
+	type = ((ListType)constructor.getType().getType()).getInsideType();
+	return type;
     }
     public String toString() { return constructor + "[" + index + "]"; }
 
