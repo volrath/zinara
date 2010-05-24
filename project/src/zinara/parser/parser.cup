@@ -467,13 +467,11 @@ fed       ::= END | ENDDEF;
 /*
       EXPRESIONS
  */
-cast ::= LT type:t GT {: RESULT = t; :}
-       |
-       ;
+cast ::= LT type:t GT {: RESULT = t; :};
 
 expr_list ::= expr_list:el COMMA expr:e  {: RESULT = el; el.add(e); :}
-//| expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
-            | cast expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
+            | expr:e                     {: RESULT = new ArrayList(); RESULT.add(e); :}
+            | cast:c expr:e              {: RESULT = new ArrayList(); RESULT.add(new CastedExp(c,e));:}
             ;
 
 expr_tuple ::= expr_tuple:el COMMA expr:e  {: RESULT = el; el.add(e); :}

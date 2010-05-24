@@ -1,7 +1,7 @@
 package zinara.ast.expression;
-import zinara.code_generator.*;
 
 import zinara.ast.type.*;
+import zinara.code_generator.*;
 import zinara.exceptions.TypeClashException;
 import zinara.parser.sym;
 import zinara.parser.parser;
@@ -32,6 +32,7 @@ public class BinaryExp extends Expression {
     public String tox86(Genx86 generate) throws IOException {
 	String code = "";
 	int regs_used = 1;
+	Type type = this.type;
 	
 	String save;
 	String restore;

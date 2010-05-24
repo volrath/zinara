@@ -1,6 +1,6 @@
 main:
     if True:
-        def fun() returns <Int>:
+        def fun() -> Int:
             return 0
     	end
     end
