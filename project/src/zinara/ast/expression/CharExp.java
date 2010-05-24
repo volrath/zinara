@@ -11,6 +11,6 @@ public class CharExp extends Expression {
     public String toString() { return Character.toString(value); }
 
     public String tox86(Genx86 generate){
-        return "";
+ 	return generate.mov(generate.current_reg(),generate.toASCII(value));
     }
 }
