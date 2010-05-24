@@ -43,6 +43,7 @@ public class Operators {
     public final int arithmetic = -1;
     public final int relational = -2;
     public final int logical    = -3;
+    public final int cast       = -4;
 
     public Operators() {
 	this.table = new HashMap();
@@ -80,11 +81,15 @@ public class Operators {
 
 	this.table.put(new OP(sym.UMINUS, new IntType(), null).toString(), new IntType());
 	this.table.put(new OP(sym.UMINUS, new FloatType(), null).toString(), new FloatType());
+
+	//Casting
+	//El 2do argumentdo del constructor de OP es el tipo HACIA el que se castea
+	this.table.put(new OP(this.cast, new IntType(), new FloatType()).toString(), new IntType());
     }
 
     // also returns the type cohersion if needed
     public Type check(int o, Type l, Type r) throws TypeClashException {
-	// maps the operator to `arithmetic`, `relational` or `logical`
+	// maps the operator to `arithmetic`, `relational`, `logical` or `cast`
 	int om = -1;
 	switch (o) {
 	case sym.PLUS:
@@ -109,12 +114,15 @@ public class Operators {
 	case sym.SOR:
 	    om = logical;
 	    break;
+	case -4:
+	    om = cast;
+	    break;
 	}
 
 	String comp = new OP(om,l,r).toString();
 	//@ assume \typeof(table.get(comp)) == \type(Type);
-	Type result = (Type)table.get(comp);
 	if (!table.containsKey(comp)) throw new TypeClashException("Error de tipos con el operador " + o + " en la linea tal..."); // mejorar
+	Type result = (Type)table.get(comp);
 	return result;
     }
 }
