@@ -58,8 +58,8 @@ public class StaticTypeChecking {
     //@ requires expr != null;
     public static void checkIterable(Expression expr)
 	throws TypeClashException {
-	if (!(expr.getType() instanceof ListType))
-	    throw new TypeClashException("La expresion " + expr + " no es iterable.");
+	if (!(expr.getType().getType() instanceof ListType))
+	    throw new TypeClashException("La expresion " + expr + expr.getType() + " no es iterable.");
     }
 
     /*
@@ -117,46 +117,49 @@ public class StaticTypeChecking {
       Lists or Tuples, the Dictionary checking is on the next static
       method.
      */
-    public static LValue checkAndReturnLValue(LValue lv, Expression expr)
+    public static LValue checkAndReturnLValue(LValue constructor, Expression expr)
 	throws InvalidAccessException, TypeClashException, KeyErrorException {
-	Type lvType = lv.getType();
-	ListType emptyList = new ListType();
-	TupleType emptyTuple = new TupleType();
-	if (!(lvType.equals(emptyList)) && !(lvType.equals(emptyTuple)))
-	    throw new InvalidAccessException("La expresion " + lv + " no es del tipo lista o tupla y no puede ser indexada con una expresion. ");
-	if (lvType.equals(emptyList))
+
+	Type constructorType = constructor.getType().getType();
+
+	if (!(constructorType instanceof TupleType) && !(constructorType instanceof ListType))
+	    throw new InvalidAccessException("La expresion " + constructor + " no es del tipo lista o tupla y no puede ser indexada con una expresion. ");
+
+	if (constructorType instanceof ListType)
 	    if (!(expr.getType() instanceof IntType))
-		throw new InvalidAccessException("La expresion " + lv + " es del tipo " + lvType + " y la expresion " + expr + " debe ser del tipo Int para poder realizar el indexamiento");
+		throw new InvalidAccessException("La expresion " + expr + " es del tipo " + expr.getType() + " pero debe ser del tipo Int para poder realizar el indexamiento");
 	    else
-		return new LValueList(lv, expr);
-	if (lvType.equals(emptyTuple))
+		return new LValueList(constructor, expr);
+
+	if (constructorType instanceof TupleType)
 	    if (!(expr instanceof IntegerExp))
-		throw new InvalidAccessException("La expresion " + lv + " es del tipo Tuple y debe ser indexada unicamente por enteros literales");
+		throw new InvalidAccessException("La expresion " + expr + " debe ser un entero literal");
 	    else
-		return new LValueTuple(lv, ((IntegerExp)expr).getValue());
+		return new LValueTuple(constructor, ((IntegerExp)expr).getValue());
+
 	throw new InvalidAccessException("Diccionarios todavia no estan implementados");
     }
 
-    //@requires lv != null;
+    //@requires constructor != null;
     //@requires id != null;
     //@requires ct != null;
-    public static LValue checkAndReturnLValue(LValue lv, String id, SymTable ct) 
+    public static LValue checkAndReturnLValue(LValue constructor, String id, SymTable ct) 
 	throws InvalidAccessException, TypeClashException, KeyErrorException, IdentifierNotDeclaredException {
-	Type lvType = lv.getType();
-	//@assume lv.getType() != null;
-	if (lvType instanceof ListType) {
+	Type constructorType = constructor.getType().getType();
+	//@assume constructor.getType() != null;
+	if (constructorType instanceof ListType) {
 	    SymTable st = ct.getSymTableForId(id);
 	    if (st == null) throw new IdentifierNotDeclaredException(id);
 	    SymValue sv = st.getSymValueForId(id);
 	    //@assume sv != null;
 	    if (sv.getType() instanceof IntType)
-		return new LValueList(lv, new Identifier(id, st));
+		return new LValueList(constructor, new Identifier(id, st));
 	    else
 		throw new InvalidAccessException("El identificador " + id + " tiene tipo " + sv.getType() + ", se requiere Int");
 	}
-	if (!(lvType instanceof DictType))
-	    throw new InvalidAccessException("La expresion " + lv + " no representa un diccionario y no puede ser indexado con un identificador.");
-	return new LValueDict(lv, id);
+	if (!(constructorType instanceof DictType))
+	    throw new InvalidAccessException("La expresion " + constructor + " no representa un diccionario y no puede ser indexado con un identificador.");
+	return new LValueDict(constructor, id);
     }
 }
 
