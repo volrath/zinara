@@ -186,10 +186,16 @@ def_decl     ::= DEF IDENTIFIER:id
 		     code_block:cb 
                  fed
                  {:
-		  RESULT = new SingleDeclaration(new FunctionType(al,t,cb),id,null,false);
-		  currentTable=currentTable.getFather();
-		  cb.setSymTable(currentTable);
-		  currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), false));
+		     if (t != null)
+			 RESULT = new SingleDeclaration(new FunctionType(al,t,cb), id, null, false);
+		     else
+			 RESULT = new SingleDeclaration(new ProcedureType(al, cb), id, null, false);
+		     currentTable=currentTable.getFather();
+		     cb.setSymTable(currentTable);
+		     if (t != null)
+			 currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), false));
+		     else
+			 currentTable.addSymbol(id,new SymValue(new ProcedureType(al, cb), false));
                  :};
 
 args_list    ::= args_list2:al                   {: RESULT = al; :}
