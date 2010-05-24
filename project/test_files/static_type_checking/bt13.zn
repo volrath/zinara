@@ -1,4 +1,4 @@
-def fun(a as Int) returns <Float>:
+def fun(a as Int) -> Float:
     return .1
 end
 

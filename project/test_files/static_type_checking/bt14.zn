@@ -1,4 +1,4 @@
-def fun() returns <Int>:
+def fun() -> Int:
     return 1.
 end
 
