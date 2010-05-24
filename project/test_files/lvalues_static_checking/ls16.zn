@@ -1,0 +1,5 @@
+[Int] x = []
+main:
+Char y = 'a'
+x[0] = y
+endmain

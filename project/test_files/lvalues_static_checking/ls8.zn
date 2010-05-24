@@ -1,0 +1,6 @@
+[Int]  x = [1,2]
+[Char] y = ['a']
+
+main:
+Int z = x[0] + y[0]
+endmain

@@ -7,20 +7,11 @@ import java.util.Iterator;
 import zinara.exceptions.KeyErrorException;
 
 public class DictType extends Type {
-    private String name;
     private HashMap table;
 
     public DictType(HashMap t) {
-	name = "";
 	table = t;
     }
-
-    public DictType(String n, HashMap t) {
-	name = n;
-	table = t;
-    }
-
-    public String getName() { return name; }
 
     public Iterator getIterator() { return table.keySet().iterator(); }
 
@@ -36,7 +27,7 @@ public class DictType extends Type {
     }
 
     public String toString() {
-	String ret = "<" + ((name == "") ? "{" : "<" + name + ">{");
+	String ret = "<{";
 	Set keySet = table.keySet();
 	Iterator it = keySet.iterator();
 	String currentKey;
@@ -52,9 +43,6 @@ public class DictType extends Type {
     public boolean equals(Type other) {
 	if (!(other instanceof DictType)) return false;
 	DictType otherDict = (DictType)other;
-	if (getName() != "" && otherDict.getName() != "")
-	    if (getName() == otherDict.getName()) return true;
-	    else return false;
 	// Checks internally
 	if (size() != otherDict.size()) return false;
 	Iterator it1 = getIterator();

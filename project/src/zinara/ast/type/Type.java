@@ -4,6 +4,6 @@ import java.util.Iterator;
 
 public abstract class Type {
     public abstract boolean equals(Type other);
-    public abstract String toString();
+    public String toString() { return super.toString(); };
     public abstract Type getType();
 }

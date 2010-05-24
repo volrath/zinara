@@ -1,0 +1,32 @@
+main:
+    [Int] x = [1, 2, 3]
+    for e in x:
+    	print(e)
+    end
+
+    [Int] y = []
+    for e in y:
+    	print(e)
+    end
+
+    for e in [1, 2, 3]:
+    	print(e)
+    end
+
+    for e in []:
+    	print(e)
+    end
+
+    for e in [x, y]:
+    	print(e)
+    end
+
+    for e in [x, y]:
+    	for e' in e:
+	    print(e')
+	    print(e)
+	    print(x)
+	end
+	print(e)
+    end
+endmain
