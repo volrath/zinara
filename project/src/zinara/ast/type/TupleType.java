@@ -13,10 +13,11 @@ public class TupleType extends Type {
     public Type get(int i) { return (Type)types.get(i); }
 
     public String toString() {
-	String ret = "<(";
-	for (int i = 0; i < types.size(); i++)
-	    ret += (Type)types.get(i) + ", ";
-	return ret.substring(0, ret.length()-2) + ")>";
+	return super.toString();
+// 	String ret = "<(";
+// 	for (int i = 0; i < types.size(); i++)
+// 	    ret += (Type)types.get(i) + ", ";
+// 	return ret.substring(0, ret.length()-2) + ")>";
     }
 
     public Type getType() { return this; }

@@ -157,7 +157,7 @@ public class SymTable{
 
 	//@ assume lv.getType() != null;
 
-	if (lv.getType().equals(expr.getType()))
+	if (lv.getType().getType().equals(expr.getType().getType()))
 	    return new SingleAssignation(lv, expr);
 	else
 	    throw new TypeClashException("Conflicto de tipos entre el identificador " + lv + lv.getType() +" y la expresion " + expr + expr.getType());

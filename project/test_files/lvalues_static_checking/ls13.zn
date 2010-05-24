@@ -1,0 +1,4 @@
+[Char] x
+main:
+x = [1,2]
+endmain

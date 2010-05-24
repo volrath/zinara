@@ -1,0 +1,6 @@
+[Int] x = [1,2,3]
+Float y = 1.3
+
+main:
+x[y] = 6
+endmain

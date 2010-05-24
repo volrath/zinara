@@ -274,7 +274,7 @@ ident_list   ::= ident_list:il COMMA l_value:id        {: RESULT = il; il.add(id
                ;
 
 l_value      ::= IDENTIFIER:id                                                      {: SymTable finded = currentTable.getSymTableForIdOrDie(id); RESULT = new Identifier(id, finded); :}
-               | l_value:lv LBRACKET other_expr:e RBRACKET                          {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
+               | l_value:lv LBRACKET expr:e RBRACKET                                {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
                | l_value:lv LBRACKET other_expr:e DOUBLEDOT other_expr RBRACKET     {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
 //               | l_value:lv LBRACKET IDENTIFIER:id RBRACKET                         {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, id, currentTable); :}
                ;
@@ -374,7 +374,7 @@ ctrl_struct   ::=
 		{:
 		 StaticTypeChecking.checkIterable(e);
 		 currentTable = currentTable.newTable();
-		 currentTable.addSymbol(id,new SymValue(((ListType)e.getType()).getInsideType(),false));
+		 currentTable.addSymbol(id,new SymValue(((ListType)(e.getType().getType())).getInsideType(),false));
 		 :}
 		      code_block_loop:cb
 		      {: currentTable = currentTable.getFather(); RESULT = new For(id, e, cb); :}

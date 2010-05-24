@@ -712,6 +712,14 @@ Bool        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & Bool \
 \textbf{Tipos Compuestos:}
 
 \emph{List:}
+El tipo de las listas se definir\'a de la siguiente forma:
+
+\begin{equation}
+  List(T)
+\end{equation}
+
+D\'onde T es un tipo cualquiera del lenguaje.
+
 \begin{itemize}
 \item Indexamiento: 
   \begin{equation}
@@ -750,6 +758,15 @@ Bool        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & Bool \
 \end{itemize}
 
 \emph{Tuple:}
+El tipo de las tuplas se definir\'a de la siguiente forma:
+
+\begin{equation}
+  Tuple(T_0, ..., T_N)
+\end{equation}
+
+D\'onde $T_0, ..., T_N$ representa una lista de tipos cualquiera del
+lenguaje.
+
 \begin{itemize}
 \item Indexamiento:
   \begin{equation}
@@ -776,6 +793,9 @@ El tipo de los diccionarios se definir\'a de dos formas, que son an\'alogas:
 \begin{equation}
   Dict(V_{K_0}, ..., V_{K_N})
 \end{equation}
+
+D\'onde los $K_i$ representan identificadores del lenguaje y los $V_i$
+tipos cualquiera.
 
 \begin{itemize}
 \item Indexamiento:

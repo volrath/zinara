@@ -1,0 +1,5 @@
+[Int] x = []
+
+main:
+x[0] = 'a'
+endmain
