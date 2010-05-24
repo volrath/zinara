@@ -5,8 +5,8 @@ import zinara.ast.type.Type;
 import zinara.ast.type.BoolType;
 
 public class TrueExp extends Expression {
-    public TrueExp () {}
-    public Type getType() { return new BoolType(); }
+    public TrueExp () { type = new BoolType(); }
+    public Type getType() { return type; }
     public String toString() { return "True"; }
 
     public String tox86(Genx86 generate){

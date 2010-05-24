@@ -21,7 +21,9 @@ public class LValueDict extends LValue {
     }
 
     public Type getType() throws TypeClashException {
-	return ((DictType)constructor.getType()).get(identifier);
+	if (type != null) return type;
+	type = ((DictType)constructor.getType()).get(identifier);
+	return type;
     }
     public String toString() { return constructor + "[" + identifier + "]"; }
 

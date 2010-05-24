@@ -16,6 +16,7 @@ public class DictExp extends Expression {
     public DictExp() { value = new HashMap(); }
 
     public Type getType() throws TypeClashException {
+	if (type != null) return type;
 	HashMap typemap = new HashMap();
 	Iterator it = value.keySet().iterator();
 	String ckey;
@@ -24,7 +25,8 @@ public class DictExp extends Expression {
 	    if (typemap.put(ckey, (Type)((Expression)value.get(ckey)).getType()) != null)
 		throw new TypeClashException("La clave " + ckey + " se repite en el diccionario " + this);
 	}
-	return new DictType(typemap);
+	type = new DictType(typemap);
+	return type;
     }
     // DictType(null) = {} which doesn't exist;
 

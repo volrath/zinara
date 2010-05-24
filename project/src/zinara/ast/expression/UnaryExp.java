@@ -12,7 +12,9 @@ public class UnaryExp extends Expression {
     public UnaryExp ( int o, Expression e ) { operator=o; operand=e; }
 
     public Type getType() throws TypeClashException {
-	return parser.operators.check(this.operator, this.operand.getType(), null);
+	if (type != null) return type;
+	type = parser.operators.check(this.operator, this.operand.getType(), null);
+	return type;
    }
 
     public String toString() {

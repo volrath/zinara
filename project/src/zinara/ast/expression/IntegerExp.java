@@ -6,9 +6,9 @@ import zinara.ast.type.IntType;
 
 public class IntegerExp extends Expression {
     private int value;
-    public IntegerExp ( int n ) { value=n; }
+    public IntegerExp ( int n ) { value=n; type = new IntType(); }
     public int getValue() { return value; }
-    public Type getType() { return new IntType(); }
+    public Type getType() { return type; }
     public String toString() { return Integer.toString(value); }
 
     public String tox86(Genx86 generate){

@@ -6,8 +6,8 @@ import zinara.ast.type.Type;
 
 public class StringExp extends Expression {
     public String value;
-    public StringExp(String v) { value = v; }
-    public Type getType() { return new StringType(); }
+    public StringExp(String v) { value = v; type = new StringType(); }
+    public Type getType() { return type; }
     public String toString() { return "\"" + value + "\""; }
 
     public String tox86(Genx86 generate){

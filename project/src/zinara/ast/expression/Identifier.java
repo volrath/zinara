@@ -20,7 +20,9 @@ public class Identifier extends LValue {
     }
 
     public Type getType() {
-	return symtable.getSymValueForId(identifier).getType();
+	if (type != null) return type;
+	type = symtable.getSymValueForId(identifier).getType();
+	return type;
     }
     public String toString() { return identifier; }
 

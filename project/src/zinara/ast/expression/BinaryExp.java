@@ -20,14 +20,16 @@ public class BinaryExp extends Expression {
     }
     
     public Type getType() throws TypeClashException {
-	return parser.operators.check(this.operator, this.left.getType(), this.right.getType());
+	if (type != null) return type;
+	type = parser.operators.check(this.operator, this.left.getType(), this.right.getType());
+	return type;
     }
 
     public String toString() {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public String tox86(Genx86 generate) throws IOException{
+    public String tox86(Genx86 generate) throws IOException {
 	String code = "";
 	int regs_used = 1;
 	Type type = this.type;
