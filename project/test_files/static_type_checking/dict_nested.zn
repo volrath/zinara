@@ -1,4 +1,4 @@
-main
+main:
    {u:Char} singlechar
    {i:Int, german:Float} cosas 
    [Char] b

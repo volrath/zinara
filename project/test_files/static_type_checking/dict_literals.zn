@@ -1,4 +1,4 @@
-main
+main:
 {num:Int, list:[Char]} x
 {{x:Char, y:Char}:y, dog:String} y
 
