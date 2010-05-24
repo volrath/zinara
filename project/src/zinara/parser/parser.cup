@@ -100,12 +100,11 @@ terminal SEMI;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
 terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
-terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, RETURNS;
+terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, LITTLE_ARROW;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal AS, IN;
 terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
 terminal CONTINUE, BREAK;
-
 
 /* Non-terminals */
 nonterminal Program program;
@@ -133,6 +132,7 @@ nonterminal fi, elihw, elcyc, rof, fed;
 nonterminal ArrayList type_list;
 nonterminal HashMap dict_types;
 nonterminal ArrayList dict_type;
+nonterminal Type def_type;
 
 
 /* Precedences */
@@ -179,7 +179,7 @@ def_decl     ::= DEF IDENTIFIER:id
 		  currentTable = currentTable.newTable();
 		 :}
 //                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOTTERM
-                   LPAREN args_list:al RPAREN RETURNS cast:t DOUBLEDOTTERM
+                   LPAREN args_list:al RPAREN def_type:t DOUBLEDOTTERM
 		 {:
 		     currentTable.addSymbol("return", new SymValue(t,false));
 		 :}
@@ -312,6 +312,9 @@ dict_types   ::= dict_types:dts COMMA dict_type:dt {:
 dict_type    ::= IDENTIFIER:id DOUBLEDOT type:t  {: RESULT = new ArrayList(2); RESULT.add(id); RESULT.add(t);:}
                ;
 
+def_type ::= LITTLE_ARROW type:t {: RESULT = t; :}
+           | 
+	   ;
 
 /* --- Code blocks --- */
 code_block    ::= code_block:cb instruction:i SEMI          {: cb.addInst(i); RESULT = cb;:}

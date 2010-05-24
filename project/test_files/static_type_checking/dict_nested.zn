@@ -1,0 +1,21 @@
+main:
+   {u:Char} singlechar
+   {i:Int, german:Float} cosas 
+   [Char] b
+
+   for i in ['b','c','h']:
+      for e in b:
+         singlechar[u] = i
+         singlechar[u] = e
+      endfor  
+   end
+
+   while True:
+      {l:Int, ll:Float} k
+      if 6<9:
+      	 Int you = -8
+         cosas[i] = you
+	 cosas[german]=k[ll]
+      end
+   endwhile
+end

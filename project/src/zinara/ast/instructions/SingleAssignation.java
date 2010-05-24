@@ -2,6 +2,7 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 import zinara.ast.expression.LValue;
+import zinara.exceptions.TypeClashException;
 import zinara.code_generator.*;
 
 import java.io.IOException;

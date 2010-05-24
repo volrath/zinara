@@ -73,6 +73,9 @@ Number      = {Digit}+
  "copy"                          { return symbol(sym.COPY); }
  ","                             { return symbol(sym.COMMA);}
 
+ //retorno de una funcion
+ "->"                            { return symbol(sym.LITTLE_ARROW);}
+
  "+"                             { return symbol(sym.PLUS);}
  "-"                             { return symbol(sym.MINUS);}
  "*"                             { return symbol(sym.TIMES); }
@@ -119,7 +122,6 @@ Number      = {Digit}+
  "++"                            { return symbol(sym.PLUSPLUS);}
  "="                             { return symbol(sym.ASIG);}
  "return"                        { return symbol(sym.RETURN);}
- "returns"                       { return symbol(sym.RETURNS);}
  "print"                         { return symbol(sym.PRINT);}
  "read"                          { return symbol(sym.READ);}
 
