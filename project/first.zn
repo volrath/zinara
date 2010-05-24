@@ -1,3 +1,7 @@
+def hola(ula as Int, ula as Int):
+  ula = 9
+enddef
+
 Int a
 Float b
 Int c
@@ -6,6 +10,7 @@ main:
    a = 0
    b = 567.12
    c = 6
+   c = hola(1,2)
 
    b = b+9.0*367.89/3.
 //   b = 2*(c*2+3)/2
