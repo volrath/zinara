@@ -94,7 +94,7 @@ public class StaticTypeChecking {
 	    if (!currentExpr.getType().equals(funcType.getArgument(i)))
 		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + funcName);
 	}
-	return new FunctionCall(funcName, expr_list);
+	return new FunctionCall(funcName, expr_list, st);
     }
 
     public static ProcedureCall checkProcedureCall(String procName, ArrayList expr_list, SymTable st)

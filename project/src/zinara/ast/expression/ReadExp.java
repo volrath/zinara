@@ -2,7 +2,7 @@ package zinara.ast.expression;
 import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
-import zinara.ast.type.IntType;
+import zinara.ast.type.StringType;
 
 public class ReadExp extends Expression {
     public ReadExp () { type = new StringType(); }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.FunctionType;
+import zinara.symtable.SymTable;
 
 public class FunctionCall extends Expression {
     private String name;
@@ -15,7 +16,7 @@ public class FunctionCall extends Expression {
 	this.name = name;
 	arguments = s;
 	symtable = st;
-	type = symtable.getSymValueForId(identifier).getType();
+	type = symtable.getSymValueForId(this.name).getType();
     }
 
     public Type getType() { return ((FunctionType)type).getReturnType(); }
