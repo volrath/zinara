@@ -1,0 +1,5 @@
+main
+{num:Int, list:[Char]} x
+{} y;
+
+end

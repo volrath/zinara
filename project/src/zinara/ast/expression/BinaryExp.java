@@ -27,7 +27,7 @@ public class BinaryExp extends Expression {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public String tox86(Genx86 generate) throws IOException, TypeClashException{
+    public String tox86(Genx86 generate) throws IOException{
 	String code = "";
 	int regs_used = 1;
 	Type type = getType();

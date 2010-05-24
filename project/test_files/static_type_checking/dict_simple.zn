@@ -1,0 +1,14 @@
+main
+Int hola
+[[Char]] chao
+
+{h':Int, b:Char} dic
+
+{b:Float} real
+
+dic[h'] = hola
+chao[hola][4] = dic[b] 
+
+real[b] = .0
+
+end
