@@ -43,7 +43,8 @@ public class Operators {
     public final int arithmetic = -1;
     public final int relational = -2;
     public final int logical    = -3;
-    public final int cast       = -4;
+    public final int unary      = -4;
+    public final int cast       = -5;
 
     public Operators() {
 	this.table = new HashMap();
@@ -116,6 +117,9 @@ public class Operators {
 	    break;
 	case -4:
 	    om = cast;
+	    break;
+	default:
+	    om = o;
 	    break;
 	}
 

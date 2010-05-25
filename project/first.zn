@@ -1,5 +1,5 @@
 def hola(ula as Int, ula as Int):
-  ula = 9
+    print(ula)
 enddef
 
 Int a
