@@ -1,11 +1,12 @@
 package zinara.ast;
-import zinara.code_generator.*;
 
+import zinara.ast.ASTNode;
 import zinara.ast.instructions.CodeBlock;
+import zinara.code_generator.*;
 
 import java.io.IOException;
 
-public class Main {
+public class Main extends ASTNode {
     CodeBlock code;
     
     public Main(CodeBlock c) {

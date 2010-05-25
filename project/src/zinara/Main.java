@@ -9,7 +9,7 @@ import zinara.parser.*;
 import java.io.*;
 
 public class Main {
-    public static final boolean debug_parsing = true;
+    public static final boolean debug_parsing = false;
 
     public static boolean testStaticFail(String programName)
 	throws ClassCastException, IdentifierAlreadyDeclaredException,
@@ -49,7 +49,7 @@ public class Main {
 	    parser p = new parser(new Scanner(new FileReader(argv[0])));
 	    Program root;
 	    String filename = argv[0];
-	    Genx86 codeG = new Genx86(Integer.parseInt(argv[1]),new File("../x86.asm"));
+	    String asmCodeFile = "../x86.asm";
 		
 	    if (debug_parsing)
 		root = (Program)p.debug_parse().value;
@@ -58,7 +58,11 @@ public class Main {
 
 	    System.out.println("AST:      " + root + "\n");
 	    System.out.println("SYMTABLE: " + root.getSymTable() + "\n");
+
+	    System.out.println("Writing Assembler code to " + asmCodeFile + " ...");
+	    Genx86 codeG = new Genx86(Integer.parseInt(argv[1]), asmCodeFile);
 	    root.tox86(codeG);
+	    System.out.println("... done.");
 	} 
 	catch (ClassCastException e) {
 	    System.out.println("oops..., classcastE: " + e.toString());

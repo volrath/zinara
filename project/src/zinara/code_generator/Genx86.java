@@ -29,7 +29,7 @@ public class Genx86{
     private String save;
     private String restore;
 
-    public Genx86(int bits, File file) throws InvalidArchitectureException, IOException{
+    public Genx86(int bits, String fileName) throws InvalidArchitectureException, IOException{
 	if (bits == 64){
 	    regs = new String[14];
 	    regs[0] = "eax";
@@ -71,16 +71,16 @@ public class Genx86{
 	else
 	    throw new InvalidArchitectureException(bits); 
 	
-	this.data_offset = "glob";
+	data_offset = "glob";
 
 	next_reg = 0;
-	this.bits = bits;
-	this.save = null;
-	this.restore = null;
+	bits = bits;
+	save = null;
+	restore = null;
 
-	this.file = new BufferedWriter(new FileWriter(file));
+	file = new BufferedWriter(new FileWriter(new File(fileName)));
 
-	this.file.write("%include \"asm_io.inc\"\n");
+	file.write("%include \"asm_io.inc\"\n");
 	    
 	if (this.bits == 64)
 	    this.file.write("BITS 64\n");

@@ -1,6 +1,8 @@
 package zinara.ast.type;
 
 public class CharType extends Type {
+    public int size = 1;
+
     public CharType() {}
     public String toString() { return "<CHAR>"; }
     public boolean equals(Type other) { return (other.getType() instanceof CharType); }

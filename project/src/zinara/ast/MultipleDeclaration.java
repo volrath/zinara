@@ -1,12 +1,14 @@
 package zinara.ast;
-import zinara.code_generator.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import zinara.ast.ASTNode;
 import zinara.ast.expression.Identifier;
 import zinara.ast.instructions.MultipleAssignation;
 import zinara.ast.type.Type;
 import zinara.ast.type.ConstantType;
+import zinara.code_generator.Genx86;
 
 public class MultipleDeclaration extends Declaration {
     public ArrayList declarations; // arraylist of SingleDeclaration
@@ -48,7 +50,7 @@ public class MultipleDeclaration extends Declaration {
 	return "MultipleDeclaration:" + ret;
     }
 
-    public String tox86(Genx86 generate){
+    public String tox86(Genx86 generate) throws IOException {
         return "";
     }
 }
