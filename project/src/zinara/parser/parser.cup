@@ -25,6 +25,7 @@ action code{:
 SymTable globalTable = new SymTable();
 SymTable mainTable = new SymTable(globalTable);
 SymTable currentTable = globalTable;
+int cycles_depth = 0;
 :}
 
 parser code {:
@@ -324,7 +325,6 @@ code_block    ::= code_block:cb instruction:i SEMI          {: cb.addInst(i); RE
 instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
-                | def_decl:dd                               {: RESULT = new DecInst(dd); :}
                 | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
                 | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
@@ -363,29 +363,38 @@ ctrl_struct   ::=
                   /*WHILE*/
                 | WHILE expr:e DOUBLEDOTTERM
 		  {:StaticTypeChecking.checkExpression(e, new BoolType());
-		    currentTable = currentTable.newTable(); :}
+		    currentTable = currentTable.newTable();
+                    cycles_depth += 1;:}
                       code_block_loop:cb
                   elihw
                   {:currentTable = currentTable.getFather();
+                    cycles_depth -= 1;
                     RESULT = new While(cb,e); :}
 
                   /*FOR*/
                 | FOR IDENTIFIER:id IN expr:e DOUBLEDOTTERM
 		{:
+                 cycles_depth += 1;
 		 StaticTypeChecking.checkIterable(e);
 		 currentTable = currentTable.newTable();
 		 currentTable.addSymbol(id,new SymValue(((ListType)(e.getType().getType())).getInsideType(),false));
 		 :}
 		      code_block_loop:cb
-		      {: currentTable = currentTable.getFather(); RESULT = new For(id, e, cb); :}
+		 {: currentTable = currentTable.getFather();
+                    cycles_depth -= 1;
+                    RESULT = new For(id, e, cb);
+                  :}
                   rof
 
                   /*CYCLE - WITH BRANCHES*/
                 | CYCLE DOUBLEDOTTERM
-		  {: currentTable = currentTable.newTable(); :}
+		  {: cycles_depth += 1;
+                     currentTable = currentTable.newTable();
+                   :}
                       code_block_loop:cb 
                       cycle_body:cd
                   {:currentTable = currentTable.getFather();
+                    cycles_depth -= 1;
                     RESULT = new Cycle(cd,cb);:}
                   elcyc
 
