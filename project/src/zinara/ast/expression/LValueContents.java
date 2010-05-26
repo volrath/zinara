@@ -24,6 +24,7 @@ public class LValueContents extends Expression {
     }
 
     public String tox86(Genx86 generate){
-	return generate.mov(generate.current_reg(),"["+lvalue.tox86(generate)+"]");
+	//return generate.mov(generate.current_reg(),"["+lvalue.tox86(generate)+"]");
+	return lvalue.tox86(generate);
     }
 }
