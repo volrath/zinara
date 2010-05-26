@@ -2,8 +2,10 @@ package zinara.symtable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Iterator;
 
+import zinara.ast.ASTNode;
 import zinara.ast.Declaration;
 import zinara.ast.SingleDeclaration;
 import zinara.ast.MultipleDeclaration;
@@ -198,7 +200,7 @@ public class SymTable{
 	this.sons.add(son);
     }
 
-    public Object[] getSymbols(){
-	return (Object[])this.table.keySet().toArray();
+    public Set keySet() {
+	return table.keySet();
     }
 }

@@ -10,7 +10,6 @@ public class Break extends Instruction{
 	return "<Break>";
     }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

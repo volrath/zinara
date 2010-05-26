@@ -1,8 +1,10 @@
 package zinara.ast.expression;
-import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.IntType;
+import zinara.code_generator.Genx86;
+
+import java.io.IOException;
 
 public class IntegerExp extends Expression {
     private int value;
@@ -11,7 +13,7 @@ public class IntegerExp extends Expression {
     public Type getType() { return type; }
     public String toString() { return Integer.toString(value); }
 
-    public String tox86(Genx86 generate){
- 	return generate.mov(generate.current_reg(),this.toString());	
+    public void tox86(Genx86 generate) throws IOException {
+ 	generate.write(generate.mov(generate.current_reg(),this.toString()));
     }
 }

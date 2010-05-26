@@ -1,10 +1,11 @@
 package zinara.ast.instructions;
 
-import zinara.code_generator.*;
+import zinara.ast.ASTNode;
+import zinara.code_generator.Genx86;
 
 import java.io.IOException;
 
-public abstract class Instruction {
+public abstract class Instruction extends ASTNode {
     public abstract String toString();
-    public abstract String tox86(Genx86 generate) throws IOException;
+    public abstract void tox86(Genx86 generate) throws IOException;
 }

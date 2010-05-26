@@ -5,13 +5,15 @@ import zinara.ast.instructions.*;
 import zinara.ast.expression.*;
 import zinara.exceptions.InvalidArchitectureException;
 import zinara.parser.sym;
-import zinara.symtable.*;
+import zinara.symtable.SymTable;
+import zinara.symtable.SymValue;
 
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Genx86{
     private String[] regs;
@@ -29,7 +31,7 @@ public class Genx86{
     private String save;
     private String restore;
 
-    public Genx86(int bits, File file) throws InvalidArchitectureException, IOException{
+    public Genx86(int bits, String fileName) throws InvalidArchitectureException, IOException{
 	if (bits == 64){
 	    regs = new String[14];
 	    regs[0] = "eax";
@@ -71,19 +73,52 @@ public class Genx86{
 	else
 	    throw new InvalidArchitectureException(bits); 
 	
-	this.data_offset = "glob";
+	data_offset = "glob";
 
 	next_reg = 0;
-	this.bits = bits;
-	this.save = null;
-	this.restore = null;
+	bits = bits;
+	save = null;
+	restore = null;
 
-	this.file = new BufferedWriter(new FileWriter(file));
+	file = new BufferedWriter(new FileWriter(new File(fileName)));
 
-	this.file.write("%include \"asm_io.inc\"\n");
+	file.write("%include \"asm_io.inc\"\n");
 	    
 	if (this.bits == 64)
 	    this.file.write("BITS 64\n");
+    }
+
+    public void generateProgram(Program program) throws IOException {
+	generateHeader(program.getSymTable());
+
+	// Generate code for all of its functions
+	// ...
+	// And then main
+	program.getMain().tox86(this);
+
+	// Exits the program
+	exitSyscall(0);
+	closeFile();
+    }
+
+    public void generateHeader(SymTable symtable) throws IOException {
+	Iterator keyIt = symtable.keySet().iterator();
+	String identifier;
+	SymValue symValue;
+
+	int total_size = 0;
+	while(keyIt.hasNext()) {
+	    identifier = (String)keyIt.next();
+	    symValue = symtable.getSymbol(identifier);
+	    symValue.setOffset(total_size);
+	    total_size += symValue.type.size;
+	}
+
+	// .ASM HEADER
+	//  El espacio para variables, texto de las funciones
+	//  y el comienzo del texto del main se crean aca
+	write(data(data_offset(), total_size));
+	write(main_text_header());
     }
 
     public void write(String thing) throws IOException{
@@ -557,7 +592,7 @@ public class Genx86{
 	return code;
     }
 
-    public String exit_syscall(int exit_code){
+    public String exitSyscall(int exit_code){
 	String code = "";
 	String e_code = Integer.toString(exit_code);
 

@@ -1,11 +1,12 @@
 package zinara.ast;
-import zinara.code_generator.*;
 
+import zinara.ast.ASTNode;
 import zinara.ast.instructions.CodeBlock;
+import zinara.code_generator.*;
 
 import java.io.IOException;
 
-public class Main {
+public class Main extends ASTNode {
     CodeBlock code;
     
     public Main(CodeBlock c) {
@@ -18,8 +19,7 @@ public class Main {
 
     public String toString() { return "(Main: " + code + ")"; }
 
-    public String tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generate) throws IOException{
 	this.code.tox86(generate);
-	return "";
     }
 }

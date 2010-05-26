@@ -1,8 +1,11 @@
 package zinara.ast;
-import zinara.code_generator.*;
 
+import java.io.IOException;
+
+import zinara.ast.ASTNode;
 import zinara.ast.type.Type;
 import zinara.ast.expression.Identifier;
+import zinara.code_generator.Genx86;
 
 public class SingleDeclaration extends Declaration {
     private Type type;
@@ -47,7 +50,7 @@ public class SingleDeclaration extends Declaration {
 	return "(Declaration: " + type + " " + identifier + " [" + (variable ? "VAR" : "CONST") + (value != null ? "="+value : "") +  "])";
     }
 
-    public String tox86(Genx86 generate){
-	return "SingleDeclaration NO IMPLEMENTADA";
+    public void tox86(Genx86 generate) throws IOException {
+	// "SingleDeclaration NO IMPLEMENTADA";
     }
 }

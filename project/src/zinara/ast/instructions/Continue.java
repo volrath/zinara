@@ -10,7 +10,6 @@ public class Continue extends Instruction{
 	return "<Continue>";
     }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

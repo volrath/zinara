@@ -31,7 +31,6 @@ public class TupleExp extends Expression {
 	return ret.substring(0, ret.length()-2) + ")";
     }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

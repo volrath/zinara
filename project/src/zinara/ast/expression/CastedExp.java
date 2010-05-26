@@ -1,7 +1,7 @@
 package zinara.ast.expression;
 
 import zinara.ast.type.*;
-import zinara.code_generator.*;
+import zinara.code_generator.Genx86;
 import zinara.exceptions.TypeClashException;
 import zinara.parser.parser;
 
@@ -24,7 +24,7 @@ public class CastedExp extends Expression {
 	return "(<"+cast+"> "+exp+")";
     }
 
-    public String tox86(Genx86 generate) throws IOException{
-        return "Codigo de CastedExp NO GENERADO";
+    public void tox86(Genx86 generate) throws IOException{
+        //return "Codigo de CastedExp NO GENERADO";
     }
 }

@@ -29,8 +29,7 @@ public class BinaryExp extends Expression {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public String tox86(Genx86 generate) throws IOException {
-	String code = "";
+    public void tox86(Genx86 generate) throws IOException {
 	int regs_used = 1;
 	Type type = this.type;
 	
@@ -40,19 +39,15 @@ public class BinaryExp extends Expression {
 	String exp1Reg = generate.current_reg();
 	String exp2Reg;
 	
-	code += left.tox86(generate);
-
+	left.tox86(generate);
+	generate.write(generate.save());
 	exp2Reg = generate.next_reg();
-	save = generate.save();
-	restore = generate.restore();
-	
-	code += save;
-	code += right.tox86(generate);
+	right.tox86(generate);
 
 	if (type instanceof IntType)
-	    code += intOps(generate,exp1Reg,exp2Reg);
+	    generate.write(intOps(generate,exp1Reg,exp2Reg));
 	else if (type instanceof FloatType)
-	    code += realOps(generate,exp1Reg,exp2Reg);
+	    generate.write(realOps(generate,exp1Reg,exp2Reg));
 	else{
 	    System.out.println("Tipo no implementado: "+operator);
 	    System.exit(1);
@@ -60,8 +55,8 @@ public class BinaryExp extends Expression {
 
 	generate.prevs_regs(regs_used);
 
-	code += restore;
-        return code;
+	generate.write(generate.restore());
+        generate.write(code);
     }
 
     private String intOps(Genx86 generate, String exp1Reg, String exp2Reg){

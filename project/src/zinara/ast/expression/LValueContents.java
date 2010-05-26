@@ -1,8 +1,10 @@
 package zinara.ast.expression;
-import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
+import zinara.code_generator.Genx86;
 import zinara.exceptions.TypeClashException;
+
+import java.io.IOException;
 
 public class LValueContents extends Expression {
     private LValue lvalue;
@@ -23,8 +25,11 @@ public class LValueContents extends Expression {
 	return this.lvalue.toString();
     }
 
-    public String tox86(Genx86 generate){
-	//return generate.mov(generate.current_reg(),"["+lvalue.tox86(generate)+"]");
-	return lvalue.tox86(generate);
+    // public String tox86(Genx86 generate){
+    // 	//return generate.mov(generate.current_reg(),"["+lvalue.tox86(generate)+"]");
+    // 	return lvalue.tox86(generate);
+    // }
+    public void tox86(Genx86 generate) throws IOException {
+	//generate.write(generate.mov(generate.current_reg(),"["+lvalue.tox86(generate)+"]"));
     }
 }

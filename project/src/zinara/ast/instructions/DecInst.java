@@ -13,7 +13,6 @@ public class DecInst extends Instruction {
 
     public String toString() { return "<" + declaration + ">"; }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

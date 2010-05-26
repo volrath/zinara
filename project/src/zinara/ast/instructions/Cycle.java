@@ -31,7 +31,6 @@ public class Cycle extends Instruction{
 	return "<G-LOOP>";
     }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

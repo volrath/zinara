@@ -14,8 +14,8 @@ public class LValueTuple extends LValue {
     public LValueTuple(LValue c, int i)
 	throws KeyErrorException, TypeClashException {
 	// check if i is between the bounds of the type
-	if (i < 0 || i >= ((TupleType)(c.getType().getType())).size())
-	    throw new KeyErrorException("El indice " + i + " es mayor al tamano de la tupla (" + ((TupleType)c.getType()).size() + ")");
+	if (i < 0 || i >= ((TupleType)(c.getType().getType())).len())
+	    throw new KeyErrorException("El indice " + i + " es mayor al tamano de la tupla (" + ((TupleType)c.getType()).len() + ")");
 
 	constructor = c;
 	index = i;
@@ -28,7 +28,6 @@ public class LValueTuple extends LValue {
     }
     public String toString() { return constructor + "[" + index + "]"; }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

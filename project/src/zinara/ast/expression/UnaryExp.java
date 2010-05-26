@@ -21,7 +21,6 @@ public class UnaryExp extends Expression {
 	return operator + " " + operand;
     }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

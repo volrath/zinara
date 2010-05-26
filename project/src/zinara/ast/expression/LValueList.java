@@ -23,11 +23,6 @@ public class LValueList extends LValue {
     }
     public String toString() { return constructor + "[" + index + "]"; }
 
-    public String/*void*/ tox86(/*FileHandle*/){
-        return "";
-    }
-
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

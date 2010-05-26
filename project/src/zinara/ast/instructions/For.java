@@ -33,7 +33,6 @@ public class For extends Instruction{
 	return "<For " + i + " in " + expr + ": " + code + ">";
     }   
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }
