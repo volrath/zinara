@@ -28,7 +28,12 @@ public class Identifier extends LValue {
     }
     public String toString() { return identifier; }
 
-    public void tox86(Genx86 generate) throws IOException {
-	generate.write(generate.global_space()+"+"+getSymValue().getOffset());
+    public void tox86(Genx86 generator) throws IOException {
+	generator.write(generator.mov(generator.current_reg(), ""+getSymValue().getOffset()));
+	generator.write(generator.add(generator.current_reg(), generator.global_space()));
+    }
+
+    public String currentDirection(Genx86 generator) {
+	return generator.global_space() + "+" + getSymValue().getOffset();
     }
 }

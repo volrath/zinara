@@ -7,6 +7,6 @@ Float b
 Int c
 
 main:
-   Int d
-   a = a + 1
+   Int d = 3
+   d = d + 1
 endmain   

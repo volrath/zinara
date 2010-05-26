@@ -120,7 +120,6 @@ nonterminal ArrayList expr_list, expr_tuple;  // arraylist of expressions
 nonterminal ArrayList  ident_list, decl_ident_list; // arraylist of lvalues
 nonterminal Expression expr, relational_expr,other_expr;
 nonterminal LValue l_value;
-nonterminal LValueContents l_value_contents;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
 nonterminal ArrayList args_list, args_list2; // arraylist of types
 nonterminal Type arg;
@@ -546,7 +545,7 @@ other_expr   ::=
             | LBRACET dict_vals:dv RBRACET /*dictionary*/ {:RESULT=new DictExp(dv);:}
             | LPAREN expr_tuple:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
     /* ----- LVALUE ----- */
-            | l_value_contents:lvc                        {: RESULT = lvc; :}
+            | l_value:lv                                  {: RESULT = lv; :}
     /* ----- Composite types operations ----- */
 //| IDENTIFIER LBRACKET expr RBRACKET                 // indexing
 //| IDENTIFIER LBRACKET other_expr DOUBLEDOT other_expr RBRACKET  // slicing
@@ -557,9 +556,6 @@ other_expr   ::=
     /* ----- Other expressions ----- */
             | READ                                     {: RESULT = new ReadExp(); :}
 	    ;
-
-l_value_contents  ::= l_value:lv                       {: RESULT = new LValueContents(lv); :}
-                   ;
 
 //Dictionary values
 dict_vals       ::= dict_vals:dv COMMA dict_val:v      {:
