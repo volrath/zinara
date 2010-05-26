@@ -15,7 +15,9 @@ public class DictType extends Type {
 
     public Iterator getIterator() { return table.keySet().iterator(); }
 
-    public int size() { return table.size(); }
+    public int len() { return table.size(); }
+
+    public int size() { return 0; }
 
     public Type get(String key) { return (Type)table.get(key); }
 

@@ -56,7 +56,7 @@ public class BinaryExp extends Expression {
 	generate.prevs_regs(regs_used);
 
 	generate.write(generate.restore());
-        generate.write(code);
+        //generate.write(code);
     }
 
     private String intOps(Genx86 generate, String exp1Reg, String exp2Reg){

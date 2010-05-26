@@ -7,4 +7,5 @@ public class CharType extends Type {
     public String toString() { return "<CHAR>"; }
     public boolean equals(Type other) { return (other.getType() instanceof CharType); }
     public Type getType() { return this; }
+    public int size() { return this.size; }
 }

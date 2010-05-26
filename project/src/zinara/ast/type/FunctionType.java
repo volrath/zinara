@@ -21,7 +21,9 @@ public class FunctionType extends Type {
 
     public Type getReturnType() { return returnType; }
 
-    public int size() { return argsTypes.size(); }
+    public int len() { return argsTypes.size(); }
+
+    public int size() { return 0; }
 
     public String toString() {
 	String ret = "<";

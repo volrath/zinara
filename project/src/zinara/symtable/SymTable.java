@@ -91,9 +91,9 @@ public class SymTable{
 	return (SymValue)this.table.get(id);
     }
 
-    public SymTable getFather (){
-	return this.father;
-    }
+    public SymTable getFather() { return this.father; }
+    public ArrayList getSons() { return sons; }
+    public SymTable getSon(int i) { return (SymTable)sons.get(i); }
 
     public boolean currentTableContainsId(String id){
 	return this.table.containsKey(id);

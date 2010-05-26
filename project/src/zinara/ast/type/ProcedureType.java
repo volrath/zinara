@@ -17,7 +17,8 @@ public class ProcedureType extends Type {
 	return (Type)argsTypes.get(i);
     }
 
-    public int size() { return argsTypes.size(); }
+    public int len() { return argsTypes.size(); }
+    public int size() { return 0; }
 
     public String toString() {
 	String ret = "<";

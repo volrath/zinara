@@ -29,6 +29,6 @@ public class Identifier extends LValue {
     public String toString() { return identifier; }
 
     public void tox86(Genx86 generate) throws IOException {
-	generate.write(generate.data_offset()+"+"+getSymValue().getOffset());
+	generate.write(generate.global_space()+"+"+getSymValue().getOffset());
     }
 }

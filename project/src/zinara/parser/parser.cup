@@ -226,7 +226,6 @@ const_decl   ::= VAR decl:d                   {:
 					       if (d.isSingle()) {
 						   currentDeclaration = ((SingleDeclaration)d);
 						   currentDeclaration.setVariable(true);
-						   //currentDeclaration.setType(((ConstantType)(currentDeclaration.getType())).getRealType());
 						   // Aqui, una vez agregada la declaracion, se chequea los tipos
 						   if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
 					       } else {
