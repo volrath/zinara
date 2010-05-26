@@ -23,7 +23,6 @@ public class FunctionCall extends Expression {
 
     public String toString() { return name + "(" + arguments + ")"; }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

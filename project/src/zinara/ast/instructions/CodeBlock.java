@@ -33,10 +33,8 @@ public class CodeBlock extends Instruction{
 	return (ret.substring(0, ret.length()-1) + ">");
     }
 
-    public String tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generate) throws IOException{
 	for (int i = 0; i < block.size(); i++)
 	    ((Instruction)block.get(i)).tox86(generate);
-
-        return "";
     }
 }

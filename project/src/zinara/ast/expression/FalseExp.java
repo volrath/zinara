@@ -9,7 +9,6 @@ public class FalseExp extends Expression {
     public Type getType() { return type; }
     public String toString() { return "False"; }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

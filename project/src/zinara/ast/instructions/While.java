@@ -22,7 +22,6 @@ public class While extends Instruction{
 
     public String toString() { return "While " + expr + ": " + code + ">"; }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

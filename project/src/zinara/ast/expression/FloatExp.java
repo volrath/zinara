@@ -4,13 +4,15 @@ import zinara.ast.type.Type;
 import zinara.ast.type.FloatType;
 import zinara.code_generator.Genx86;
 
+import java.io.IOException;
+
 public class FloatExp extends Expression {
     public float value;
     public FloatExp ( float n ) { value=n; type = new FloatType(); }
     public Type getType() { return type; }
     public String toString() { return Float.toString(value); }
 
-    public String tox86(Genx86 generate){
- 	return generate.mov(generate.current_reg(),generate.toReal(value));	
+    public void tox86(Genx86 generate) throws IOException {
+ 	generate.write(generate.mov(generate.current_reg(),generate.toReal(value)));
     }
 }

@@ -12,5 +12,5 @@ public abstract class Expression extends ASTNode {
     //@ ensures \result != null
     public abstract Type getType() throws TypeClashException;
     public abstract String toString();
-    public abstract String tox86(Genx86 generate) throws IOException;
+    public abstract void tox86(Genx86 generate) throws IOException;
 }

@@ -20,13 +20,13 @@ public class Print extends Instruction{
 	return "<Print " + expr + ">";
     }
 
-    public String tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generate) throws IOException{
 	// Por ahora se asume que todas las expresiones son numeros enteros
 	//de un solo digito.
 	String code = "";
 	String expReg = generate.current_reg();
 
-	code += expr.tox86(generate);
+	expr.tox86(generate);
 
 	//"Transformo" a ASCII
 	code += generate.add(expReg,"48");
@@ -42,6 +42,5 @@ public class Print extends Instruction{
 	code += generate.restore_print_regs();
 	    	    
 	generate.write(code);
-	return "";
     }
 }

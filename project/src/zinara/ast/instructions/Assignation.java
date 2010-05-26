@@ -7,6 +7,4 @@ import java.io.IOException;
 public abstract class Assignation extends Instruction {
     public abstract boolean isSingle();
     public abstract String toString();
-
-    public abstract String tox86(Genx86 generate) throws IOException;
 }

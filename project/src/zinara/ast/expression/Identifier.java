@@ -1,8 +1,10 @@
 package zinara.ast.expression;
-import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
+import zinara.code_generator.Genx86;
 import zinara.symtable.*;
+
+import java.io.IOException;
 
 public class Identifier extends LValue {
     private String identifier;
@@ -26,7 +28,7 @@ public class Identifier extends LValue {
     }
     public String toString() { return identifier; }
 
-    public String tox86(Genx86 generate){
-	return generate.data_offset()+"+"+getSymValue().getDesp();
+    public void tox86(Genx86 generate) throws IOException {
+	generate.write(generate.data_offset()+"+"+getSymValue().getOffset());
     }
 }

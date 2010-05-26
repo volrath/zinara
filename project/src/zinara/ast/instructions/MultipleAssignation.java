@@ -43,9 +43,8 @@ public class MultipleAssignation extends Assignation {
 	return "<MultipleAssignation:" + ret + ">";
     }
 
-    public String tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generate) throws IOException{
 	for (int i = 0; i < assignations.size(); i++)
 	    ((SingleAssignation)assignations.get(i)).tox86(generate);
-	return "";
     }
 }

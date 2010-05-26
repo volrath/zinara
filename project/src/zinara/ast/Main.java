@@ -19,8 +19,7 @@ public class Main extends ASTNode {
 
     public String toString() { return "(Main: " + code + ")"; }
 
-    public String tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generate) throws IOException{
 	this.code.tox86(generate);
-	return "";
     }
 }

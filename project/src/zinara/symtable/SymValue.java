@@ -7,13 +7,12 @@ public class SymValue{
     public Type type; //@ invariant type != null;
 
     //Variables pertinentes a la generacion de codigo
-    private int desp;
+    private int offset = 0;
 
     //@ requires t != null;
     public SymValue(Type t, boolean var) {
 	this.variable = var;
         this.type = t;
-	this.desp = 0;
     }
 
     //@ ensures \result != null;
@@ -21,13 +20,8 @@ public class SymValue{
 
     public boolean isVariable() { return this.variable; }
 
-    public int getDesp(){
-	return this.desp;
-    }
-
-    public void setDesp(int d){
-	this.desp = d;
-    }
+    public int getOffset() { return offset; }
+    public void setOffset(int os) { offset = os; }
 
     public String toString() {
     	return "<" + (this.variable ? "Variable" : "Constant") + ": " + this.type + ">";

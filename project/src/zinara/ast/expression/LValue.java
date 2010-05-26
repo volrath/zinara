@@ -1,8 +1,10 @@
 package zinara.ast.expression;
-import zinara.code_generator.*;
+
+import zinara.code_generator.Genx86;
+
+import java.io.IOException;
 
 public abstract class LValue extends Expression {
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate) throws IOException {
     }
 }

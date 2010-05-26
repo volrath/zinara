@@ -6,5 +6,5 @@ import java.io.IOException;
 
 public abstract class ASTNode {
     public String code;
-    public abstract String tox86(Genx86 generate) throws IOException;
+    public abstract void tox86(Genx86 generate) throws IOException;
 }

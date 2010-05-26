@@ -9,7 +9,6 @@ public class TrueExp extends Expression {
     public Type getType() { return type; }
     public String toString() { return "True"; }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

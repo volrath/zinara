@@ -50,7 +50,6 @@ public class MultipleDeclaration extends Declaration {
 	return "MultipleDeclaration:" + ret;
     }
 
-    public String tox86(Genx86 generate) throws IOException {
-        return "";
+    public void tox86(Genx86 generate) throws IOException {
     }
 }

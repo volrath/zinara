@@ -50,7 +50,7 @@ public class SingleDeclaration extends Declaration {
 	return "(Declaration: " + type + " " + identifier + " [" + (variable ? "VAR" : "CONST") + (value != null ? "="+value : "") +  "])";
     }
 
-    public String tox86(Genx86 generate) throws IOException {
-	return "SingleDeclaration NO IMPLEMENTADA";
+    public void tox86(Genx86 generate) throws IOException {
+	// "SingleDeclaration NO IMPLEMENTADA";
     }
 }

@@ -27,7 +27,6 @@ public class LValueDict extends LValue {
     }
     public String toString() { return constructor + "[" + identifier + "]"; }
 
-    public String tox86(Genx86 generate){
-        return "";
+    public void tox86(Genx86 generate){
     }
 }

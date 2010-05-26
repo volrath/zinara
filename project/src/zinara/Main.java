@@ -60,8 +60,8 @@ public class Main {
 	    System.out.println("SYMTABLE: " + root.getSymTable() + "\n");
 
 	    System.out.println("Writing Assembler code to " + asmCodeFile + " ...");
-	    Genx86 codeG = new Genx86(Integer.parseInt(argv[1]), asmCodeFile);
-	    root.tox86(codeG);
+	    Genx86 codeGenerator = new Genx86(Integer.parseInt(argv[1]), asmCodeFile);
+	    codeGenerator.generateProgram(root);
 	    System.out.println("... done.");
 	} 
 	catch (ClassCastException e) {
