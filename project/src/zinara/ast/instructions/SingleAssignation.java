@@ -46,7 +46,7 @@ public class SingleAssignation extends Assignation {
 	//Puede que el calculo del lvalue ocupe registros o puede que no.
 	//El se encarga de reservar sus registros en caso de ser necesario.
 	if (lvalue instanceof Identifier)
-	    generator.write(generator.mov("["+ ((Identifier)lvalue).currentDirection(generator) +"]", expReg));
+	    generator.write(generator.mov(((Identifier)lvalue).currentDirection(generator), expReg));
 	else {
 	    generator.next_reg();
 	    lvalue.tox86(generator);

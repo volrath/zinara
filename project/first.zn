@@ -7,6 +7,7 @@ Float b
 Int c
 
 main:
-   Int d = 3
-   d = d + 1
+   [Int] d = []
+   a = d[2] + 1
+   d[1] = 9
 endmain   

@@ -9,7 +9,7 @@ import zinara.parser.*;
 import java.io.*;
 
 public class Main {
-    public static final boolean debug_parsing = false;
+    public static final boolean debug_parsing = true;
 
     public static boolean testStaticFail(String programName)
 	throws ClassCastException, IdentifierAlreadyDeclaredException,

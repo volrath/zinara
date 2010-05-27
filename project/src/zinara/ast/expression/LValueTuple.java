@@ -28,6 +28,19 @@ public class LValueTuple extends LValue {
     }
     public String toString() { return constructor + "[" + index + "]"; }
 
-    public void tox86(Genx86 generate){
-    }
+    public void tox86(Genx86 generator) {
+// 	generator.write("B-----\n");
+// 	constructor.tox86(generator);
+// 	// Save, i dont know how to do this
+// 	generator.next_reg();
+// 	index.tox86(generator);
+// 	// Save again, it seems, dont really know.
+// 	generator.prevs_regs(1);
+// 	// Restore something
+// 	//generator.write(generator.add(generator.current_reg(), getOffsetByIndex(gener)));
+// 	generator.prevs_regs(1);
+// 	// And restore again
+// 	if (isExpression()) writeExpression(generator);
+// 	generator.write("E-----\n");
+     }
 }

@@ -29,11 +29,15 @@ public class Identifier extends LValue {
     public String toString() { return identifier; }
 
     public void tox86(Genx86 generator) throws IOException {
-	generator.write(generator.mov(generator.current_reg(), ""+getSymValue().getOffset()));
+	if (isExpression() && !getSymValue().isKnownConstant())
+	    generator.write(getSymValue().knownConstant(generator));
+
+	generator.write(generator.mov(generator.current_reg(), Integer.toString(getSymValue().getOffset())));
 	generator.write(generator.add(generator.current_reg(), generator.global_space()));
+	if (isExpression()) writeExpression(generator);
     }
 
     public String currentDirection(Genx86 generator) {
-	return generator.global_space() + "+" + getSymValue().getOffset();
+	return "[" + generator.global_space() + "+" + getSymValue().getOffset() + "]";
     }
 }

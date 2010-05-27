@@ -1,6 +1,7 @@
 package zinara.symtable;
 
 import zinara.ast.type.*;
+import zinara.code_generator.Genx86;
 
 public class SymValue{
     private boolean variable;
@@ -26,4 +27,12 @@ public class SymValue{
     public String toString() {
     	return "<" + (this.variable ? "Variable" : "Constant") + ": " + this.type + ">";
     }
+
+    public boolean isKnownConstant() {
+// 	if (variable || ((ConstantType)getType()).getValue() == null) return false;
+// 	return ((ConstantType)getType()).getValue().isKnown();
+	return false;
+    }
+
+    public String knownConstant(Genx86 generator) { return ""; }
 }

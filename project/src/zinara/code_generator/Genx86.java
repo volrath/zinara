@@ -25,6 +25,7 @@ public class Genx86{
     private int n_regs;
     private int next_reg;
     private int bits;
+    private int labelCounter = 0;
 
     private BufferedWriter file;
 
@@ -131,6 +132,18 @@ public class Genx86{
 	//  y el comienzo del texto del main se crean aca
 	write(reserve_space_str(global_space, total_size));
 	write(main_header_str());
+    }
+
+    public String jump(String label) {
+	return "jmp " + label + "\n";
+    }
+
+    public String newLabel() {
+	return "zn" + labelCounter++ + ":\n";
+    }
+
+    public String regName(int regNumber) {
+	return regs[regNumber % n_regs];
     }
 
     public void write(String thing) throws IOException{
@@ -604,8 +617,8 @@ public class Genx86{
 	return code;
     }
 
-    public String exitSyscall(int exit_code){
-	String code = "";
+    public void exitSyscall(int exit_code) throws IOException {
+	String code = "\n";
 	String e_code = Integer.toString(exit_code);
 
 	if (this.bits == 64){
@@ -618,7 +631,7 @@ public class Genx86{
 	}
 	code += syscall();
 
-	return code;
+	write(code);
     }
 
     public String syscall(){

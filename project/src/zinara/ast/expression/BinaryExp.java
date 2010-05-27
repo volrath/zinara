@@ -13,15 +13,14 @@ public class BinaryExp extends Expression {
     public Expression left;
     public Expression right;
     
-    public BinaryExp (int o, Expression l, Expression r) {
+    public BinaryExp (int o, Expression l, Expression r) throws TypeClashException {
 	operator=o;
 	left=l;
 	right=r;
+	type = parser.operators.check(this.operator, this.left.getType(), this.right.getType());
     }
     
-    public Type getType() throws TypeClashException {
-	if (type != null) return type;
-	type = parser.operators.check(this.operator, this.left.getType(), this.right.getType());
+    public Type getType() {
 	return type;
     }
 
