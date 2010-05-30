@@ -149,6 +149,7 @@ precedence left AND, SAND, OR, SOR, XOR;
 //expresion. Da shift/reduce, quiero que vaya por
 //la parentizacion.
 precedence right RPAREN;
+precedence right RBRACKET;
 
 /* The grammar */
 
@@ -281,7 +282,7 @@ ident_list   ::= ident_list:il COMMA l_value:id        {: RESULT = il; il.add(id
 l_value      ::= IDENTIFIER:id                                                      {: SymTable finded = currentTable.getSymTableForIdOrDie(id); RESULT = new Identifier(id, finded); :}
                | l_value:lv LBRACKET expr:e RBRACKET                                {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
                | l_value:lv LBRACKET other_expr:e DOUBLEDOT other_expr RBRACKET     {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
-//               | l_value:lv LBRACKET IDENTIFIER:id RBRACKET                         {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, id, currentTable); :}
+               | l_value:lv LBRACKET IDENTIFIER:id RBRACKET                         {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, id, currentTable); :}
                ;
 
 // Types
