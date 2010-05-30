@@ -16,6 +16,7 @@ public class BinaryBooleanExp extends BooleanExp {
     public BinaryBooleanExp (int o, Expression l, Expression r) throws TypeClashException {
 	type = parser.operators.check(o, l.getType(), r.getType());
 	operator=o;
+	// If they are lvalues with boolean type, we have to get the expression out of them
 	left = (BooleanExp)l;
 	right = (BooleanExp)r;
     }
@@ -29,71 +30,68 @@ public class BinaryBooleanExp extends BooleanExp {
     }
 
     public void tox86(Genx86 generator) throws IOException {
+	if (left instanceof LValue) ((LValue)left).setAsBool(true);
+	if (right instanceof LValue) ((LValue)right).setAsBool(true);
 	switch(operator) {
 	case sym.AND:
 	    conjuntionToX86(generator, true);
+	    break;
 	case sym.SAND:
 	    conjuntionToX86(generator, false);
+	    break;
 	case sym.OR:
 	    disjunctionToX86(generator, true);
+	    break;
 	case sym.SOR:
 	    disjunctionToX86(generator, false);
+	    break;
 	case sym.XOR:
 	    xorToX86(generator);
 	}
     }
 
     public void conjuntionToX86(Genx86 generator, boolean shortCircuit) throws IOException {
-	BooleanExp bLeft  = (BooleanExp)left;
-	BooleanExp bRight = (BooleanExp)right;
+	left.yesLabel  = generator.newLabel();
+	left.noLabel   = (shortCircuit ? noLabel : left.yesLabel);
+	right.yesLabel = yesLabel;
+	right.noLabel  = noLabel;
 
-	bLeft.yesLabel  = generator.newLabel();
-	bLeft.noLabel   = (shortCircuit ? noLabel : bLeft.yesLabel);
-	bRight.yesLabel = yesLabel;
-	bRight.noLabel  = noLabel;
-
-	bLeft.register  = register;
-	bRight.register = register + 1;
+	left.register  = register;
+	right.register = register + 1;
 
 	// saving and restoring register missing
-	bLeft.tox86(generator);
-	generator.write(bLeft.yesLabel);
-	bRight.tox86(generator);
+	left.tox86(generator);
+	generator.writeLabel(left.yesLabel);
+	right.tox86(generator);
     }
 
     public void disjunctionToX86(Genx86 generator, boolean shortCircuit) throws IOException {
-	BooleanExp bLeft  = (BooleanExp)left;
-	BooleanExp bRight = (BooleanExp)right;
+	left.noLabel   = generator.newLabel();
+	left.yesLabel  = (shortCircuit ? yesLabel : left.noLabel);
+	right.yesLabel = yesLabel;
+	right.noLabel  = noLabel;
 
-	bLeft.noLabel   = generator.newLabel();
-	bLeft.yesLabel  = (shortCircuit ? yesLabel : bLeft.noLabel);
-	bRight.yesLabel = yesLabel;
-	bRight.noLabel  = noLabel;
-
-	bLeft.register  = register;
-	bRight.register = register + 1;
+	left.register  = register;
+	right.register = register + 1;
 
 	// saving and restoring register missing
-	bLeft.tox86(generator);
-	generator.write(bLeft.noLabel);
-	bRight.tox86(generator);
+	left.tox86(generator);
+	generator.writeLabel(left.noLabel);
+	right.tox86(generator);
     }
 
     public void xorToX86(Genx86 generator) throws IOException {
-	BooleanExp bLeft  = (BooleanExp)left;
-	BooleanExp bRight = (BooleanExp)right;
+	left.yesLabel  = yesLabel;
+	left.noLabel   = generator.newLabel();
+	right.yesLabel = yesLabel;
+	right.noLabel  = noLabel;
 
-	bLeft.yesLabel  = yesLabel;
-	bLeft.noLabel   = generator.newLabel();
-	bRight.yesLabel = yesLabel;
-	bRight.noLabel  = noLabel;
-
-	bLeft.register  = register;
-	bRight.register = register + 1;
+	left.register  = register;
+	right.register = register + 1;
 
 	// saving and restoring register missing
-	bLeft.tox86(generator);
-	generator.write(bLeft.noLabel);
-	bRight.tox86(generator);
+	left.tox86(generator);
+	generator.writeLabel(left.noLabel);
+	right.tox86(generator);
     }
 }

@@ -20,6 +20,7 @@ public class Main extends ASTNode {
     public String toString() { return "(Main: " + code + ")"; }
 
     public void tox86(Genx86 generate) throws IOException{
+	this.code.register = register;
 	this.code.tox86(generate);
     }
 }

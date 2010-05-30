@@ -95,9 +95,13 @@ public class Genx86{
 	// Generate code for all of its functions
 	// ...
 	// And then main
+	program.getMain().register = 0;
+	program.getMain().getCode().nextInst = "halt";
+
 	program.getMain().tox86(this);
 
 	// Exits the program
+	writeLabel(program.getMain().getCode().nextInst);
 	exitSyscall(0);
 	closeFile();
     }
@@ -139,7 +143,7 @@ public class Genx86{
     }
 
     public String newLabel() {
-	return "zn" + labelCounter++ + ":\n";
+	return "zn" + labelCounter++;
     }
 
     public String regName(int regNumber) {
@@ -148,6 +152,10 @@ public class Genx86{
 
     public void write(String thing) throws IOException{
 	file.write(thing);
+    }
+
+    public void writeLabel(String label) throws IOException {
+	file.write(label + ":\n");
     }
 
     public void closeFile() throws IOException{

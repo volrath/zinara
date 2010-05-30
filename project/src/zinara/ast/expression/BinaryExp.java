@@ -29,52 +29,48 @@ public class BinaryExp extends Expression {
     }
 
     public void tox86(Genx86 generate) throws IOException {
-	int regs_used = 1;
-	Type type = this.type;
-	
 	String save;
 	String restore;
 
-	String exp1Reg = generate.current_reg();
-	String exp2Reg;
+	left.register = register;
+	right.register = register + 1;
 	
 	left.tox86(generate);
-	generate.write(generate.save());
-	exp2Reg = generate.next_reg();
+	// Save and restore missing;
+	//generate.write(generate.save());
 	right.tox86(generate);
 
 	if (type instanceof IntType)
-	    generate.write(intOps(generate,exp1Reg,exp2Reg));
+	    generate.write(intOps(generate));
 	else if (type instanceof FloatType)
-	    generate.write(realOps(generate,exp1Reg,exp2Reg));
+	    generate.write(realOps(generate));
+
 	else{
 	    System.out.println("Tipo no implementado: "+operator);
 	    System.exit(1);
 	}
 
-	generate.prevs_regs(regs_used);
-
-	generate.write(generate.restore());
-        //generate.write(code);
+	// restore!
+	//generate.write(generate.restore());
     }
 
-    private String intOps(Genx86 generate, String exp1Reg, String exp2Reg){
+    private String intOps(Genx86 generate){
 	String code = "";
 
 	if (operator == sym.PLUS){
-	    code += generate.add(exp1Reg,exp2Reg);
+	    code += generate.add(generate.regName(left.register),generate.regName(right.register));
 	}
 	else if (operator == sym.MINUS){
-	    code += generate.sub(exp1Reg,exp2Reg);
+	    code += generate.sub(generate.regName(left.register),generate.regName(right.register));
 	}
 	else if (operator == sym.TIMES){
-	    code += generate.imul(exp1Reg,exp2Reg);
+	    code += generate.imul(generate.regName(left.register),generate.regName(right.register));
 	}
 	else if (operator == sym.DIVIDE){
-	    code += generate.idiv(exp1Reg,exp2Reg);
+	    code += generate.idiv(generate.regName(left.register),generate.regName(right.register));
 	}
 	else if (operator == sym.MOD){
-	    code += generate.imod(exp1Reg,exp2Reg);
+	    code += generate.imod(generate.regName(left.register),generate.regName(right.register));
 	}
 	else{
 	    System.out.println("Operacion no implementada para enteros: "+operator);
@@ -84,20 +80,20 @@ public class BinaryExp extends Expression {
 	return code;
     }
 
-    private String realOps(Genx86 generate, String exp1Reg, String exp2Reg){
+    private String realOps(Genx86 generate){
 	String code = "";
 
 	if (operator == sym.PLUS){
-	    code += generate.fadd(exp1Reg,exp2Reg);
+	    code += generate.fadd(generate.regName(left.register),generate.regName(right.register));
 	}
 	else if (operator == sym.MINUS){
-	    code += generate.fsub(exp1Reg,exp2Reg);
+	    code += generate.fsub(generate.regName(left.register),generate.regName(right.register));
 	}
 	else if (operator == sym.TIMES){
-	    code += generate.fmul(exp1Reg,exp2Reg);
+	    code += generate.fmul(generate.regName(left.register),generate.regName(right.register));
 	}
 	else if (operator == sym.DIVIDE){
-	    code += generate.fdiv(exp1Reg,exp2Reg);
+	    code += generate.fdiv(generate.regName(left.register),generate.regName(right.register));
 	}
 	else{
 	    System.out.println("Operacion no implementada para reales: "+operator);

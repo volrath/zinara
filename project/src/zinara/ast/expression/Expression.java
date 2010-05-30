@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public abstract class Expression extends ASTNode {
     public Type type;
-    public int register;
     //@ ensures \result != null
     public abstract Type getType() throws TypeClashException;
     public abstract String toString();

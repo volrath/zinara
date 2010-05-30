@@ -27,20 +27,27 @@ public class LValueList extends LValue {
 
     public void tox86(Genx86 generator) throws IOException {
 	generator.write("B-----\n");
+
+	constructor.register = register;
+	index.register       = register + 1;
+
 	constructor.tox86(generator);
 	// Save, i dont know how to do this
-	generator.next_reg();
 	index.tox86(generator);
+
 	// Save again, it seems, dont really know.
-	try {
-	    generator.write(generator.imul(generator.current_reg(), Integer.toString(getType().getType().size())));
-	} catch (TypeClashException e) {}
-	generator.prevs_regs(1);
+	generator.write(generator.imul(generator.regName(index.register), Integer.toString(type.size())));
+
 	// Restore something
-	generator.write(generator.add(generator.current_reg(), generator.next_reg()));
-	generator.prevs_regs(1);
+	generator.write(generator.add(generator.regName(constructor.register), generator.regName(index.register)));
 	// And restore again
-	if (isExpression()) writeExpression(generator);
+
+	if (isExpression()) {
+	    if (isBool())
+		writeBooleanExpression(generator);
+	    else
+		writeExpression(generator);
+	}
 	generator.write("E-----\n");
     }
 }

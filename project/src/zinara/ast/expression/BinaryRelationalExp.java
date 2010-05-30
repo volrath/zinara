@@ -32,16 +32,22 @@ public class BinaryRelationalExp extends BooleanExp {
 	switch(operator) {
 	case sym.LT:
 	    lowerThan(generator, false);
+	    break;
 	case sym.GT:
 	    greaterThan(generator, false);
+	    break;
 	case sym.LTE:
 	    lowerThan(generator, true);
+	    break;
 	case sym.GTE:
 	    greaterThan(generator, true);
+	    break;
 	case sym.SHEQ:
 	    equal(generator, false);
+	    break;
 	case sym.DEEQ:
 	    equal(generator, true);
+	    break;
 	case sym.NOEQ:
 	    notEqual(generator);
 	}

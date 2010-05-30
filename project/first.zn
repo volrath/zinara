@@ -7,7 +7,18 @@ Float b
 Int c
 
 main:
-   [Int] d = []
+/.   [Int] d = []
    a = d[2] + 1
-   d[1] = 9
+   d[1] = 9 
+
+   a = 1 + 1
+   c = c + a
+   c = c * 2./
+
+   Bool x, y
+   [Bool] d
+   x = True
+   y = False
+   d[1] = x and y
+
 endmain   
