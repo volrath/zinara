@@ -1,10 +1,12 @@
 package zinara.ast.expression;
-import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.DictType;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
+import zinara.code_generator.Genx86;
+
+import java.io.IOException;
 
 public class LValueDict extends LValue {
     private LValue constructor;
@@ -27,6 +29,22 @@ public class LValueDict extends LValue {
     }
     public String toString() { return constructor + "[" + identifier + "]"; }
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generator) throws IOException {
+	constructor.register = register;
+	constructor.tox86(generator);
+
+	// Get the identifier offset
+	try {
+	    Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
+	    generator.write(generator.add(generator.regName(register), offset.toString()));
+	} catch (TypeClashException e) {}
+
+	if (isExpression()) {
+	    if (isBool())
+		writeBooleanExpression(generator);
+	    else
+		writeExpression(generator);
+	}
+
     }
 }
