@@ -16,7 +16,7 @@ public class While extends Instruction{
 	return this.code;
     }
 
-    public Expression getExpression(){
+    public BooleanExp getExpression(){
 	return this.expr;
     }
 
