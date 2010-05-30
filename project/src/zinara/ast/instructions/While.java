@@ -1,7 +1,9 @@
 package zinara.ast.instructions;
-import zinara.code_generator.*;
 
-import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
+import zinara.code_generator.Genx86;
+
+import java.io.IOException;
 
 public class While extends Instruction{
     private BooleanExp expr;
@@ -22,7 +24,7 @@ public class While extends Instruction{
 
     public String toString() { return "While " + expr + ": " + code + ">"; }
 
-    public void tox86(Genx86 generator){
+    public void tox86(Genx86 generator) throws IOException {
 	expr.yesLabel = generator.newLabel();
 	expr.noLabel  = nextInst;
 

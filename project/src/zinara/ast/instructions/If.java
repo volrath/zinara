@@ -5,6 +5,7 @@ import zinara.ast.instructions.IfCase;
 import zinara.code_generator.Genx86;
 
 import java.util.ArrayList;
+import java.io.IOException;
 
 public class If extends Instruction{
     private ArrayList cases; // Arraylist of IfCase's
@@ -24,10 +25,10 @@ public class If extends Instruction{
 	return (ret + ">");
     }
 
-    public void tox86(Genx86 generator){
-	ifCase ic;
+    public void tox86(Genx86 generator) throws IOException {
+	IfCase ic;
 	for (int i = 0; i < cases.size(); i++) {
-	    ic = (ifCase)cases.get(i);
+	    ic = (IfCase)cases.get(i);
 	    ic.register = register;
 	    ic.nextInst = ((i != cases.size() - 1) ? generator.newLabel() : nextInst);
 	    ic.completeIfNextInst = nextInst;

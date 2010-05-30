@@ -26,7 +26,7 @@ public class LValueList extends LValue {
     public String toString() { return constructor + "[" + index + "]"; }
 
     public void tox86(Genx86 generator) throws IOException {
-	generator.write("B-----\n");
+	generator.write("; B-----\n");
 
 	constructor.register = register;
 	index.register       = register + 1;
@@ -48,6 +48,6 @@ public class LValueList extends LValue {
 	    else
 		writeExpression(generator);
 	}
-	generator.write("E-----\n");
+	generator.write("; E-----\n");
     }
 }
