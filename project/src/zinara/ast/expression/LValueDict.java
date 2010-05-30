@@ -14,7 +14,7 @@ public class LValueDict extends LValue {
     public LValueDict(LValue c, String i)
 	throws KeyErrorException, TypeClashException {
 	// check if i is in the dictionary
-	((DictType)c.getType()).getOrDie(i);
+	((DictType)c.getType().getType()).getOrDie(i);
 
 	constructor = c;
 	identifier = i;
@@ -22,7 +22,7 @@ public class LValueDict extends LValue {
 
     public Type getType() throws TypeClashException {
 	if (type != null) return type;
-	type = ((DictType)constructor.getType()).get(identifier);
+	type = ((DictType)constructor.getType().getType()).get(identifier);
 	return type;
     }
     public String toString() { return constructor + "[" + identifier + "]"; }

@@ -17,7 +17,10 @@ public class SymValue{
     }
 
     //@ ensures \result != null;
-    public Type getType() { return this.type; }
+    public Type getType() { 
+	Type t = (type instanceof ConstantType ? ((ConstantType)type).getRealType() : type);
+	return t;
+    }
 
     public boolean isVariable() { return this.variable; }
 
