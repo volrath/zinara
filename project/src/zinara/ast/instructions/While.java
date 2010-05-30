@@ -4,10 +4,10 @@ import zinara.code_generator.*;
 import zinara.ast.expression.Expression;
 
 public class While extends Instruction{
-    private Expression expr;
+    private BooleanExp expr;
     private CodeBlock code;
 
-    public While(CodeBlock cb, Expression ex){
+    public While(CodeBlock cb, BooleanExp ex){
 	this.code = cb;
 	this.expr = ex;
     }
@@ -22,6 +22,17 @@ public class While extends Instruction{
 
     public String toString() { return "While " + expr + ": " + code + ">"; }
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generator){
+	expr.yesLabel = generator.newLabel();
+	expr.noLabel  = nextInst;
+
+	code.register = register;
+	code.nextInst = generator.newLabel();
+
+	generator.write(generator.jump(code.nextInst));
+	generator.writeLabel(expr.yesLabel);
+	code.tox86(generator);
+	generator.writeLabel(code.nextInst);
+	expr.tox86(generator);
     }
 }
