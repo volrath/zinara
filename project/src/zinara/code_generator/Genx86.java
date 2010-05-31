@@ -20,11 +20,12 @@ public class Genx86{
     private String stackp;
     private String framep;
     private String stackAlig; //Alineamiento de la pila
-    private String data_offset;
+    private String global_offset;
     
     private int n_regs;
     private int next_reg;
     private int bits;
+    private int labelCounter = 0;
 
     private BufferedWriter file;
 
@@ -73,10 +74,10 @@ public class Genx86{
 	else
 	    throw new InvalidArchitectureException(bits); 
 	
-	data_offset = "glob";
+	global_offset = "glob";
 
 	next_reg = 0;
-	bits = bits;
+	this.bits = bits;
 	save = null;
 	restore = null;
 
@@ -94,35 +95,67 @@ public class Genx86{
 	// Generate code for all of its functions
 	// ...
 	// And then main
+	program.getMain().register = 0;
+	program.getMain().getCode().nextInst = "halt";
+
 	program.getMain().tox86(this);
 
 	// Exits the program
+	writeLabel(program.getMain().getCode().nextInst);
 	exitSyscall(0);
 	closeFile();
     }
 
     public void generateHeader(SymTable symtable) throws IOException {
-	Iterator keyIt = symtable.keySet().iterator();
 	String identifier;
 	SymValue symValue;
 
+	// First set space for global variables
+ 	Iterator keyIt = symtable.keySet().iterator();
 	int total_size = 0;
 	while(keyIt.hasNext()) {
 	    identifier = (String)keyIt.next();
 	    symValue = symtable.getSymbol(identifier);
+	    if (symValue.type.size() == 0) continue;
 	    symValue.setOffset(total_size);
-	    total_size += symValue.type.size;
+	    total_size += symValue.type.size();
+	}
+	// then for main variables
+	SymTable mainSymTable = symtable.getSon(symtable.getSons().size()-1);
+ 	keyIt = mainSymTable.keySet().iterator();
+	while(keyIt.hasNext()) {
+	    identifier = (String)keyIt.next();
+	    symValue = mainSymTable.getSymbol(identifier);
+	    if (symValue.type.size() == 0) continue;
+	    symValue.setOffset(total_size);
+	    total_size += symValue.type.size();
 	}
 
 	// .ASM HEADER
 	//  El espacio para variables, texto de las funciones
 	//  y el comienzo del texto del main se crean aca
-	write(data(data_offset(), total_size));
-	write(main_text_header());
+	write(reserve_space_str(global_offset, total_size));
+	write(main_header_str());
+    }
+
+    public String jump(String label) {
+	return "jmp " + label + "\n";
+    }
+
+    public String newLabel() {
+	return "zn" + labelCounter++;
+    }
+
+    public String regName(int regNumber) {
+	return regs[regNumber % n_regs];
     }
 
     public void write(String thing) throws IOException{
 	file.write(thing);
+    }
+
+    public void writeLabel(String label) throws IOException {
+	file.write(label + ":\n");
     }
 
     public void closeFile() throws IOException{
@@ -142,8 +175,8 @@ public class Genx86{
 	return this.framep;
     }
 
-    public String data_offset(){
-	return this.data_offset;
+    public String global_offset(){
+	return global_offset;
     }
 
     public String save(){
@@ -196,11 +229,11 @@ public class Genx86{
 
     //Reserva tanta memoria como le pidan. data_size es la cantidad
     //de bytes. 
-    public String data(String label, int data_size){
+    public String reserve_space_str(String label, int data_size){
 	return "section .bss\n   "+label+": resb "+data_size+"\n";
     }
 
-    public String main_text_header(){
+    public String main_header_str(){
 	return "section .text\n   global main\nmain:\n";
     }
 
@@ -535,6 +568,54 @@ public class Genx86{
 	return code;
     }
 
+    public String and(String a, String b){
+	return "and "+a+","+b+"\n";
+    }
+
+    public String or(String a, String b){
+	return "or "+a+","+b+"\n";
+    }
+
+    public String xor(String a, String b){
+	return "xor "+a+","+b+"\n";
+    }
+
+    public String cmp(String a, String b){
+	return "cmp "+a+","+b+"\n";
+    }
+
+    public String jz(String label){
+	return "jz "+label+"\n";
+    }
+
+    public String jnz(String label){
+	return "jnz "+label+"\n";
+    }
+
+    public String je(String label){
+	return "je "+label+"\n";
+    }
+
+    public String jne(String label){
+	return "je "+label+"\n";
+    }
+
+    public String jg(String label){
+	return "jg "+label+"\n";
+    }
+
+    public String jge(String label){
+	return "jge "+label+"\n";
+    }
+
+    public String jl(String label){
+	return "jl "+label+"\n";
+    }
+
+    public String jle(String label){
+	return "jle "+label+"\n";
+    }
+
     public String save_print_regs(){
 	String code = "";
 	if (this.bits == 32){
@@ -592,8 +673,8 @@ public class Genx86{
 	return code;
     }
 
-    public String exitSyscall(int exit_code){
-	String code = "";
+    public void exitSyscall(int exit_code) throws IOException {
+	String code = "\n";
 	String e_code = Integer.toString(exit_code);
 
 	if (this.bits == 64){
@@ -606,7 +687,7 @@ public class Genx86{
 	}
 	code += syscall();
 
-	return code;
+	write(code);
     }
 
     public String syscall(){

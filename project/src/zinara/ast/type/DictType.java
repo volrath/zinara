@@ -7,15 +7,35 @@ import java.util.Iterator;
 import zinara.exceptions.KeyErrorException;
 
 public class DictType extends Type {
-    private HashMap table;
+    private HashMap table; // HashMap of <String, Type>
+    private HashMap offsets; // HashMap of <String, Int>   
 
     public DictType(HashMap t) {
 	table = t;
+	String key;
+	Type ct;
+	Iterator it = table.keySet().iterator();
+	while(it.hasNext()) {
+	    key = (String)it.next();
+	    ct  = (Type)table.get(key);
+	    offsets.put(key, new Integer(ct.size()));
+	}
     }
 
     public Iterator getIterator() { return table.keySet().iterator(); }
 
-    public int size() { return table.size(); }
+    public int len() { return table.size(); }
+
+    public int size() {
+	int size = 0;
+	Type ct;
+	Iterator it = table.entrySet().iterator();
+	while(it.hasNext()) {
+	    ct = (Type)it.next();
+	    size += ct.size();
+	}
+	return size;
+    }
 
     public Type get(String key) { return (Type)table.get(key); }
 
@@ -25,6 +45,8 @@ public class DictType extends Type {
 	    throw new KeyErrorException("La clave " + key + " no se encuentra definida en el tipo de diccionario " + toString());
 	return type;
     }
+
+    public Integer getOffsetFor(String key) { return (Integer)offsets.get(key); }
 
     public String toString() {
 	String ret = "<{";

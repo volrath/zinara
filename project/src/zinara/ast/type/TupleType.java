@@ -5,24 +5,25 @@ import java.util.ArrayList;
 public class TupleType extends Type {
     private ArrayList types; // arraylist of types
 
-    public TupleType(ArrayList ts) {
-	types = ts;
-	size = 0;
-	for (int i = 0; i < types.size(); i++)
-	    size += ((Type)types.get(i)).size;
-    }
+    public TupleType(ArrayList ts) { types = ts; }
     public TupleType() { types = null; }
 
     public int len() { return types.size(); }
 
+    public int size() {
+	int size = 0;
+	for (int i = 0; i < types.size(); i++)
+	    size += ((Type)types.get(i)).size();
+	return size;
+    }
+
     public Type get(int i) { return (Type)types.get(i); }
 
     public String toString() {
-	return super.toString();
-// 	String ret = "<(";
-// 	for (int i = 0; i < types.len(); i++)
-// 	    ret += (Type)types.get(i) + ", ";
-// 	return ret.substring(0, ret.length()-2) + ")>";
+	String ret = "<(";
+	for (int i = 0; i < types.size(); i++)
+	    ret += (Type)types.get(i) + ", ";
+	return ret.substring(0, ret.length()-2) + ")>";
     }
 
     public Type getType() { return this; }

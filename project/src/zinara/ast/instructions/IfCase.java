@@ -1,13 +1,17 @@
 package zinara.ast.instructions;
-import zinara.code_generator.*;
 
-import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
+import zinara.code_generator.Genx86;
+
+import java.io.IOException;
 
 public class IfCase extends Instruction {
-    private Expression expr;
+    private BooleanExp expr;
     private CodeBlock code;
 
-    public IfCase(CodeBlock cb, Expression ex){
+    public String completeIfNextInst;
+
+    public IfCase(CodeBlock cb, BooleanExp ex){
 	this.code = cb;
 	this.expr = ex;
     }
@@ -16,12 +20,22 @@ public class IfCase extends Instruction {
 	return this.code;
     }
 
-    public Expression getExpression(){
+    public BooleanExp getExpression(){
 	return this.expr;
     }
 
     public String toString() { return "<If " + expr + ": " + code + ">"; }
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generator) throws IOException {
+	expr.yesLabel = generator.newLabel();
+	expr.noLabel  = nextInst;
+
+	code.register = register;
+	code.nextInst = completeIfNextInst;
+
+	expr.tox86(generator);
+	generator.writeLabel(expr.yesLabel);
+	code.tox86(generator);
+	generator.write(generator.jump(completeIfNextInst));
     }
 }

@@ -90,10 +90,11 @@ Number      = {Digit}+
  "=="                            { return symbol(sym.SHEQ);}
  "<=>"                           { return symbol(sym.DEEQ);}
 
- "AND"                           { return symbol(sym.AND);}
- "OR"                            { return symbol(sym.OR);}
+ "and"                           { return symbol(sym.AND);}
+ "or"                            { return symbol(sym.OR);}
  "&"                             { return symbol(sym.SAND);}
  "|"                             { return symbol(sym.SOR);}
+ "xor"                           { return symbol(sym.XOR); }
  "!"                             { return symbol(sym.NOEQ);}
 
  "for"                           { return symbol(sym.FOR);}

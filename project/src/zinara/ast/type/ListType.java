@@ -19,4 +19,6 @@ public class ListType extends Type {
 	return insideType.equals(otherList.getInsideType());
     }
     public Type getType() { return this; }
+
+    public int size() { return 0; }
 }

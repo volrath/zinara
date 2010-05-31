@@ -1,9 +1,10 @@
 package zinara.ast.instructions;
-import zinara.code_generator.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import zinara.ast.instructions.DecInst;
+import zinara.code_generator.Genx86;
 import zinara.symtable.SymTable;
 
 public class CodeBlock extends Instruction{
@@ -33,8 +34,18 @@ public class CodeBlock extends Instruction{
 	return (ret.substring(0, ret.length()-1) + ">");
     }
 
-    public void tox86(Genx86 generate) throws IOException{
-	for (int i = 0; i < block.size(); i++)
-	    ((Instruction)block.get(i)).tox86(generate);
+    public void tox86(Genx86 generator) throws IOException{
+	Instruction inst;
+	
+	for (int i = 0; i < block.size(); i++) {
+	    inst = (Instruction)block.get(i);
+	    if (inst instanceof DecInst) continue; // this really doesnt belong here
+
+	    inst.register = register;
+	    inst.nextInst = ((i != block.size() - 1) ? generator.newLabel() : nextInst);
+	    System.out.println("writing " + inst + " -> " + inst.nextInst);
+	    inst.tox86(generator);
+	    if (i != block.size() - 1) generator.writeLabel(inst.nextInst);
+	}
     }
 }

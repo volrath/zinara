@@ -1,13 +1,15 @@
 package zinara.ast.instructions;
-import zinara.code_generator.*;
 
-import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
+import zinara.code_generator.Genx86;
+
+import java.io.IOException;
 
 public class While extends Instruction{
-    private Expression expr;
+    private BooleanExp expr;
     private CodeBlock code;
 
-    public While(CodeBlock cb, Expression ex){
+    public While(CodeBlock cb, BooleanExp ex){
 	this.code = cb;
 	this.expr = ex;
     }
@@ -16,12 +18,23 @@ public class While extends Instruction{
 	return this.code;
     }
 
-    public Expression getExpression(){
+    public BooleanExp getExpression(){
 	return this.expr;
     }
 
     public String toString() { return "While " + expr + ": " + code + ">"; }
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generator) throws IOException {
+	expr.yesLabel = generator.newLabel();
+	expr.noLabel  = nextInst;
+
+	code.register = register;
+	code.nextInst = generator.newLabel();
+
+	generator.write(generator.jump(code.nextInst));
+	generator.writeLabel(expr.yesLabel);
+	code.tox86(generator);
+	generator.writeLabel(code.nextInst);
+	expr.tox86(generator);
     }
 }
