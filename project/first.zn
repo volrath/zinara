@@ -1,4 +1,4 @@
-def hola(ula as Int, ula as Int):
+def hola(ulo as Int, ula as Int):
     print(ula)
 enddef
 
@@ -10,15 +10,15 @@ main:
    [[Int]] d = []
    a = d[2][0] + 1
    d[1] = [1,2,3] 
-/.
+
    a = 1 + 1
    c = c + a
    c = c * 2
 
    Bool x, y
-   [Bool] d
+   [Bool] db
    x = True
    y = False
-   d[1] = x and y
-./
+   //d[1] = x and y
+
 endmain   

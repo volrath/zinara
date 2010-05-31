@@ -29,71 +29,62 @@ public class BinaryRelationalExp extends BooleanExp {
     }
 
     public void tox86(Genx86 generator) throws IOException {
+	left.register  = register;
+	right.register = register + 1;
+
+	String leftReg = generator.regName(left.register);
+	String rightReg = generator.regName(left.register + 1);
+
+	// saving and restoring missing
+	left.tox86(generator);
+	right.tox86(generator);
+	generator.write(generator.cmp(leftReg,rightReg));
+
 	switch(operator) {
 	case sym.LT:
-	    lowerThan(generator, false);
+	    lowerThan(generator, leftReg, rightReg, false);
 	    break;
 	case sym.GT:
-	    greaterThan(generator, false);
+	    greaterThan(generator, leftReg, rightReg, false);
 	    break;
 	case sym.LTE:
-	    lowerThan(generator, true);
+	    lowerThan(generator, leftReg, rightReg, true);
 	    break;
 	case sym.GTE:
-	    greaterThan(generator, true);
+	    greaterThan(generator, leftReg, rightReg, true);
 	    break;
 	case sym.SHEQ:
-	    equal(generator, false);
+	    equal(generator, leftReg, rightReg, false);
 	    break;
 	case sym.DEEQ:
-	    equal(generator, true);
+	    equal(generator, leftReg, rightReg, true);
 	    break;
 	case sym.NOEQ:
-	    notEqual(generator);
+	    notEqual(generator, leftReg, rightReg);
 	}
-    }
 
-    public void lowerThan(Genx86 generator, boolean orEqual) throws IOException {
-	left.register  = register;
-	right.register = register + 1;
-
-	// saving and restoring missing
-	left.tox86(generator);
-	right.tox86(generator);
-// 	if (orEqual)
-// 	    generator.write(generator.conditionalJump(generator.regName(left.register),
-// 						      generator.regName(right.register),
-// 						      yesLabel));
-// 	else
-// 	    generator.write(generator.conditionalJump(generator.regName(left.register),
-// 						      generator.regName(right.register),
-// 						      yesLabel));
 	generator.write(generator.jump(noLabel));
     }
 
-    public void greaterThan(Genx86 generator, boolean orEqual) throws IOException {
-	left.register  = register;
-	right.register = register + 1;
-
-	// saving and restoring missing
-	left.tox86(generator);
-	right.tox86(generator);
-// 	if (orEqual)
-// 	    generator.write(generator.conditionalJump(generator.regName(right.register),
-// 						      generator.regName(left.register),
-// 						      yesLabel));
-// 	else
-// 	    generator.write(generator.conditionalJump(generator.regName(right.register),
-// 						      generator.regName(left.register),
-// 						      yesLabel));
-	generator.write(generator.jump(noLabel));
+    public void lowerThan(Genx86 generator, String a, String b, boolean orEqual) throws IOException {
+	if (orEqual)
+	    generator.write(generator.jle(yesLabel));
+	else
+	    generator.write(generator.jl(yesLabel));
     }
 
-    public void equal(Genx86 generator, boolean deep) throws IOException {
-	generator.write(generator.jump(yesLabel));
+    public void greaterThan(Genx86 generator, String a, String b, boolean orEqual) throws IOException {
+	if (orEqual)
+	    generator.write(generator.jge(yesLabel));
+	else
+	    generator.write(generator.jg(yesLabel));
     }
 
-    public void notEqual(Genx86 generator) throws IOException {
-	generator.write(generator.jump(noLabel));
+    public void equal(Genx86 generator, String a, String b, boolean deep) throws IOException {
+	generator.write(generator.je(yesLabel));
+    }
+
+    public void notEqual(Genx86 generator, String a, String b) throws IOException {
+	generator.write(generator.jne(yesLabel));
     }
 }

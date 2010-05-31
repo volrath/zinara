@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public abstract class Expression extends ASTNode {
     public Type type;
+    public String yesLabel;
+    public String noLabel;
     //@ ensures \result != null
     public abstract Type getType() throws TypeClashException;
     public abstract String toString();

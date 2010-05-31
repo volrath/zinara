@@ -26,7 +26,8 @@ public class MultipleDeclaration extends Declaration {
     public MultipleDeclaration(MultipleAssignation asigs, Type type) {
 	ArrayList declarations = new ArrayList();
 	for (int i = 0; i < asigs.assignations.size(); i++)
-	    declarations.add(new SingleDeclaration(new ConstantType(type,asigs.get(i).getExpression()), (Identifier)(asigs.get(i).getLValue()), asigs.get(i).getExpression(), false));
+	    declarations.add(new SingleDeclaration(new ConstantType(type,asigs.get(i).getExpression()), 
+						   (Identifier)(asigs.get(i).getLValue()), asigs.get(i).getExpression(),false));
 	this.declarations = declarations;
     }
 

@@ -20,7 +20,7 @@ public class Genx86{
     private String stackp;
     private String framep;
     private String stackAlig; //Alineamiento de la pila
-    private String global_space;
+    private String global_offset;
     
     private int n_regs;
     private int next_reg;
@@ -74,10 +74,10 @@ public class Genx86{
 	else
 	    throw new InvalidArchitectureException(bits); 
 	
-	global_space = "glob";
+	global_offset = "glob";
 
 	next_reg = 0;
-	bits = bits;
+	this.bits = bits;
 	save = null;
 	restore = null;
 
@@ -134,7 +134,7 @@ public class Genx86{
 	// .ASM HEADER
 	//  El espacio para variables, texto de las funciones
 	//  y el comienzo del texto del main se crean aca
-	write(reserve_space_str(global_space, total_size));
+	write(reserve_space_str(global_offset, total_size));
 	write(main_header_str());
     }
 
@@ -175,8 +175,8 @@ public class Genx86{
 	return this.framep;
     }
 
-    public String global_space(){
-	return global_space;
+    public String global_offset(){
+	return global_offset;
     }
 
     public String save(){
@@ -566,6 +566,54 @@ public class Genx86{
 	code += fninit();
 	
 	return code;
+    }
+
+    public String and(String a, String b){
+	return "and "+a+","+b+"\n";
+    }
+
+    public String or(String a, String b){
+	return "or "+a+","+b+"\n";
+    }
+
+    public String xor(String a, String b){
+	return "xor "+a+","+b+"\n";
+    }
+
+    public String cmp(String a, String b){
+	return "cmp "+a+","+b+"\n";
+    }
+
+    public String jz(String label){
+	return "jz "+label+"\n";
+    }
+
+    public String jnz(String label){
+	return "jnz "+label+"\n";
+    }
+
+    public String je(String label){
+	return "je "+label+"\n";
+    }
+
+    public String jne(String label){
+	return "je "+label+"\n";
+    }
+
+    public String jg(String label){
+	return "jg "+label+"\n";
+    }
+
+    public String jge(String label){
+	return "jge "+label+"\n";
+    }
+
+    public String jl(String label){
+	return "jl "+label+"\n";
+    }
+
+    public String jle(String label){
+	return "jle "+label+"\n";
     }
 
     public String save_print_regs(){

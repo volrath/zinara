@@ -86,7 +86,4 @@ public class SingleAssignation extends Assignation {
 	    generator.write(generator.mov("[" + generator.regName(lvalue.register) + "]", "0"));
 	}
     }
-    //Funcion que falta implementar.
-    //Por si el calculo del lvalue ocupo un registro
-    //private boolean isRegister(String)
 }

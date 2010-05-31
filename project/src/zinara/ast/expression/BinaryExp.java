@@ -44,7 +44,6 @@ public class BinaryExp extends Expression {
 	    generate.write(intOps(generate));
 	else if (type instanceof FloatType)
 	    generate.write(realOps(generate));
-
 	else{
 	    System.out.println("Tipo no implementado: "+operator);
 	    System.exit(1);
