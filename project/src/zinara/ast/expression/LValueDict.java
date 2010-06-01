@@ -2,6 +2,10 @@ package zinara.ast.expression;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.DictType;
+import zinara.ast.type.ListType;
+import zinara.ast.type.IntType;
+import zinara.ast.type.FloatType;
+import zinara.ast.type.BoolType;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
 import zinara.code_generator.Genx86;
@@ -31,20 +35,37 @@ public class LValueDict extends LValue {
 
     public void tox86(Genx86 generator) throws IOException {
 	constructor.register = register;
+	String constructorReg = generator.regName(constructor.register);
 	constructor.tox86(generator);
 
 	// Get the identifier offset
 	try {
 	    Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
-	    generator.write(generator.add(generator.regName(register), offset.toString()));
+	    generator.write(generator.add(constructorReg, offset.toString()));
 	} catch (TypeClashException e) {}
 
-	if (isExpression()) {
-	    if (isBool())
-		writeBooleanExpression(generator);
-	    else
-		writeExpression(generator);
+	if (type.getType() instanceof IntType)
+	    generator.write(generator.movInt(constructorReg,
+					     "[" + constructorReg + "]"));
+	else if (type.getType() instanceof FloatType)
+	    generator.write(generator.movReal(constructorReg,
+					      "[" + constructorReg + "]"));
+	else if (type.getType() instanceof BoolType)
+	    generator.write(generator.movBool(constructorReg,
+					      "[" + constructorReg + "]"));
+	else if ((type.getType() instanceof ListType)||
+		 (type.getType() instanceof DictType)){
+	    generator.write("; E-----\n");
+	    return;
 	}
-
+	else
+	    generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
+	
+	// if (isExpression()) {
+	//     if (isBool())
+	// 	writeBooleanExpression(generator);
+	//     else
+	// 	writeExpression(generator);
+	// }
     }
 }

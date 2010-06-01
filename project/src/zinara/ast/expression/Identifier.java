@@ -42,23 +42,7 @@ public class Identifier extends LValue {
 	// 			      Integer.toString(getSymValue().getOffset())));
 	String reg = generator.regName(register);
 
-	//Si es un tipo numerico o boleano, se copian los contenidos
-	if ((type.getType() instanceof IntType)||
-	    (type.getType() instanceof FloatType)||
-	    (type.getType() instanceof BoolType))
-	    generator.write(generator.mov(reg,
-					  "[" + generator.global_offset() +
-					  "+" + getSymValue().getOffset() + 
-					  "]"));
-	//Si es una lista, devuelvo su direccion
-	else if (type.getType() instanceof ListType)
-	    generator.write(generator.mov(reg,
-					  generator.global_offset()+
-					  "+"+
-					  Integer.toString(getSymValue().getOffset())));
-	else
-	    generator.write("Identificador para el tipo "+type.getType().toString()+" no implementado\n");	    
-
+	storeValue(generator, reg);
 	// generator.write(generator.add(generator.regName(register),
 	// 			      generator.global_space()));
 
@@ -71,6 +55,33 @@ public class Identifier extends LValue {
     }
 
     public String currentDirection(Genx86 generator) {
-	return "[" + generator.global_offset() + "+" + getSymValue().getOffset() + "]";
+	return generator.global_offset() + "+" + getSymValue().getOffset();
+    }
+
+    private void storeValue(Genx86 generator, String currentReg) throws IOException{
+	//Si es un tipo numerico o boleano, se copian los contenidos
+	if (type.getType() instanceof IntType)
+	    generator.write(generator.movInt(currentReg,
+					  "[" + generator.global_offset() +
+					  "+" + getSymValue().getOffset() + 
+					  "]"));
+	else if (type.getType() instanceof FloatType)
+	    generator.write(generator.movReal(currentReg,
+					  "[" + generator.global_offset() +
+					  "+" + getSymValue().getOffset() + 
+					  "]"));
+	else if (type.getType() instanceof BoolType)
+	    generator.write(generator.movBool(currentReg,
+					  "[" + generator.global_offset() +
+					  "+" + getSymValue().getOffset() + 
+					  "]"));
+	//Si es una lista, devuelvo su direccion
+	else if (type.getType() instanceof ListType)
+	    generator.write(generator.movAddr(currentReg,
+					  generator.global_offset()+
+					  "+"+
+					  Integer.toString(getSymValue().getOffset())));
+	else
+	    generator.write("Identificador para el tipo "+type.getType().toString()+" no implementado\n");	    
     }
 }

@@ -13,6 +13,6 @@ public class FloatExp extends Expression {
     public String toString() { return Float.toString(value); }
 
     public void tox86(Genx86 generate) throws IOException {
- 	generate.write(generate.mov(generate.regName(register),generate.toReal(value)));
+ 	generate.write(generate.movReal(generate.regName(register),generate.toReal(value)));
     }
 }

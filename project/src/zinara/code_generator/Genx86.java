@@ -35,12 +35,12 @@ public class Genx86{
     public Genx86(int bits, String fileName) throws InvalidArchitectureException, IOException{
 	if (bits == 64){
 	    regs = new String[14];
-	    regs[0] = "eax";
-	    regs[1] = "ebx";
-	    regs[2] = "ecx";
-	    regs[3] = "edx";
-	    regs[4] = "esi";
-	    regs[5] = "edi";
+	    regs[0] = "rax";
+	    regs[1] = "rbx";
+	    regs[2] = "rcx";
+	    regs[3] = "rdx";
+	    regs[4] = "rsi";
+	    regs[5] = "rdi";
 	    regs[6] = "r8d";
 	    regs[7] = "r9d";
 	    regs[8] = "r10d";
@@ -350,14 +350,43 @@ public class Genx86{
 
     // Usando este mov, nasm deducira la cantidad de
     //bytes a mover a partir del contexto.
-    public String mov(String dst, String orig){
+    private String mov(String dst, String orig){
 	return "mov "+dst+","+orig+"\n";
     }
 
     // Usando este mov, se le especifica explicitamente
     //a nasm la cantidad de bytes (byte,word,dword o qword).
-    public String mov(String dst, String orig, String size_mod){
+    private String mov(String dst, String orig, String size_mod){
 	return "mov "+size_mod+" "+dst+","+orig+"\n";
+    }
+
+    public String movInt(String dst, String orig){
+	if (this.bits == 32)
+	    return mov(dst,orig,"dword");
+	else
+	    return mov(dst,orig,"qword");	    
+    }
+
+    public String movReal(String dst, String orig){
+	if (this.bits == 32)
+	    return mov(dst,orig,"dword");
+	else
+	    return mov(dst,orig,"qword");	    
+    }
+
+    public String movBool(String dst, String orig){
+	return mov(dst,orig,"dword");
+    }
+
+    public String movChar(String dst, String orig){
+	return mov(dst,orig,"byte");
+    }
+
+    public String movAddr(String dst, String orig){
+	if (this.bits == 32)
+	    return mov(dst,orig,"dword");
+	else
+	    return mov(dst,orig,"qword");
     }
 
     public String fst(String dst, String size){

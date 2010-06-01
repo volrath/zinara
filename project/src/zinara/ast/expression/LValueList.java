@@ -1,10 +1,11 @@
 package zinara.ast.expression;
 
+import zinara.ast.type.Type;
 import zinara.ast.type.BoolType;
 import zinara.ast.type.FloatType;
 import zinara.ast.type.IntType;
-import zinara.ast.type.Type;
 import zinara.ast.type.ListType;
+import zinara.ast.type.DictType;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.TypeClashException;
 
@@ -48,19 +49,8 @@ public class LValueList extends LValue {
 	generator.write(generator.add(constructorReg,
 				      indexReg));
 	// And restore again
-
-	if ((type.getType() instanceof IntType)||
-	    (type.getType() instanceof FloatType)||
-	    (type.getType() instanceof BoolType))
-	    generator.write(generator.mov(constructorReg,
-					  "[" + constructorReg + "]"));
-	else if (type.getType() instanceof ListType){
-	    generator.write("; E-----\n");
-	    return;
-	}
-	else
-	    generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");	    
-
+	
+	storeValue(generator, constructorReg);
 	// if (isExpression()) {
 	//     if (isBool())
 	// 	writeBooleanExpression(generator);
@@ -68,5 +58,24 @@ public class LValueList extends LValue {
 	// 	writeExpression(generator);
 	// }
 	generator.write("; E-----\n");
+    }
+
+    private void storeValue(Genx86 generator, String addrReg)  throws IOException{
+	if (type.getType() instanceof IntType)
+	    generator.write(generator.movInt(addrReg,
+					     "[" + addrReg + "]"));
+	else if (type.getType() instanceof FloatType)
+	    generator.write(generator.movReal(addrReg,
+					  "[" + addrReg + "]"));
+	else if (type.getType() instanceof BoolType)
+	    generator.write(generator.movBool(addrReg,
+					  "[" + addrReg + "]"));
+	else if ((type.getType() instanceof ListType)||
+		 (type.getType() instanceof DictType)){
+	    generator.write("; E-----\n");
+	    return;
+	}
+	else
+	    generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
     }
 }

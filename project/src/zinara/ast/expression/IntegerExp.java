@@ -14,6 +14,6 @@ public class IntegerExp extends Expression {
     public String toString() { return Integer.toString(value); }
 
     public void tox86(Genx86 generate) throws IOException {
- 	generate.write(generate.mov(generate.regName(register),this.toString()));
+ 	generate.write(generate.movInt(generate.regName(register),this.toString()));
     }
 }
