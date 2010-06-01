@@ -1,10 +1,12 @@
 package zinara.ast.expression;
-import zinara.code_generator.*;
 
 import zinara.ast.type.Type;
 import zinara.ast.type.TupleType;
+import zinara.code_generator.Genx86;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
+
+import java.io.IOException;
 
 public class LValueTuple extends LValue {
     private LValue constructor;
@@ -43,4 +45,12 @@ public class LValueTuple extends LValue {
 // 	if (isExpression()) writeExpression(generator);
 // 	generator.write("E-----\n");
      }
+
+    public void writeExpression(Genx86 generator) throws IOException {
+	// for now,
+    }
+
+    public boolean isStaticallyKnown() {
+	return false;
+    }
 }

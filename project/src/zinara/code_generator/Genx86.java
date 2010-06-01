@@ -350,7 +350,7 @@ public class Genx86{
 
     // Usando este mov, nasm deducira la cantidad de
     //bytes a mover a partir del contexto.
-    private String mov(String dst, String orig){
+    public String mov(String dst, String orig){
 	return "mov "+dst+","+orig+"\n";
     }
 

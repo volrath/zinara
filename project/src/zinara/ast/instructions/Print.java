@@ -20,27 +20,27 @@ public class Print extends Instruction{
 	return "<Print " + expr + ">";
     }
 
-    public void tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generator) throws IOException{
 	// Por ahora se asume que todas las expresiones son numeros enteros
 	//de un solo digito.
 	String code = "";
-	String expReg = generate.current_reg();
+	expr.register = register;
 
-	expr.tox86(generate);
+	expr.tox86(generator);
 
 	//"Transformo" a ASCII
-	code += generate.add(expReg,"48");
+	code += generator.add(generator.regName(register),"48");
 
-	code += generate.save_print_regs();
+	code += generator.save_print_regs();
 
-	code += generate.mov("["+generate.stack_pointer()+"]",expReg);
+	code += generator.mov("["+generator.stack_pointer()+"]",generator.regName(register));
 	// Pongo el valor de la expresion en la pila, ya que la llamada
         //sys_write necesita que el String este en memoria.
 	
-	code += generate.setup_print(generate.stack_pointer(),"1","4");
-	code += generate.syscall();
-	code += generate.restore_print_regs();
+	code += generator.setup_print(generator.stack_pointer(),"1","4");
+	code += generator.syscall();
+	code += generator.restore_print_regs();
 	    	    
-	generate.write(code);
+	generator.write(code);
     }
 }

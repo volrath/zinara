@@ -3,6 +3,7 @@ package zinara.semantic;
 import java.util.ArrayList;
 
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
 import zinara.ast.expression.IntegerExp;
 import zinara.ast.expression.LValue;
 import zinara.ast.expression.LValueList;

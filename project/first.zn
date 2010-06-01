@@ -7,10 +7,11 @@ Float b
 Int c
 
 main:
-   [[Int]] d = []
-   a = d[2][0] + 1
+   [Int] d = []
+   a = d[2] + 1
+   d[1] = c
    //d[1] = [1,2,3] 
-
+/.
    a = 1 + 1
    c = c + a
    c = c * 2
@@ -20,5 +21,5 @@ main:
    x = True
    y = False
    //d[1] = x and y
-
+./
 endmain   

@@ -15,4 +15,5 @@ public abstract class Expression extends ASTNode {
     public abstract Type getType() throws TypeClashException;
     public abstract String toString();
     public abstract void tox86(Genx86 generate) throws IOException;
+    public abstract boolean isStaticallyKnown();
 }

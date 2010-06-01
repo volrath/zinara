@@ -44,28 +44,18 @@ public class LValueDict extends LValue {
 	    generator.write(generator.add(constructorReg, offset.toString()));
 	} catch (TypeClashException e) {}
 
-	if (type.getType() instanceof IntType)
-	    generator.write(generator.movInt(constructorReg,
-					     "[" + constructorReg + "]"));
-	else if (type.getType() instanceof FloatType)
-	    generator.write(generator.movReal(constructorReg,
-					      "[" + constructorReg + "]"));
-	else if (type.getType() instanceof BoolType)
-	    generator.write(generator.movBool(constructorReg,
-					      "[" + constructorReg + "]"));
-	else if ((type.getType() instanceof ListType)||
-		 (type.getType() instanceof DictType)){
-	    generator.write("; E-----\n");
-	    return;
+	if (isExpression()) {
+	    if (isBool())
+		writeBooleanExpression(generator);
+	    else
+		writeExpression(generator);
 	}
-	else
-	    generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
-	
-	// if (isExpression()) {
-	//     if (isBool())
-	// 	writeBooleanExpression(generator);
-	//     else
-	// 	writeExpression(generator);
-	// }
+    }
+
+    public void writeExpression(Genx86 generator) throws IOException {}
+
+    public boolean isStaticallyKnown() {
+	// for now,
+	return false;
     }
 }

@@ -14,4 +14,6 @@ public class TrueExp extends BooleanExp {
     public void tox86(Genx86 generator) throws IOException {
 	generator.write(generator.jump(yesLabel));
     }
+
+    public boolean isStaticallyKnown() { return true; }
 }

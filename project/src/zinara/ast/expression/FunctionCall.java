@@ -25,4 +25,6 @@ public class FunctionCall extends Expression {
 
     public void tox86(Genx86 generate){
     }
+
+    public boolean isStaticallyKnown() { return false; }
 }
