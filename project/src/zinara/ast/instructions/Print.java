@@ -1,7 +1,8 @@
 package zinara.ast.instructions;
-import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
+import zinara.code_generator.*;
+import zinara.exceptions.InvalidCodeException;
 
 import java.io.IOException;
 
@@ -20,11 +21,11 @@ public class Print extends Instruction{
 	return "<Print " + expr + ">";
     }
 
-    public void tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generate) throws IOException, InvalidCodeException{
 	// Por ahora se asume que todas las expresiones son numeros enteros
 	//de un solo digito.
 	String code = "";
-	String expReg = generate.current_reg();
+	String expReg = generate.regName(register,expr.type);
 
 	expr.tox86(generate);
 
@@ -33,7 +34,8 @@ public class Print extends Instruction{
 
 	code += generate.save_print_regs();
 
-	code += generate.mov("["+generate.stack_pointer()+"]",expReg);
+	//Necesita ser generico, esperando que asm_io funcione
+	code += generate.movInt("["+generate.stack_pointer()+"]",expReg);
 	// Pongo el valor de la expresion en la pila, ya que la llamada
         //sys_write necesita que el String este en memoria.
 	

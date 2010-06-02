@@ -14,6 +14,18 @@ main:
    a = 1 + 1
    c = c + a
    c = c * 2
+   
+   a=10
+   while a>=0 AND c<a AND True:
+      print(1)
+      a = a-1
+   endwhile
+   
+   if a == 2:
+     a = 3
+   elif a < 0:
+     a = 0
+   endif
 
    Bool x, y
    [Bool] db
@@ -21,4 +33,4 @@ main:
    y = False
    //d[1] = x and y
 
-endmain   
+endmain

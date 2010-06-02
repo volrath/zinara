@@ -8,6 +8,7 @@ import zinara.ast.type.FloatType;
 import zinara.ast.type.BoolType;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
+import zinara.exceptions.InvalidCodeException;
 import zinara.code_generator.Genx86;
 
 import java.io.IOException;
@@ -33,25 +34,22 @@ public class LValueDict extends LValue {
     }
     public String toString() { return constructor + "[" + identifier + "]"; }
 
-    public void tox86(Genx86 generator) throws IOException {
+    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
 	constructor.register = register;
-	String constructorReg = generator.regName(constructor.register);
-	constructor.tox86(generator);
+	String constructorReg = generator.addrRegName(constructor.register);
+	String indexValue = generator.regName(constructor.register,type);
 
-	// Get the identifier offset
-	try {
-	    Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
-	    generator.write(generator.add(constructorReg, offset.toString()));
-	} catch (TypeClashException e) {}
+	//Deja en constructorReg la direccion del LValue
+	currentDirection(generator);
 
 	if (type.getType() instanceof IntType)
-	    generator.write(generator.movInt(constructorReg,
+	    generator.write(generator.movInt(indexValue,
 					     "[" + constructorReg + "]"));
 	else if (type.getType() instanceof FloatType)
-	    generator.write(generator.movReal(constructorReg,
+	    generator.write(generator.movReal(indexValue,
 					      "[" + constructorReg + "]"));
 	else if (type.getType() instanceof BoolType)
-	    generator.write(generator.movBool(constructorReg,
+	    generator.write(generator.movBool(indexValue,
 					      "[" + constructorReg + "]"));
 	else if ((type.getType() instanceof ListType)||
 		 (type.getType() instanceof DictType)){
@@ -67,5 +65,16 @@ public class LValueDict extends LValue {
 	//     else
 	// 	writeExpression(generator);
 	// }
+    }
+
+    public void currentDirection(Genx86 generator) throws InvalidCodeException, IOException{
+	constructor.register = register;
+	String constructorReg = generator.addrRegName(constructor.register);
+
+	constructor.tox86(generator);
+	try {
+	    Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
+	    generator.write(generator.add(constructorReg, offset.toString()));
+	} catch (TypeClashException e) {}
     }
 }

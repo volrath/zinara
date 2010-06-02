@@ -3,6 +3,7 @@ package zinara.ast.expression;
 import zinara.ast.type.Type;
 import zinara.ast.type.FloatType;
 import zinara.code_generator.Genx86;
+import zinara.exceptions.InvalidCodeException;
 
 import java.io.IOException;
 
@@ -12,7 +13,8 @@ public class FloatExp extends Expression {
     public Type getType() { return type; }
     public String toString() { return Float.toString(value); }
 
-    public void tox86(Genx86 generate) throws IOException {
- 	generate.write(generate.movReal(generate.regName(register),generate.toReal(value)));
+    public void tox86(Genx86 generate) throws IOException,InvalidCodeException {
+	String reg = generate.regName(register,new FloatType());
+ 	generate.write(generate.movReal(reg,generate.toReal(value)));
     }
 }

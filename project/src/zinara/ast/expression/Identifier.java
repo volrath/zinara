@@ -6,6 +6,7 @@ import zinara.ast.type.IntType;
 import zinara.ast.type.ListType;
 import zinara.ast.type.Type;
 import zinara.code_generator.Genx86;
+import zinara.exceptions.InvalidCodeException;
 import zinara.symtable.*;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class Identifier extends LValue {
     }
     public String toString() { return identifier; }
 
-    public void tox86(Genx86 generator) throws IOException {
+    public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
 	// if (isExpression() && !getSymValue().isKnownConstant())
 	//     generator.write(getSymValue().knownConstant(generator));
 
@@ -40,7 +41,7 @@ public class Identifier extends LValue {
 	// 			      generator.global_offset()+
 	// 			      "+"+
 	// 			      Integer.toString(getSymValue().getOffset())));
-	String reg = generator.regName(register);
+	String reg = generator.regName(register,type);
 
 	storeValue(generator, reg);
 	// generator.write(generator.add(generator.regName(register),
@@ -54,10 +55,16 @@ public class Identifier extends LValue {
 	// }
     }
 
-    public String currentDirection(Genx86 generator) {
-	return generator.global_offset() + "+" + getSymValue().getOffset();
+    public void currentDirection(Genx86 generator) throws IOException{
+	String reg = generator.addrRegName(register);
+	generator.write(
+			generator.movAddr(reg,
+					  generator.global_offset()+
+					  "+"+
+					  getSymValue().getOffset())
+			);
     }
-
+    
     private void storeValue(Genx86 generator, String currentReg) throws IOException{
 	//Si es un tipo numerico o boleano, se copian los contenidos
 	if (type.getType() instanceof IntType)
@@ -82,6 +89,6 @@ public class Identifier extends LValue {
 					  "+"+
 					  Integer.toString(getSymValue().getOffset())));
 	else
-	    generator.write("Identificador para el tipo "+type.getType().toString()+" no implementado\n");	    
+	    generator.write("Identificador para el tipo "+type.getType().toString()+" no implementado\n");
     }
 }

@@ -2,6 +2,7 @@ package zinara.ast.expression;
 
 import zinara.ast.expression.BooleanExp;
 import zinara.code_generator.Genx86;
+import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
 
 import java.io.IOException;
@@ -13,7 +14,9 @@ public abstract class LValue extends Expression {
     // public void setAsExpression(boolean e) { isExpression = e; }
     // public boolean isExpression() { return isExpression; }
 
-    public abstract void tox86(Genx86 generator) throws IOException;
+    public abstract void tox86(Genx86 generator) throws IOException, InvalidCodeException;
+
+    public abstract void currentDirection(Genx86 generator) throws IOException, InvalidCodeException;
 
     // public void writeExpression(Genx86 generator) throws IOException {
     // 	generator.write(generator.mov(generator.regName(register), "[" + generator.regName(register) + "]"));

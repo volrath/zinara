@@ -4,9 +4,11 @@ import zinara.ast.*;
 import zinara.ast.instructions.*;
 import zinara.ast.expression.*;
 import zinara.exceptions.InvalidArchitectureException;
+import zinara.exceptions.InvalidCodeException;
 import zinara.parser.sym;
 import zinara.symtable.SymTable;
 import zinara.symtable.SymValue;
+import zinara.ast.type.*;
 
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -17,6 +19,8 @@ import java.util.Iterator;
 
 public class Genx86{
     private String[] regs;
+    private String[] dwordRegs;
+    private String[] byteRegs;
     private String stackp;
     private String framep;
     private String stackAlig; //Alineamiento de la pila
@@ -35,20 +39,53 @@ public class Genx86{
     public Genx86(int bits, String fileName) throws InvalidArchitectureException, IOException{
 	if (bits == 64){
 	    regs = new String[14];
+	    dwordRegs = new String[14];
+	    byteRegs = new String[14];
+
 	    regs[0] = "rax";
 	    regs[1] = "rbx";
 	    regs[2] = "rcx";
 	    regs[3] = "rdx";
 	    regs[4] = "rsi";
 	    regs[5] = "rdi";
-	    regs[6] = "r8d";
-	    regs[7] = "r9d";
-	    regs[8] = "r10d";
-	    regs[9] = "r11d";
-	    regs[10] = "r12d";
-	    regs[11] = "r13d";
-	    regs[12] = "r14d";
-	    regs[13] = "r15d";
+	    regs[6] = "r8";
+	    regs[7] = "r9";
+	    regs[8] = "r10";
+	    regs[9] = "r11";
+	    regs[10] = "r12";
+	    regs[11] = "r13";
+	    regs[12] = "r14";
+	    regs[13] = "r15";
+
+	    dwordRegs[0] = "eax";
+	    dwordRegs[1] = "ebx";
+	    dwordRegs[2] = "ecx";
+	    dwordRegs[3] = "edx";
+	    dwordRegs[4] = "esi";
+	    dwordRegs[5] = "edi";
+	    dwordRegs[6] = "r8d";
+	    dwordRegs[7] = "r9d";
+	    dwordRegs[8] = "r10d";
+	    dwordRegs[9] = "r11d";
+	    dwordRegs[10] = "r12d";
+	    dwordRegs[11] = "r13d";
+	    dwordRegs[12] = "r14d";
+	    dwordRegs[13] = "r15d";
+
+	    byteRegs[0] = "al";
+	    byteRegs[1] = "bl";
+	    byteRegs[2] = "cl";
+	    byteRegs[3] = "dl";
+	    byteRegs[4] = "sil";
+	    byteRegs[5] = "dil";
+	    byteRegs[6] = "r8b";
+	    byteRegs[7] = "r9b";
+	    byteRegs[8] = "r10b";
+	    byteRegs[9] = "r11b";
+	    byteRegs[10] = "r12b";
+	    byteRegs[11] = "r13b";
+	    byteRegs[12] = "r14b";
+	    byteRegs[13] = "r15b";
 
 	    stackp = "rsp";
 	    framep = "rbp";
@@ -58,12 +95,21 @@ public class Genx86{
 	}
 	else if (bits == 32){
 	    regs = new String[6];
+	    byteRegs = new String[6];
+
 	    regs[0] = "eax";
 	    regs[1] = "ebx";
 	    regs[2] = "ecx";
 	    regs[3] = "edx";
 	    regs[4] = "esi";
 	    regs[5] = "edi";
+
+	    byteRegs[0] = "al";
+	    byteRegs[1] = "bl";
+	    byteRegs[2] = "cl";
+	    byteRegs[3] = "dl";
+	    byteRegs[4] = "sil";
+	    byteRegs[5] = "dil";
 
 	    stackp = "esp";
 	    framep = "ebp";
@@ -146,8 +192,61 @@ public class Genx86{
 	return "zn" + labelCounter++;
     }
 
-    public String regName(int regNumber) {
+    private String regId(int regNumber) {
 	return regs[regNumber % n_regs];
+    }
+
+    public String dwordRegId(int regNumber) {
+	return dwordRegs[regNumber % n_regs];
+    }
+
+    public String byteRegId(int regNumber) {
+	return byteRegs[regNumber % n_regs];
+    }
+
+    public String intRegName(int regNumber){
+	if (this.bits == 32){
+	    return regId(regNumber);
+	}
+	else
+	    return dwordRegId(regNumber);	    
+    }
+
+    public String realRegName(int regNumber){
+	return regId(regNumber);
+    }
+
+    public String charRegName(int regNumber){
+	return byteRegId(regNumber);
+    }
+
+    public String boolRegName(int regNumber){
+	if (this.bits == 32){
+	    return regId(regNumber);
+	}
+	else
+	    return dwordRegId(regNumber);	    
+    }
+
+    public String addrRegName(int regNumber){
+	    return regId(regNumber);
+    }
+
+    public String regName(int r, Type type) throws InvalidCodeException{
+	if (type instanceof IntType)
+	    return intRegName(r);
+	else if (type instanceof FloatType)
+	    return realRegName(r);
+	else if (type instanceof BoolType)
+	    return boolRegName(r);
+	else if (type instanceof CharType)
+	    return charRegName(r);
+	else if ((type instanceof ListType)||
+		 (type instanceof DictType)||
+		 (type instanceof StringType))
+	    return addrRegName(r);
+	else
+	    throw new InvalidCodeException("No se tienen registros para el tipo "+type);
     }
 
     public void write(String thing) throws IOException{
@@ -160,11 +259,6 @@ public class Genx86{
 
     public void closeFile() throws IOException{
 	file.close();
-    }
-
-    //Devuelve el registro actual
-    public String current_reg(){
-	return this.regs[next_reg%n_regs];
     }
 
     public String stack_pointer(){
@@ -264,7 +358,7 @@ public class Genx86{
     }
 
     //Push de 64 bits (quad-word)
-    public String pushq (String thing){
+    public String pushq (String thing) throws InvalidCodeException{
 	String code = "";
 	if (this.bits == 64){
 	    code += mov("[rsp]",thing);
@@ -272,10 +366,8 @@ public class Genx86{
 	    return code;
 	}
 	else{
-	    System.out.println("pushq en 32 bits");
-	    System.exit(1);
+	    throw new InvalidCodeException("pushq en 32 bits");
 	}
-	return "";
     }
 
     // Pop, la cantidad de bits es la misma
@@ -313,7 +405,7 @@ public class Genx86{
 	    return pushw(in);
     }
 
-    public String pushReal (String real){
+    public String pushReal (String real) throws InvalidCodeException{
 	if (this.bits == 32)
 	    return pushFloat(real);
 	else
@@ -327,14 +419,12 @@ public class Genx86{
 	    return pushw(flo);
     }
 
-    public String pushDouble (String dou){
+    public String pushDouble (String dou) throws InvalidCodeException{
 	if (this.bits == 64)
 	    return push(dou);
 	else{
-	    System.out.println("pushDouble en 32 bits");
-	    System.exit(1);
+	    throw new InvalidCodeException("pushDouble en 32 bits");
 	}
-	return "";
     }
 
     public String pushChar (String ch){
@@ -364,7 +454,7 @@ public class Genx86{
 	if (this.bits == 32)
 	    return mov(dst,orig,"dword");
 	else
-	    return mov(dst,orig,"qword");	    
+	    return mov(dst,orig,"dword");	    
     }
 
     public String movReal(String dst, String orig){
@@ -645,7 +735,7 @@ public class Genx86{
 	return "jle "+label+"\n";
     }
 
-    public String save_print_regs(){
+    public String save_print_regs() throws InvalidCodeException{
 	String code = "";
 	if (this.bits == 32){
 	    code += pushw("eax");//Codigo del syscall

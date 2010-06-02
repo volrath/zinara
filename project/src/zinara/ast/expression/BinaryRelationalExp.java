@@ -32,8 +32,8 @@ public class BinaryRelationalExp extends BooleanExp {
 	left.register  = register;
 	right.register = register + 1;
 
-	String leftReg = generator.regName(left.register);
-	String rightReg = generator.regName(left.register + 1);
+	String leftReg = generator.regName(left.register,left.type);
+	String rightReg = generator.regName(left.register + 1,right.type);
 
 	// saving and restoring missing
 	left.tox86(generator);

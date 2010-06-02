@@ -4,6 +4,7 @@ import zinara.ast.type.Type;
 import zinara.ast.type.BoolType;
 import zinara.code_generator.Genx86;
 import zinara.parser.parser;
+import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ public class UnaryBooleanExp extends BooleanExp {
 	return operator + " " + operand;
     }
 
-    public void tox86(Genx86 generator) throws IOException {
+    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
 	operand.yesLabel = noLabel;
 	operand.noLabel  = yesLabel;
 	operand.tox86(generator);

@@ -2,6 +2,7 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.BooleanExp;
 import zinara.code_generator.Genx86;
+import zinara.exceptions.InvalidCodeException;
 
 import java.io.IOException;
 
@@ -26,7 +27,7 @@ public class IfCase extends Instruction {
 
     public String toString() { return "<If " + expr + ": " + code + ">"; }
 
-    public void tox86(Genx86 generator) throws IOException {
+    public void tox86(Genx86 generator) throws  InvalidCodeException, IOException{
 	expr.yesLabel = generator.newLabel();
 	expr.noLabel  = nextInst;
 

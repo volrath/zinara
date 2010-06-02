@@ -43,4 +43,5 @@ public class LValueTuple extends LValue {
 // 	if (isExpression()) writeExpression(generator);
 // 	generator.write("E-----\n");
      }
+    public void currentDirection(Genx86 generator){}
 }

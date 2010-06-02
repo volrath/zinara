@@ -59,8 +59,8 @@ public class BinaryBooleanExp extends BooleanExp {
 
 	left.register  = register;
 	right.register = register + 1;
-	String leftReg = generator.regName(left.register);
-	String rightReg = generator.regName(right.register);
+	String leftReg = generator.regName(left.register,left.type);
+	String rightReg = generator.regName(right.register,left.type);
 
 	// saving and restoring register missing
 	left.tox86(generator);
@@ -87,8 +87,8 @@ public class BinaryBooleanExp extends BooleanExp {
 
 	left.register  = register;
 	right.register = register + 1;
-	String leftReg = generator.regName(left.register);
-	String rightReg = generator.regName(right.register);
+	String leftReg = generator.regName(left.register,type);
+	String rightReg = generator.regName(right.register,type);
 
 	// saving and restoring register missing
 	left.tox86(generator);
