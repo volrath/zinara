@@ -23,6 +23,8 @@ public class SymValue{
 
     public boolean isVariable() { return status instanceof Variable; }
 
+    public Status getStatus() { return status; }
+
     public int getOffset() { return offset; }
     public void setOffset(int os) { offset = os; }
 

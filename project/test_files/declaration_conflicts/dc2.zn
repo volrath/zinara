@@ -1,4 +1,4 @@
 main:
-    Int x
+    Int x = 1
     x = y
 endmain

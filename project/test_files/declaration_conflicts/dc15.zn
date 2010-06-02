@@ -1,9 +1,11 @@
+def fun(x as Float) -> Int:
+    return 0
+end
+
 main:
     if True:
-        def fun() -> Int:
-            return 0
-    	end
+       var Float y = 9.
     end
 
-    fun()
+    fun(y)
 endmain

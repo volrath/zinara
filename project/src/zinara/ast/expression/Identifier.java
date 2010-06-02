@@ -66,7 +66,10 @@ public class Identifier extends LValue {
 
     public boolean isStaticallyKnown() {
 	SymValue sv = symtable.getSymbol(identifier);
-	// for now,
-	return sv.isVariable();
+	if (sv.isVariable()) return false;
+	// Recursively check the content of the expression
+	else return ((Constant)sv.getStatus()).getExpression().isStaticallyKnown();
     }
+
+    public Object staticValue() { return null; }
 }
