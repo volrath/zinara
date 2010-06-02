@@ -13,6 +13,6 @@ public class CharExp extends Expression {
     public String toString() { return Character.toString(value); }
 
     public void tox86(Genx86 generate) throws IOException {
- 	generate.write(generate.mov(generate.current_reg(),generate.toASCII(value)));
+ 	generate.write(generate.movChar(generate.current_reg(),generate.toASCII(value)));
     }
 }
