@@ -274,12 +274,12 @@ type         ::=
                | BOOL                       {: RESULT = new BoolType(); :}
 
     /* ----- Composite types ----- */
-               | STRING                     {: RESULT = new StringType(); :}
-               | LBRACKET type:t RBRACKET   {: RESULT = new ListType(t); :}
+               | STRING                                       {: RESULT = new StringType(); :}
+               | LBRACKET type:t SOR INTEGER_V:size RBRACKET  {: RESULT = new ListType(t,size.intValue()); :}
                  // list - [type]
-               | LPAREN type_list:tl RPAREN {: RESULT = new TupleType(tl); :}
+               | LPAREN type_list:tl RPAREN                   {: RESULT = new TupleType(tl); :}
                  // tuple - (type0, type1, ..., typen)
-               | LBRACET dict_types:dt RBRACET {: RESULT = new DictType(dt); :}  
+               | LBRACET dict_types:dt RBRACET                {: RESULT = new DictType(dt); :}  
                  // dictionary - {ident0:type0,ident1:type1...,identn:typen}
                ;
 

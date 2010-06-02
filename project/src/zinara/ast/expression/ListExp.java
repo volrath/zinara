@@ -24,7 +24,7 @@ public class ListExp extends Expression {
 
     public Type getType() throws TypeClashException { 
 	if (type != null) return type;
-	type = (value.size() > 0 ? new ListType(((Expression)value.get(0)).getType()) : new ListType(null));
+	type = (value.size() > 0 ? new ListType(((Expression)value.get(0)).getType(),0) : new ListType(null,0));
 	return type;
     }
 
