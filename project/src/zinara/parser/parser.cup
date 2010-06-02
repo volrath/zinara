@@ -111,7 +111,7 @@ terminal CONTINUE, BREAK;
 nonterminal Program program;
 nonterminal Main main;
 nonterminal ArrayList decl_list;                      // arraylist of declarations (multiples or singles)
-nonterminal Declaration const_decl, decl, def_decl;  // (just one declaration, multiple or single)
+nonterminal Declaration const_decl, var_decl, decl, def_decl;  // (just one declaration, multiple or single)
 nonterminal Assignation asig, dasig;                 // (just one assignation, multiple or single)
 nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignations
@@ -169,6 +169,7 @@ main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {
 /* --- Basic structure --- */
 decl_list    ::= decl_list:ds const_decl:d SEMI  {: RESULT = ds; RESULT.add(d);:}
                | decl_list:ds def_decl:d SEMI    {: RESULT = ds; RESULT.add(d);:}
+               | decl_list:ds var_decl:d SEMI    {: RESULT = ds; RESULT.add(d);:}
                | const_decl:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d);:}
                | def_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d);:}
                ;
@@ -221,7 +222,7 @@ arg          ::= COPY IDENTIFIER:id AS type:t    {:
                ;
 
 /* --- Variables and constants declarations --- */
-const_decl   ::= VAR decl:d                   {:
+var_decl   ::= VAR decl:d                   {:
 					       SingleDeclaration currentDeclaration;
 					       if (d.isSingle()) {
 						   currentDeclaration = ((SingleDeclaration)d);
@@ -239,13 +240,17 @@ const_decl   ::= VAR decl:d                   {:
 					       currentTable.addDeclaration(d);
 					       RESULT = d;
 					       :}
-               | decl:d                       {:
+             ;
+const_decl  ::=  type:t dasig:a                {:
 	            	                       SingleDeclaration currentDeclaration;
-					       if (d.isSingle()) {
-						   currentDeclaration = ((SingleDeclaration)d);
+					       Declaration d; //parche para q funcione el else
+					       if (a.isSingle()) {
+						   currentDeclaration = new SingleDeclaration(new ConstantType(t, ((SingleAssignation)a).getExpression()), ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false);
+						   d = currentDeclaration; //parche para el RESULT
 						   // Aqui, una vez agregada la declaracion, se chequea los tipos
 						   if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
 					       } else {
+						   d = new MultipleDeclaration(((MultipleAssignation)a),t);
 						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) {
 						       currentDeclaration = (SingleDeclaration)((MultipleDeclaration)d).get(i);
 						       //((MultipleDeclaration)d).get(i).setType(((ConstantType)(((MultipleDeclaration)d).get(i).getType())).getRealType());
@@ -255,7 +260,6 @@ const_decl   ::= VAR decl:d                   {:
 		                               currentTable.addDeclaration(d); RESULT = d; 
 					       :}
                ;
-
 decl         ::= type:t dasig:a               {:
 					      if (a.isSingle())
 					          RESULT = new SingleDeclaration(new ConstantType(t, ((SingleAssignation)a).getExpression()), ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false);
@@ -263,7 +267,7 @@ decl         ::= type:t dasig:a               {:
 					          RESULT = new MultipleDeclaration(((MultipleAssignation)a),t);
 					      :}
 
-               | type:t decl_ident_list:ids       {:
+               | type:t decl_ident_list:ids   {:
 		                              if (ids.size() == 1)
 						  RESULT = new SingleDeclaration(new ConstantType(t, null), (String)(ids.get(0)), null, false);
 					      else
@@ -330,6 +334,7 @@ code_block    ::= code_block:cb instruction:i SEMI          {: cb.addInst(i); RE
 instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
+                | var_decl:d                              {: RESULT = new DecInst(d); :}
                 | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
                 | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
@@ -344,6 +349,7 @@ code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i
 instruction_loop  ::= asig:a                                      {: RESULT = a; :}
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
+                    | var_decl:d                                {: RESULT = new DecInst(d); :}
                     | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
                     | IDENTIFIER:id LPAREN RPAREN                 {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
