@@ -35,19 +35,19 @@ public class Print extends Instruction{
 
 	if (expr.type.getType() instanceof IntType){
 	    generate.write(generate.movInt("rdi",expReg));
-	    generate.write("call print_int");
+	    generate.write("call print_int\n");
 	}
 	else if (expr.type.getType() instanceof BoolType){
 	    generate.write(generate.movBool("rdi",expReg));
-	    generate.write("call print_int");
+	    generate.write("call print_int\n");
 	}
 	else if (expr.type.getType() instanceof FloatType){
 	    generate.write(generate.movReal("rdi",expReg));
-	    generate.write("call print_float");
+	    generate.write("call print_float\n");
 	}
 	else if (expr.type.getType() instanceof CharType){
 	    generate.write(generate.movChar("rdi",expReg));
-	    generate.write("call print_char");
+	    generate.write("call print_char\n");
 	}
 	else{
 	    generate.write("print de "+expr.type.getType()+" no implementado");
@@ -56,6 +56,7 @@ public class Print extends Instruction{
 	    System.out.println("====================");
 	}
 	
+	generate.write(generate.pop("rdi"));
 	// // Por ahora se asume que todas las expresiones son numeros enteros
 	// //de un solo digito.
 	// String code = "";

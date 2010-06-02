@@ -15,6 +15,8 @@ main:
    c = c + a
    c = c * 2
 
+   print(4)
+
    Bool x, y
    [Bool] db
    x = True
