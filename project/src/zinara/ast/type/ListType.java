@@ -2,9 +2,11 @@ package zinara.ast.type;
 
 public class ListType extends Type {
     private Type insideType;
+    private int size;
 
-    public ListType(Type it) {
+    public ListType(Type it, int size) {
 	insideType = it;
+	this.size = size;
     }
     public ListType() { insideType = null; }
 
@@ -20,5 +22,5 @@ public class ListType extends Type {
     }
     public Type getType() { return this; }
 
-    public int size() { return 0; }
+    public int size() { return this.size; }
 }
