@@ -33,55 +33,40 @@ public class Identifier extends LValue {
     public String toString() { return identifier; }
 
     public void tox86(Genx86 generator) throws IOException {
-	// if (isExpression() && !getSymValue().isKnownConstant())
-	//     generator.write(getSymValue().knownConstant(generator));
-
-	// generator.write(generator.mov(generator.regName(register),
-	// 			      generator.global_offset()+
-	// 			      "+"+
-	// 			      Integer.toString(getSymValue().getOffset())));
-	String reg = generator.regName(register);
-
-	storeValue(generator, reg);
-	// generator.write(generator.add(generator.regName(register),
-	// 			      generator.global_space()));
-
-	// if (isExpression()) {
-	//     if (isBool())
-	// 	writeBooleanExpression(generator);
-	//     else
-	// 	writeExpression(generator);
-	// }
+	generator.write(generator.movAddr(generator.regName(register),
+					  generator.global_offset()+
+					  "+"+
+					  Integer.toString(getSymValue().getOffset())));
+	if (isExpression()) {
+	    if (isBool())
+		writeBooleanExpression(generator);
+	    else
+		writeExpression(generator);
+	}	
     }
-
+    
     public String currentDirection(Genx86 generator) {
 	return generator.global_offset() + "+" + getSymValue().getOffset();
     }
 
-    private void storeValue(Genx86 generator, String currentReg) throws IOException{
+    public void writeExpression(Genx86 generator) throws IOException{
+	String reg = generator.regName(register);
 	//Si es un tipo numerico o boleano, se copian los contenidos
-	if (type.getType() instanceof IntType)
-	    generator.write(generator.movInt(currentReg,
-					  "[" + generator.global_offset() +
-					  "+" + getSymValue().getOffset() + 
-					  "]"));
+	if (type.getType() instanceof IntType) {
+	    generator.write(generator.movInt(reg,  "[" + reg + "]"));
+	    generator.write("; writing  " + type.getType());
+	}
 	else if (type.getType() instanceof FloatType)
-	    generator.write(generator.movReal(currentReg,
-					  "[" + generator.global_offset() +
-					  "+" + getSymValue().getOffset() + 
-					  "]"));
+	    generator.write(generator.movReal(reg, "[" + reg + "]"));
 	else if (type.getType() instanceof BoolType)
-	    generator.write(generator.movBool(currentReg,
-					  "[" + generator.global_offset() +
-					  "+" + getSymValue().getOffset() + 
-					  "]"));
-	//Si es una lista, devuelvo su direccion
-	else if (type.getType() instanceof ListType)
-	    generator.write(generator.movAddr(currentReg,
-					  generator.global_offset()+
-					  "+"+
-					  Integer.toString(getSymValue().getOffset())));
+	    generator.write(generator.movBool(reg, "[" + reg +  "]"));
 	else
 	    generator.write("Identificador para el tipo "+type.getType().toString()+" no implementado\n");	    
+    }
+
+    public boolean isStaticallyKnown() {
+	SymValue sv = symtable.getSymbol(identifier);
+	// for now,
+	return sv.isVariable();
     }
 }

@@ -33,4 +33,6 @@ public class UnaryBooleanExp extends BooleanExp {
 	operand.noLabel  = yesLabel;
 	operand.tox86(generator);
     }
+
+   public boolean isStaticallyKnown() { return operand.isStaticallyKnown(); }
 }

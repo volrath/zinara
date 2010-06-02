@@ -101,4 +101,6 @@ public class BinaryExp extends Expression {
 	
 	return code;
     }
+
+    public boolean isStaticallyKnown() { return left.isStaticallyKnown() && right.isStaticallyKnown(); }
 }

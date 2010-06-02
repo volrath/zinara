@@ -87,4 +87,6 @@ public class BinaryRelationalExp extends BooleanExp {
     public void notEqual(Genx86 generator, String a, String b) throws IOException {
 	generator.write(generator.jne(yesLabel));
     }
+
+    public boolean isStaticallyKnown() { return left.isStaticallyKnown() && right.isStaticallyKnown(); }
 }

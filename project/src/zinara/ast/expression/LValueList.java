@@ -50,26 +50,27 @@ public class LValueList extends LValue {
 				      indexReg));
 	// And restore again
 	
-	storeValue(generator, constructorReg);
-	// if (isExpression()) {
-	//     if (isBool())
-	// 	writeBooleanExpression(generator);
-	//     else
-	// 	writeExpression(generator);
-	// }
+	//storeValue(generator, constructorReg);
+	if (isExpression()) {
+	    if (isBool())
+		writeBooleanExpression(generator);
+	    else
+		writeExpression(generator);
+	}
 	generator.write("; E-----\n");
     }
 
-    private void storeValue(Genx86 generator, String addrReg)  throws IOException{
+    public void writeExpression(Genx86 generator)  throws IOException {
+	String reg = generator.regName(register);
 	if (type.getType() instanceof IntType)
-	    generator.write(generator.movInt(addrReg,
-					     "[" + addrReg + "]"));
+	    generator.write(generator.movInt(reg,
+					     "[" + reg + "]"));
 	else if (type.getType() instanceof FloatType)
-	    generator.write(generator.movReal(addrReg,
-					  "[" + addrReg + "]"));
+	    generator.write(generator.movReal(reg,
+					      "[" + reg + "]"));
 	else if (type.getType() instanceof BoolType)
-	    generator.write(generator.movBool(addrReg,
-					  "[" + addrReg + "]"));
+	    generator.write(generator.movBool(reg,
+					      "[" + reg + "]"));
 	else if ((type.getType() instanceof ListType)||
 		 (type.getType() instanceof DictType)){
 	    generator.write("; E-----\n");
@@ -77,5 +78,10 @@ public class LValueList extends LValue {
 	}
 	else
 	    generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
+    }
+
+    public boolean isStaticallyKnown() {
+	// for now,
+	return false;
     }
 }

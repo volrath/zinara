@@ -15,4 +15,6 @@ public class FloatExp extends Expression {
     public void tox86(Genx86 generate) throws IOException {
  	generate.write(generate.movReal(generate.regName(register),generate.toReal(value)));
     }
+
+    public boolean isStaticallyKnown() { return true; }
 }

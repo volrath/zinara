@@ -15,4 +15,6 @@ public class CharExp extends Expression {
     public void tox86(Genx86 generate) throws IOException {
  	generate.write(generate.movChar(generate.current_reg(),generate.toASCII(value)));
     }
+
+    public boolean isStaticallyKnown() { return true; }
 }
