@@ -43,4 +43,11 @@ public class TupleExp extends Expression {
 	}
 	return isk;
     }
+
+    public Object staticValue() {
+	ArrayList result = new ArrayList();
+	for (int i = 0; i < value.size(); i++)
+	    result.add(((Expression)value.get(i)).staticValue());
+	return result;
+    }
 }

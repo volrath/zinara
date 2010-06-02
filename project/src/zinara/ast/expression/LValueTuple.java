@@ -53,4 +53,6 @@ public class LValueTuple extends LValue {
     public boolean isStaticallyKnown() {
 	return false;
     }
+
+    public Object staticValue() { return null; };
 }

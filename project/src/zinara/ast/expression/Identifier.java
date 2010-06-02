@@ -71,5 +71,8 @@ public class Identifier extends LValue {
 	else return ((Constant)sv.getStatus()).getExpression().isStaticallyKnown();
     }
 
-    public Object staticValue() { return null; }
+    public Object staticValue() {
+	SymValue sv = symtable.getSymbol(identifier);
+	return ((Constant)sv.getStatus()).getExpression().staticValue();
+    }
 }

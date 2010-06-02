@@ -16,4 +16,6 @@ public class FalseExp extends BooleanExp {
     }
 
     public boolean isStaticallyKnown() { return true; }
+
+    public Object staticValue() { return new Boolean(false); };
 }

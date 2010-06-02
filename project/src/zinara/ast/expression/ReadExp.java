@@ -13,4 +13,6 @@ public class ReadExp extends Expression {
     }
 
     public boolean isStaticallyKnown() { return false; }
+
+    public Object staticValue() { return null; }
 }

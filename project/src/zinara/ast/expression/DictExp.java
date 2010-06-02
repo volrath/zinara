@@ -54,4 +54,15 @@ public class DictExp extends Expression {
 	}
 	return isk;
     }
+
+    public Object staticValue() {
+	HashMap result = new HashMap();
+	Iterator it = value.keySet().iterator();
+	String ckey;
+	while(it.hasNext()) {
+	    ckey = (String)it.next();
+	    result.put(ckey, ((Expression)value.get(ckey)).staticValue());
+	}
+	return result;
+    }
 }

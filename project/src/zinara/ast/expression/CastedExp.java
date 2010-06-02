@@ -29,4 +29,8 @@ public class CastedExp extends Expression {
     }
 
     public boolean isStaticallyKnown() { return expr.isStaticallyKnown(); }
+
+    public Object staticValue() {
+	return null;
+    }
 }

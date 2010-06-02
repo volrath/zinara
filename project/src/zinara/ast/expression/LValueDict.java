@@ -58,4 +58,6 @@ public class LValueDict extends LValue {
 	// for now,
 	return false;
     }
+
+    public Object staticValue() { return null; };
 }

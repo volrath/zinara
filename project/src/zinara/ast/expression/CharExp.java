@@ -17,4 +17,6 @@ public class CharExp extends Expression {
     }
 
     public boolean isStaticallyKnown() { return true; }
+
+    public Object staticValue() { return new Character(value); }
 }

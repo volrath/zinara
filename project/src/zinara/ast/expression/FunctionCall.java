@@ -27,4 +27,6 @@ public class FunctionCall extends Expression {
     }
 
     public boolean isStaticallyKnown() { return false; }
+
+    public Object staticValue() { return null; };
 }

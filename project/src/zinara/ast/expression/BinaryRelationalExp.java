@@ -89,4 +89,134 @@ public class BinaryRelationalExp extends BooleanExp {
     }
 
     public boolean isStaticallyKnown() { return left.isStaticallyKnown() && right.isStaticallyKnown(); }
+
+    public Object staticValue() {
+	Object leftO  = left.staticValue();
+	Object rightO = right.staticValue();
+
+	if (leftO instanceof Integer && rightO instanceof Integer) {
+	    int leftE  = ((Integer)leftO).intValue();
+	    int rightE = ((Integer)rightO).intValue();
+
+	    switch(operator) {
+	    case sym.LT:
+		return new Boolean(leftE < rightE);
+	    case sym.GT:
+		return new Boolean(leftE > rightE);
+	    case sym.LTE:
+		return new Boolean(leftE <= rightE);
+	    case sym.GTE:
+		return new Boolean(leftE >= rightE);
+	    case sym.SHEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.DEEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.NOEQ:
+		return new Boolean(leftE != rightE);
+	    }
+	} else if (leftO instanceof Float && rightO instanceof Float) {
+	    float leftE  = ((Float)leftO).floatValue();
+	    float rightE = ((Float)rightO).floatValue();
+
+	    switch(operator) {
+	    case sym.LT:
+		return new Boolean(leftE < rightE);
+	    case sym.GT:
+		return new Boolean(leftE > rightE);
+	    case sym.LTE:
+		return new Boolean(leftE <= rightE);
+	    case sym.GTE:
+		return new Boolean(leftE >= rightE);
+	    case sym.SHEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.DEEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.NOEQ:
+		return new Boolean(leftE != rightE);
+	    }
+	} else if (leftO instanceof Character && rightO instanceof Character) {
+	    char leftE  = ((Character)leftO).charValue();
+	    char rightE = ((Character)rightO).charValue();
+
+	    switch(operator) {
+	    case sym.LT:
+		return new Boolean(leftE < rightE);
+	    case sym.GT:
+		return new Boolean(leftE > rightE);
+	    case sym.LTE:
+		return new Boolean(leftE <= rightE);
+	    case sym.GTE:
+		return new Boolean(leftE >= rightE);
+	    case sym.SHEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.DEEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.NOEQ:
+		return new Boolean(leftE != rightE);
+	    }
+	} else if (leftO instanceof Boolean && rightO instanceof Boolean) {
+	    boolean leftE  = ((Boolean)leftO).booleanValue();
+	    boolean rightE = ((Boolean)rightO).booleanValue();
+
+	    switch(operator) {
+	    case sym.LT:
+		return new Boolean(relationalBoolean(leftE, rightE, 0));
+	    case sym.GT:
+		return new Boolean(relationalBoolean(leftE, rightE, 1));
+	    case sym.LTE:
+		return new Boolean(relationalBoolean(leftE, rightE, 2));
+	    case sym.GTE:
+		return new Boolean(relationalBoolean(leftE, rightE, 3));
+	    case sym.SHEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.DEEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.NOEQ:
+		return new Boolean(leftE != rightE);
+	    }
+	} else if (leftO instanceof Integer && rightO instanceof Float) {
+	    int   leftE  = ((Integer)leftO).intValue();
+	    float rightE = ((Float)rightO).floatValue();
+
+	    switch(operator) {
+	    case sym.LT:
+		return new Boolean(leftE < rightE);
+	    case sym.GT:
+		return new Boolean(leftE > rightE);
+	    case sym.LTE:
+		return new Boolean(leftE <= rightE);
+	    case sym.GTE:
+		return new Boolean(leftE >= rightE);
+	    case sym.SHEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.DEEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.NOEQ:
+		return new Boolean(leftE != rightE);
+	    }
+	} else if (leftO instanceof Float && rightO instanceof Integer) {
+	    float leftE  = ((Float)leftO).floatValue();
+	    int   rightE = ((Integer)rightO).intValue();
+
+	    switch(operator) {
+	    case sym.LT:
+		return new Boolean(leftE < rightE);
+	    case sym.GT:
+		return new Boolean(leftE > rightE);
+	    case sym.LTE:
+		return new Boolean(leftE <= rightE);
+	    case sym.GTE:
+		return new Boolean(leftE >= rightE);
+	    case sym.SHEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.DEEQ:
+		return new Boolean(leftE == rightE);
+	    case sym.NOEQ:
+		return new Boolean(leftE != rightE);
+	    }
+	}
+	return null;
+    }
+
+    public boolean relationalBoolean(boolean o1, boolean o2, int type) { return false; }
 }

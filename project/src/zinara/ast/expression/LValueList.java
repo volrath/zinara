@@ -84,4 +84,6 @@ public class LValueList extends LValue {
 	// for now,
 	return false;
     }
+
+    public Object staticValue() { return null; };
 }

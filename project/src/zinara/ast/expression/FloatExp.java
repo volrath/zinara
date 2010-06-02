@@ -17,4 +17,6 @@ public class FloatExp extends Expression {
     }
 
     public boolean isStaticallyKnown() { return true; }
+
+    public Object staticValue() { return new Float(value); };
 }

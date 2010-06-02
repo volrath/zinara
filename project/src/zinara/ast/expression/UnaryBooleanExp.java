@@ -35,4 +35,6 @@ public class UnaryBooleanExp extends BooleanExp {
     }
 
    public boolean isStaticallyKnown() { return operand.isStaticallyKnown(); }
+
+    public Object staticValue() { return new Boolean(!((Boolean)operand.staticValue()).booleanValue()); };
 }

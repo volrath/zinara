@@ -14,4 +14,6 @@ public class StringExp extends Expression {
     }
 
     public boolean isStaticallyKnown() { return true; }
+
+    public Object staticValue() { return value; };
 }

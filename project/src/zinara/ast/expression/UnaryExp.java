@@ -27,4 +27,10 @@ public class UnaryExp extends Expression {
     }
 
     public boolean isStaticallyKnown() { return operand.isStaticallyKnown(); }
+
+    public Object staticValue() {
+	Object op = operand.staticValue();
+	if (op instanceof Integer) return new Integer(-((Integer)op).intValue());
+	else return new Float(-((Float)op).floatValue());
+    }
 }

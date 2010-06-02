@@ -113,4 +113,20 @@ public class BinaryBooleanExp extends BooleanExp {
     }
 
     public boolean isStaticallyKnown() { return left.isStaticallyKnown() && right.isStaticallyKnown(); }
+
+    public Object staticValue() {
+	switch(operator) {
+	case sym.AND:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() && ((Boolean)right.staticValue()).booleanValue());
+	case sym.SAND:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() & ((Boolean)right.staticValue()).booleanValue());
+	case sym.OR:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() || ((Boolean)right.staticValue()).booleanValue());
+	case sym.SOR:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() | ((Boolean)right.staticValue()).booleanValue());
+	case sym.XOR:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() ^ ((Boolean)right.staticValue()).booleanValue());
+	}
+	return null;
+    }
 }
