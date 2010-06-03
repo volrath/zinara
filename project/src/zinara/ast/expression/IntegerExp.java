@@ -21,5 +21,5 @@ public class IntegerExp extends Expression {
 
     public boolean isStaticallyKnown() { return true; }
 
-    public Object staticValue() { return null; };
+    public Object staticValue() { return new Integer(value); };
 }
