@@ -1,5 +1,5 @@
 main:
-    var [(Int, Float)] int_float_pairs
+    var [(Int, Float)|5] int_float_pairs
     for pair in int_float_pairs:
     	var Int not_a_pair
 	not_a_pair = pair

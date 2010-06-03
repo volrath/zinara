@@ -4,22 +4,25 @@ public class ListType extends Type {
     private Type insideType;
     private int size;
 
-    public ListType(Type it, int size) {
+    public ListType(Type it, int s) {
 	insideType = it;
-	this.size = size;
+	size = s;
     }
     public ListType() { insideType = null; }
 
     public Type getInsideType() { return insideType; }
-    public String toString() { return "<[" + insideType + "]>"; }
+    public int getSize() { return size; }
+    public String toString() { return "<[" + insideType + "|" + size + "]>"; }
+
     public boolean equals(Type other) {
 	if (!(other instanceof ListType)) return false;
 	ListType otherList = (ListType)other;
 	// For empty lists...
 	if (otherList.getInsideType() == null) return true;
 	// ...................
-	return insideType.equals(otherList.getInsideType());
+	return insideType.equals(otherList.getInsideType()) && size == ((ListType)other).getSize();
     }
+
     public Type getType() { return this; }
 
     public int size() { return this.size; }

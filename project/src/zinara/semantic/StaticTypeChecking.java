@@ -134,10 +134,14 @@ public class StaticTypeChecking {
 		return new LValueList(constructor, expr);
 
 	if (constructorType instanceof TupleType)
-	    if (!(expr instanceof IntegerExp))
+	    if (!(expr.getType() instanceof IntType))
+		throw new InvalidAccessException("La expresion " + expr + " es del tipo " + expr.getType() + " pero debe ser del tipo Int para poder realizar el indexamiento");
+	    else if (!expr.isStaticallyKnown())
 		throw new InvalidAccessException("La expresion " + expr + " debe ser un entero literal");
-	    else
-		return new LValueTuple(constructor, ((IntegerExp)expr).getValue());
+	    else {
+		System.out.println("IS STATICALLY KNOWN " + expr + ":" + expr.staticValue());
+		return new LValueTuple(constructor, ((Integer)expr.staticValue()).intValue());
+	    }
 
 	throw new InvalidAccessException("Diccionarios todavia no estan implementados");
     }
