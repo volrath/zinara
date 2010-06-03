@@ -11,7 +11,7 @@ public class ListType extends Type {
     public ListType() { insideType = null; }
 
     public Type getInsideType() { return insideType; }
-    public int getSize() { return size; }
+    public int getSize() { return insideType.size() * size; }
     public String toString() { return "<[" + insideType + "|" + size + "]>"; }
 
     public boolean equals(Type other) {

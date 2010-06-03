@@ -6,4 +6,5 @@ main:
     var (Float, Int, Bool, Int) z
     //z[y] = x[y]
     z[y-2] = 9
+    print (z[y-2] * 2)
 endmain

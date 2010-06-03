@@ -144,7 +144,7 @@ public class Genx86{
 	program.getMain().register = 0;
 	program.getMain().getCode().nextInst = "halt";
 
-	program.getMain().tox86(this);
+	program.tox86(this);
 
 	// Exits the program
 	writeLabel(program.getMain().getCode().nextInst);

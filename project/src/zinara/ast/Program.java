@@ -34,6 +34,7 @@ public class Program extends ASTNode {
 
     public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
 	for (int i = 0; i < declarations.size(); i++)
-	    ((SingleDeclaration)declarations.get(i)).tox86(generator);
+	    ((Declaration)declarations.get(i)).tox86(generator);
+	main.tox86(generator);
     }
 }
