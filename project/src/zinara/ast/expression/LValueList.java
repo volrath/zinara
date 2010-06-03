@@ -43,12 +43,7 @@ public class LValueList extends LValue {
 	currentDirection(generator);
 
 	storeValue(generator, valueReg, constructorReg);
-	// if (isExpression()) {
-	//     if (isBool())
-	// 	writeBooleanExpression(generator);
-	//     else
-	// 	writeExpression(generator);
-	// }
+
 	generator.write("; E-----\n");
     }
 
@@ -76,6 +71,7 @@ public class LValueList extends LValue {
 	index.register       = register + 1;
 	String constructorReg = generator.addrRegName(constructor.register);
 	String indexReg       = generator.intRegName(index.register);
+
 	//Ver NOTA
 	String offsetReg      = generator.addrRegName(index.register);
 
@@ -98,4 +94,12 @@ public class LValueList extends LValue {
     son de 64bits, no puedes sumar registros de 32 y 64, asi que
     necesito el nombre del registro de 64bits donde esta guardado
     en indice*/
+
+    public boolean isStaticallyKnown() {
+	// for now,
+	return false;
+    }
+
+    public Object staticValue() { return null; };
+
 }

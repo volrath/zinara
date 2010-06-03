@@ -1,6 +1,5 @@
 package zinara.ast.expression;
 
-import zinara.ast.expression.LValue;
 import zinara.ast.type.*;
 import zinara.code_generator.*;
 import zinara.exceptions.TypeClashException;
@@ -17,7 +16,7 @@ public class BinaryBooleanExp extends BooleanExp {
     public BinaryBooleanExp (int o, Expression l, Expression r) throws TypeClashException {
 	type = parser.operators.check(o, l.getType(), r.getType());
 	operator=o;
-	left = l;
+	left =  l;
 	right = r;
     }
     
@@ -30,8 +29,8 @@ public class BinaryBooleanExp extends BooleanExp {
     }
 
     public void tox86(Genx86 generator) throws IOException {
-	//if (left instanceof LValue) ((LValue)left).setAsBool(true);
-	//if (right instanceof LValue) ((LValue)right).setAsBool(true);
+	if (left instanceof LValue) ((LValue)left).setAsBool(true);
+	if (right instanceof LValue) ((LValue)right).setAsBool(true);
 	switch(operator) {
 	case sym.AND:
 	    conjuntionToX86(generator, true);
@@ -45,8 +44,8 @@ public class BinaryBooleanExp extends BooleanExp {
 	case sym.SOR:
 	    disjunctionToX86(generator, false);
 	    break;
-	// case sym.XOR:
-	//     xorToX86(generator);
+	case sym.XOR:
+	    xorToX86(generator);
 	}
     }
 
@@ -64,18 +63,14 @@ public class BinaryBooleanExp extends BooleanExp {
 
 	// saving and restoring register missing
 	left.tox86(generator);
-	if (!(left instanceof BooleanExp)){
-	    generator.add(leftReg,"0");
-	    generator.jz(left.noLabel);
-	}
+	generator.add(leftReg,"0");
+	generator.jz(left.noLabel);
 
 	generator.writeLabel(left.yesLabel);
 
 	right.tox86(generator);
-	if (!(right instanceof BooleanExp)){
-	    generator.add(rightReg,"0");
-	    generator.jz(left.noLabel);
-	}
+	generator.add(rightReg,"0");
+	generator.jz(left.noLabel);
     }
 
     public void disjunctionToX86(Genx86 generator, boolean shortCircuit) throws IOException {
@@ -92,21 +87,17 @@ public class BinaryBooleanExp extends BooleanExp {
 
 	// saving and restoring register missing
 	left.tox86(generator);
-	if (!(left instanceof BooleanExp)){
-	    generator.add(leftReg,"0");
-	    generator.jnz(left.yesLabel);
-	}
+	generator.add(leftReg,"0");
+	generator.jnz(left.yesLabel);
 
 	generator.writeLabel(left.noLabel);
 
 	right.tox86(generator);
-	if (!(right instanceof BooleanExp)){
-	    generator.add(rightReg,"0");
-	    generator.jnz(left.yesLabel);
-	}
+	generator.add(rightReg,"0");
+	generator.jnz(left.yesLabel);
     }
 
-    // public void xorToX86(Genx86 generator) throws IOException {
+    public void xorToX86(Genx86 generator) throws IOException {
     // 	left.yesLabel  = yesLabel;
     // 	left.noLabel   = generator.newLabel();
     // 	right.yesLabel = yesLabel;
@@ -119,5 +110,23 @@ public class BinaryBooleanExp extends BooleanExp {
     // 	left.tox86(generator);
     // 	generator.writeLabel(left.noLabel);
     // 	right.tox86(generator);
-    // }
+    }
+
+    public boolean isStaticallyKnown() { return left.isStaticallyKnown() && right.isStaticallyKnown(); }
+
+    public Object staticValue() {
+	switch(operator) {
+	case sym.AND:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() && ((Boolean)right.staticValue()).booleanValue());
+	case sym.SAND:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() & ((Boolean)right.staticValue()).booleanValue());
+	case sym.OR:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() || ((Boolean)right.staticValue()).booleanValue());
+	case sym.SOR:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() | ((Boolean)right.staticValue()).booleanValue());
+	case sym.XOR:
+	    return new Boolean(((Boolean)left.staticValue()).booleanValue() ^ ((Boolean)right.staticValue()).booleanValue());
+	}
+	return null;
+    }
 }

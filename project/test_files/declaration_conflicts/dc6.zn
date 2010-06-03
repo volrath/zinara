@@ -3,6 +3,6 @@ def fun(a as Int) -> Bool:
 end
 
 main:
-    Bool x
+    var Bool x
     x = fun(y)
 endmain

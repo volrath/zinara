@@ -1,4 +1,4 @@
 main:
-    Bool x
+    var Bool x
     x = -y
 endmain

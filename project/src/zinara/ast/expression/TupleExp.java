@@ -33,4 +33,21 @@ public class TupleExp extends Expression {
 
     public void tox86(Genx86 generate){
     }
+
+    public boolean isStaticallyKnown() {
+	boolean isk = true;
+	Expression v;
+	for (int i = 0; i < value.size(); i++) {
+	    v = (Expression)value.get(i);
+	    isk = isk && v.isStaticallyKnown();
+	}
+	return isk;
+    }
+
+    public Object staticValue() {
+	ArrayList result = new ArrayList();
+	for (int i = 0; i < value.size(); i++)
+	    result.add(((Expression)value.get(i)).staticValue());
+	return result;
+    }
 }

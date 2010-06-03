@@ -4,23 +4,38 @@ import java.io.IOException;
 
 import zinara.ast.ASTNode;
 import zinara.ast.type.Type;
+import zinara.ast.expression.Expression;
 import zinara.ast.expression.Identifier;
 import zinara.code_generator.Genx86;
+import zinara.exceptions.TypeClashException;
+import zinara.symtable.Status;
+import zinara.symtable.Constant;
+import zinara.symtable.Variable;
 
 public class SingleDeclaration extends Declaration {
     private Type type;
     private String identifier;
-    private Object value;
-    private boolean variable;
+    private Status status;
     
-    public SingleDeclaration(Type t, String id, Object v, boolean var) {
+    public SingleDeclaration(Type t, String id, Expression expr, boolean var) throws TypeClashException {
+	// Type checking first
+	if (expr != null && !t.equals(expr.getType()))
+	    throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + expr + "`" + expr.getType() + " difiere del tipo " + t + " en la declaracion del identificador " + id);
+	// ...
 	this.type = t;
-	this.identifier = id; this.value = v; this.variable = var;
+	this.identifier = id;
+	if (var)
+	    status = new Variable(); else status = new Constant(expr);
     }
 
-    public SingleDeclaration(Type t, Identifier id, Object v, boolean var) {
+    public SingleDeclaration(Type t, Identifier id, Expression expr, boolean var) throws TypeClashException {
+	// Type checking first
+	if (expr != null && !t.equals(expr.getType()))
+	    throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + expr + "`" + expr.getType() + " difiere del tipo " + t + " en la declaracion del identificador " + id.getIdentifier());
+	// ...
 	this.type = t;
-	this.identifier = id.getIdentifier(); this.value = v; this.variable = var;
+	this.identifier = id.getIdentifier();
+	if (var) status = new Variable(); else status = new Constant(expr);
     }
 
     public boolean isSingle(){
@@ -35,19 +50,12 @@ public class SingleDeclaration extends Declaration {
 	return this.identifier;
     }
 
-    public Object getValue(){
-	return this.value;
-    }    
-
-    public boolean isVariable(){
-	return this.variable;
-    }
+    public Status getStatus() { return status; }
 
     public void setType(Type t) { this.type = t; }
-    public void setVariable(boolean var) { this.variable = var; }
 
     public String toString() {
-	return "(Declaration: " + type + " " + identifier + " [" + (variable ? "VAR" : "CONST") + (value != null ? "="+value : "") +  "])";
+	return "(Declaration: " + type + " " + identifier + " [" + status + "])";
     }
 
     public void tox86(Genx86 generate) throws IOException {

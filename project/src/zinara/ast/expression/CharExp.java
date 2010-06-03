@@ -17,4 +17,8 @@ public class CharExp extends Expression {
 	String reg = generate.regName(register,new CharType());
  	generate.write(generate.movChar(reg,generate.toASCII(value)));
     }
+
+    public boolean isStaticallyKnown() { return true; }
+
+    public Object staticValue() { return new Character(value); }
 }

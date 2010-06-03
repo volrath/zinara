@@ -17,4 +17,8 @@ public class FloatExp extends Expression {
 	String reg = generate.regName(register,new FloatType());
  	generate.write(generate.movReal(reg,generate.toReal(value)));
     }
+
+    public boolean isStaticallyKnown() { return true; }
+
+    public Object staticValue() { return new Float(value); };
 }

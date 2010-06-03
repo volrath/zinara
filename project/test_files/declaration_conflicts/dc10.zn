@@ -1,4 +1,4 @@
 main:
-    Int x
-    Int x
+    var Int x
+    var Int x
 endmain

@@ -62,7 +62,7 @@ public class SymTable{
 	    current_decl = (SingleDeclaration)decl;
 	    if (!currentTableContainsId(current_decl.getId())) {
 		addSymbol(current_decl.getId(),
-			  new SymValue(current_decl.getType(), current_decl.isVariable()));
+			  new SymValue(current_decl.getType(), current_decl.getStatus()));
 	    } else
 		throw new IdentifierAlreadyDeclaredException(((SingleDeclaration)decl).getId());
 	} else {
@@ -71,7 +71,7 @@ public class SymTable{
 		current_decl = ((MultipleDeclaration)decl).get(i);
 		//@ assume current_decl != null;
 		if (!currentTableContainsId(current_decl.getId())) {
-		    addSymbol(current_decl.getId(), new SymValue(current_decl.getType(), current_decl.isVariable()));
+		    addSymbol(current_decl.getId(), new SymValue(current_decl.getType(), current_decl.getStatus()));
 		} else
 		    throw new IdentifierAlreadyDeclaredException(current_decl.getId());
 	    }

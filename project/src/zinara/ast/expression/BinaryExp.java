@@ -106,4 +106,67 @@ public class BinaryExp extends Expression {
 	
 	return code;
     }
+
+    public boolean isStaticallyKnown() { return left.isStaticallyKnown() && right.isStaticallyKnown(); }
+
+    public Object staticValue() {
+	if (left.staticValue() instanceof Integer && right.staticValue() instanceof Integer) {
+	    int leftInt  = ((Integer)left.staticValue()).intValue();
+	    int rightInt = ((Integer)right.staticValue()).intValue();
+
+	    if (operator == sym.PLUS)
+		return new Integer(leftInt + rightInt);
+	    else if (operator == sym.MINUS)
+		return new Integer(leftInt - rightInt);
+	    else if (operator == sym.TIMES)
+		return new Integer(leftInt * rightInt);
+	    else if (operator == sym.DIVIDE)
+		return new Integer(leftInt / rightInt);
+	    else if (operator == sym.MOD)
+		return new Integer(leftInt % rightInt);
+	} else if (left.staticValue() instanceof Float || right.staticValue() instanceof Float) {
+	    float leftFloat  = ((Float)left.staticValue()).floatValue();
+	    float rightFloat = ((Float)right.staticValue()).floatValue();
+
+	    if (operator == sym.PLUS)
+		return new Float(leftFloat + rightFloat);
+	    else if (operator == sym.MINUS)
+		return new Float(leftFloat - rightFloat);
+	    else if (operator == sym.TIMES)
+		return new Float(leftFloat * rightFloat);
+	    else if (operator == sym.DIVIDE)
+		return new Float(leftFloat / rightFloat);
+	    else if (operator == sym.MOD)
+		return new Float(leftFloat % rightFloat);
+	} else if (left.staticValue() instanceof Integer || right.staticValue() instanceof Float) {
+	    int   leftInt    = ((Integer)left.staticValue()).intValue();
+	    float rightFloat = ((Float)right.staticValue()).floatValue();
+
+	    if (operator == sym.PLUS)
+		return new Float(leftInt + rightFloat);
+	    else if (operator == sym.MINUS)
+		return new Float(leftInt - rightFloat);
+	    else if (operator == sym.TIMES)
+		return new Float(leftInt * rightFloat);
+	    else if (operator == sym.DIVIDE)
+		return new Float(leftInt / rightFloat);
+	    else if (operator == sym.MOD)
+		return new Float(leftInt % rightFloat);
+	} else if (left.staticValue() instanceof Float || right.staticValue() instanceof Float) {
+	    float leftFloat  = ((Float)left.staticValue()).floatValue();
+	    int   rightInt   = ((Integer)right.staticValue()).intValue();
+
+	    if (operator == sym.PLUS)
+		return new Float(leftFloat + rightInt);
+	    else if (operator == sym.MINUS)
+		return new Float(leftFloat - rightInt);
+	    else if (operator == sym.TIMES)
+		return new Float(leftFloat * rightInt);
+	    else if (operator == sym.DIVIDE)
+		return new Float(leftFloat / rightInt);
+	    else if (operator == sym.MOD)
+		return new Float(leftFloat % rightInt);
+	}
+	return null;
+    }
 }

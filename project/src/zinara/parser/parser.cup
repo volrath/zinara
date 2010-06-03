@@ -111,7 +111,7 @@ terminal CONTINUE, BREAK;
 nonterminal Program program;
 nonterminal Main main;
 nonterminal ArrayList decl_list;                      // arraylist of declarations (multiples or singles)
-nonterminal Declaration const_decl, decl, def_decl;  // (just one declaration, multiple or single)
+nonterminal Declaration const_decl, var_decl, decl, def_decl;  // (just one declaration, multiple or single)
 nonterminal Assignation asig, dasig;                 // (just one assignation, multiple or single)
 nonterminal CodeBlock code_block, code_block_loop; // arraylist of assignations
 nonterminal ArrayList cycle_body, cycle_on, else, elif; // arraylist of assignations
@@ -167,9 +167,10 @@ main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {
       DECLARATIONS
  */
 /* --- Basic structure --- */
-decl_list    ::= decl_list:ds const_decl:d SEMI  {: RESULT = ds; RESULT.add(d);:}
+decl_list    ::= decl_list:ds decl:d SEMI  {: RESULT = ds; RESULT.add(d);:}
                | decl_list:ds def_decl:d SEMI    {: RESULT = ds; RESULT.add(d);:}
                | const_decl:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d);:}
+               | var_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d);:}
                | def_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d);:}
                ;
 
@@ -182,7 +183,7 @@ def_decl     ::= DEF IDENTIFIER:id
 //                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOTTERM
                    LPAREN args_list:al RPAREN def_type:t DOUBLEDOTTERM
 		 {:
-		     currentTable.addSymbol("return", new SymValue(t,false));
+		     currentTable.addSymbol("return", new SymValue(t,new Constant(null)));
 		 :}
 		     code_block:cb 
                  fed
@@ -194,9 +195,9 @@ def_decl     ::= DEF IDENTIFIER:id
 		     currentTable=currentTable.getFather();
 		     cb.setSymTable(currentTable);
 		     if (t != null)
-			 currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), false));
+			 currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), new Constant(null)));
 		     else
-			 currentTable.addSymbol(id,new SymValue(new ProcedureType(al, cb), false));
+			 currentTable.addSymbol(id,new SymValue(new ProcedureType(al, cb), new Constant(null)));
                  :};
 
 args_list    ::= args_list2:al                   {: RESULT = al; :}
@@ -212,63 +213,42 @@ args_list2   ::= args_list2:al COMMA arg:a        {: al.add(a); RESULT = al; :}
 
 arg          ::= COPY IDENTIFIER:id AS type:t    {: 
 						  RESULT = t;
-						  currentTable.addSymbol(id,new SymValue(t,true));
+						  currentTable.addSymbol(id,new SymValue(t, new Constant(null))); // fix this!
 						  :}
                | IDENTIFIER:id AS type:t         {: 
 		                                  RESULT = t;
-						  currentTable.addSymbol(id,new SymValue(t,true));
+						  currentTable.addSymbol(id,new SymValue(t, new Variable()));
 						  :}
                ;
 
 /* --- Variables and constants declarations --- */
-const_decl   ::= VAR decl:d                   {:
-					       SingleDeclaration currentDeclaration;
-					       if (d.isSingle()) {
-						   currentDeclaration = ((SingleDeclaration)d);
-						   currentDeclaration.setVariable(true);
-						   // Aqui, una vez agregada la declaracion, se chequea los tipos
-						   if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
-					       } else {
-						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) {
-						       currentDeclaration = (SingleDeclaration)((MultipleDeclaration)d).get(i);
-						       currentDeclaration.setVariable(true);
-						       //((MultipleDeclaration)d).get(i).setType(((ConstantType)(((MultipleDeclaration)d).get(i).getType())).getRealType());
-						       if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
-						   }
-					       }
-					       currentTable.addDeclaration(d);
-					       RESULT = d;
-					       :}
-               | decl:d                       {:
-	            	                       SingleDeclaration currentDeclaration;
-					       if (d.isSingle()) {
-						   currentDeclaration = ((SingleDeclaration)d);
-						   // Aqui, una vez agregada la declaracion, se chequea los tipos
-						   if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
-					       } else {
-						   for (int i = 0; i < ((MultipleDeclaration)d).declarations.size(); i++) {
-						       currentDeclaration = (SingleDeclaration)((MultipleDeclaration)d).get(i);
-						       //((MultipleDeclaration)d).get(i).setType(((ConstantType)(((MultipleDeclaration)d).get(i).getType())).getRealType());
-						       if (currentDeclaration.getValue() != null && !currentDeclaration.getType().equals(((Expression)currentDeclaration.getValue()).getType())) throw new TypeClashException("Asignacion invalida: tipo de la expresion `" + (Expression)currentDeclaration.getValue() + "` difiere del tipo de la declaracion " + currentDeclaration.getType());
-						   }
-					       }
-		                               currentTable.addDeclaration(d); RESULT = d; 
-					       :}
-               ;
+decl       ::= var_decl:vd                         {: RESULT = vd; :}
+             | const_decl:cd                       {: RESULT = cd; :}
+             ;
 
-decl         ::= type:t dasig:a               {:
-					      if (a.isSingle())
-					          RESULT = new SingleDeclaration(new ConstantType(t, ((SingleAssignation)a).getExpression()), ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false);
-					      else
-					          RESULT = new MultipleDeclaration(((MultipleAssignation)a),t);
-					      :}
+var_decl   ::= VAR type:t dasig:a               {:
+		                                  if (a.isSingle())
+						      RESULT = new SingleDeclaration(t, ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), null, true);
+						  else
+						      RESULT = new MultipleDeclaration(((MultipleAssignation)a), t, true);
+						 currentTable.addDeclaration(RESULT);
+					        :}
 
-               | type:t decl_ident_list:ids       {:
-		                              if (ids.size() == 1)
-						  RESULT = new SingleDeclaration(new ConstantType(t, null), (String)(ids.get(0)), null, false);
-					      else
-						  RESULT = new MultipleDeclaration(ids, new ConstantType(t, null));
-					      :}
+             | VAR type:t decl_ident_list:ids   {:
+		                                  if (ids.size() == 1)
+						      RESULT = new SingleDeclaration(t, (String)(ids.get(0)), null, true);
+						  else 
+						      RESULT = new MultipleDeclaration(ids, t);
+						 currentTable.addDeclaration(RESULT);
+					        :}
+             ;
+const_decl  ::=  type:t dasig:a                {:
+						if (a.isSingle())
+						    RESULT = new SingleDeclaration(t, ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false);
+						else
+						    RESULT = new MultipleDeclaration(((MultipleAssignation)a), t, false);
+						currentTable.addDeclaration(RESULT);
+					       :}
                ;
 
 decl_ident_list ::= decl_ident_list:il COMMA IDENTIFIER:id   {: RESULT = il; il.add(id); :}
@@ -294,12 +274,12 @@ type         ::=
                | BOOL                       {: RESULT = new BoolType(); :}
 
     /* ----- Composite types ----- */
-               | STRING                     {: RESULT = new StringType(); :}
-               | LBRACKET type:t RBRACKET   {: RESULT = new ListType(t); :}
+               | STRING                                       {: RESULT = new StringType(); :}
+               | LBRACKET type:t SOR INTEGER_V:size RBRACKET  {: RESULT = new ListType(t,size.intValue()); :}
                  // list - [type]
-               | LPAREN type_list:tl RPAREN {: RESULT = new TupleType(tl); :}
+               | LPAREN type_list:tl RPAREN                   {: RESULT = new TupleType(tl); :}
                  // tuple - (type0, type1, ..., typen)
-               | LBRACET dict_types:dt RBRACET {: RESULT = new DictType(dt); :}  
+               | LBRACET dict_types:dt RBRACET                {: RESULT = new DictType(dt); :}  
                  // dictionary - {ident0:type0,ident1:type1...,identn:typen}
                ;
 
@@ -330,6 +310,7 @@ code_block    ::= code_block:cb instruction:i SEMI          {: cb.addInst(i); RE
 instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
+                | var_decl:d                              {: RESULT = new DecInst(d); :}
                 | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
                 | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
@@ -344,6 +325,7 @@ code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i
 instruction_loop  ::= asig:a                                      {: RESULT = a; :}
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
+                    | var_decl:d                                {: RESULT = new DecInst(d); :}
                     | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
                     | IDENTIFIER:id LPAREN RPAREN                 {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}
@@ -382,7 +364,7 @@ ctrl_struct   ::=
                  cycles_depth += 1;
 		 StaticTypeChecking.checkIterable(e);
 		 currentTable = currentTable.newTable();
-		 currentTable.addSymbol(id,new SymValue(((ListType)(e.getType().getType())).getInsideType(),false));
+		 currentTable.addSymbol(id, new SymValue(((ListType)(e.getType().getType())).getInsideType(), new Constant(null))); // fix this
 		 :}
 		      code_block_loop:cb
 		 {: currentTable = currentTable.getFather();
@@ -492,7 +474,7 @@ expr_tuple ::= expr_tuple:el COMMA expr:e  {: RESULT = el; el.add(e); :}
              | expr:e1 COMMA expr:e2       {: RESULT = new ArrayList(); RESULT.add(e1);RESULT.add(e2);:}
              ;
 
-expr  ::= expr:e1 AND expr:e2            {: RESULT = new BinaryBooleanExp(sym.AND, e1, e2); :}
+expr       ::= expr:e1 AND expr:e2       {: RESULT = new BinaryBooleanExp(sym.AND, e1, e2); :}
              | expr:e1 SAND expr:e2      {: RESULT = new BinaryBooleanExp(sym.SAND, e1, e2); :}
              | expr:e1 OR expr:e2        {: RESULT = new BinaryBooleanExp(sym.OR, e1, e2); :}
              | expr:e1 SOR expr:e2       {: RESULT = new BinaryBooleanExp(sym.SOR, e1, e2); :}
@@ -541,12 +523,12 @@ other_expr   ::=
     /* ----- Composite types ----- */
              | STRING_V:e                                  {:RESULT=new StringExp(e);:}
              | LBRACKET RBRACKET     /*[] empty list*/     {:RESULT=new ListExp();:}
-//            | LBRACET RBRACET   /*{} empty dictionary*/ {:RESULT=new DictExp();:}
+             | LBRACET RBRACET   /*{} empty dictionary*/ {:RESULT=new DictExp();:}
              | LBRACKET expr_list:e RBRACKET   /*list*/    {:RESULT=new ListExp(e);:}
              | LBRACET dict_vals:dv RBRACET /*dictionary*/ {:RESULT=new DictExp(dv);:}
              | LPAREN expr_tuple:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
     /* ----- LVALUE ----- */
-             | l_value:lv                                  {: RESULT = lv; :}
+             | l_value:lv                                  {: lv.setAsExpression(true); RESULT = lv; :}
     /* ----- Composite types operations ----- */
 //| IDENTIFIER LBRACKET expr RBRACKET                 // indexing
 //| IDENTIFIER LBRACKET other_expr DOUBLEDOT other_expr RBRACKET  // slicing

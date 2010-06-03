@@ -9,22 +9,28 @@ import java.io.IOException;
 
 public class CastedExp extends Expression {
     public Type cast;
-    public Expression exp;
+    public Expression expr;
     
     public CastedExp (Type c, Expression e) {
 	cast=c;
-	exp=e;
+	expr=e;
     }
     
     public Type getType() throws TypeClashException {
-	return parser.operators.check(parser.operators.cast, this.exp.getType(), null);
+	return parser.operators.check(parser.operators.cast, this.expr.getType(), null);
     }
 
     public String toString() {
-	return "(<"+cast+"> "+exp+")";
+	return "(<"+cast+"> "+expr+")";
     }
 
     public void tox86(Genx86 generate) throws IOException{
         //return "Codigo de CastedExp NO GENERADO";
+    }
+
+    public boolean isStaticallyKnown() { return expr.isStaticallyKnown(); }
+
+    public Object staticValue() {
+	return null;
     }
 }

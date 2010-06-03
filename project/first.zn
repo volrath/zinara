@@ -2,13 +2,14 @@ def hola(ulo as Int, ula as Int):
     print(ula)
 enddef
 
-Int a
-Float b
-Int c
+var Int a = 0
+Float b = 9.
+var Int c
 
 main:
-   [[Int]] d = []
-   a = d[2][0] + 1
+   [Int] d = []
+   //a = d[2] + 1
+   //d[1] = c
    //d[1] = [1,2,3] 
 
    a = 1 + 1
@@ -27,8 +28,11 @@ main:
      a = 0
    endif
 
-   Bool x, y
-   [Bool] db
+   print(4)
+
+   var Bool x, y
+   Bool h,j,k
+   [Bool] db = [False]
    x = True
    y = False
    //d[1] = x and y

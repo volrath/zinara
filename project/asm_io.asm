@@ -14,7 +14,11 @@
         pop     r12
         pop     rbx
         leave
+<<<<<<< HEAD
 	ret
+=======
+        ret
+>>>>>>> master
 %endmacro
 
 section .rodata
@@ -82,4 +86,7 @@ section .text
         xor     rax,rax
         call    scanf
         epilogue
+<<<<<<< HEAD
 
+=======
+>>>>>>> master

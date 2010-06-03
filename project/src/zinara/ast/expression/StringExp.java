@@ -12,4 +12,8 @@ public class StringExp extends Expression {
 
     public void tox86(Genx86 generate){
     }
+
+    public boolean isStaticallyKnown() { return true; }
+
+    public Object staticValue() { return value; };
 }

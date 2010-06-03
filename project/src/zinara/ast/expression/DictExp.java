@@ -43,4 +43,26 @@ public class DictExp extends Expression {
 
     public void tox86(Genx86 generate){
     }
+
+    public boolean isStaticallyKnown() {
+	boolean isk = true;
+	Expression v;
+	Iterator it = value.entrySet().iterator();
+	while (it.hasNext()) {
+	    v = (Expression)it.next();
+	    isk = isk && v.isStaticallyKnown();
+	}
+	return isk;
+    }
+
+    public Object staticValue() {
+	HashMap result = new HashMap();
+	Iterator it = value.keySet().iterator();
+	String ckey;
+	while(it.hasNext()) {
+	    ckey = (String)it.next();
+	    result.put(ckey, ((Expression)value.get(ckey)).staticValue());
+	}
+	return result;
+    }
 }

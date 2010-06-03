@@ -7,27 +7,25 @@ import zinara.ast.ASTNode;
 import zinara.ast.expression.Identifier;
 import zinara.ast.instructions.MultipleAssignation;
 import zinara.ast.type.Type;
-import zinara.ast.type.ConstantType;
 import zinara.code_generator.Genx86;
+import zinara.exceptions.TypeClashException;
 
 public class MultipleDeclaration extends Declaration {
     public ArrayList declarations; // arraylist of SingleDeclaration
 
     public MultipleDeclaration(ArrayList ds) { this.declarations = ds; }
 
-    public MultipleDeclaration(ArrayList ids, Type type) {
+    public MultipleDeclaration(ArrayList ids, Type type) throws TypeClashException {
 	ArrayList declarations = new ArrayList();
 	for (int  i = 0; i < ids.size(); i++)
-	    declarations.add(new SingleDeclaration(type, ((String)ids.get(i)), null, false));
+	    declarations.add(new SingleDeclaration(type, ((String)ids.get(i)), null, true));
 	this.declarations = declarations;
     }
 
-    // Constant type!!!
-    public MultipleDeclaration(MultipleAssignation asigs, Type type) {
+    public MultipleDeclaration(MultipleAssignation asigs, Type type, boolean var) throws TypeClashException {
 	ArrayList declarations = new ArrayList();
 	for (int i = 0; i < asigs.assignations.size(); i++)
-	    declarations.add(new SingleDeclaration(new ConstantType(type,asigs.get(i).getExpression()), 
-						   (Identifier)(asigs.get(i).getLValue()), asigs.get(i).getExpression(),false));
+	    declarations.add(new SingleDeclaration(type, (Identifier)(asigs.get(i).getLValue()), asigs.get(i).getExpression(), var));
 	this.declarations = declarations;
     }
 
