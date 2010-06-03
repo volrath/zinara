@@ -1,6 +1,7 @@
 package zinara.ast;
 
 import zinara.code_generator.Genx86;
+import zinara.exceptions.InvalidCodeException;
 import zinara.symtable.SymTable;
 import zinara.symtable.SymValue;
 
@@ -31,5 +32,8 @@ public class Program extends ASTNode {
 
     public String toString() { return "(Program: " + main + ")"; }
 
-    public void tox86(Genx86 generator) throws IOException {}
+    public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
+	for (int i = 0; i < declarations.size(); i++)
+	    ((SingleDeclaration)declarations.get(i)).tox86(generator);
+    }
 }

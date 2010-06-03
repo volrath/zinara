@@ -40,7 +40,7 @@ public class CodeBlock extends Instruction{
 	
 	for (int i = 0; i < block.size(); i++) {
 	    inst = (Instruction)block.get(i);
-	    if (inst instanceof DecInst) continue; // this really doesnt belong here
+	    //if (inst instanceof DecInst) continue; // this really doesnt belong here
 
 	    inst.register = register;
 	    inst.nextInst = ((i != block.size() - 1) ? generator.newLabel() : nextInst);

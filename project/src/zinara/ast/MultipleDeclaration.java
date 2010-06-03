@@ -9,23 +9,25 @@ import zinara.ast.instructions.MultipleAssignation;
 import zinara.ast.type.Type;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.TypeClashException;
+import zinara.exceptions.InvalidCodeException;
+import zinara.symtable.SymTable;
 
 public class MultipleDeclaration extends Declaration {
     public ArrayList declarations; // arraylist of SingleDeclaration
 
     public MultipleDeclaration(ArrayList ds) { this.declarations = ds; }
 
-    public MultipleDeclaration(ArrayList ids, Type type) throws TypeClashException {
+    public MultipleDeclaration(ArrayList ids, Type type, SymTable st) throws TypeClashException {
 	ArrayList declarations = new ArrayList();
 	for (int  i = 0; i < ids.size(); i++)
-	    declarations.add(new SingleDeclaration(type, ((String)ids.get(i)), null, true));
+	    declarations.add(new SingleDeclaration(type, ((String)ids.get(i)), null, true, st));
 	this.declarations = declarations;
     }
 
-    public MultipleDeclaration(MultipleAssignation asigs, Type type, boolean var) throws TypeClashException {
+    public MultipleDeclaration(MultipleAssignation asigs, Type type, boolean var, SymTable st) throws TypeClashException {
 	ArrayList declarations = new ArrayList();
 	for (int i = 0; i < asigs.assignations.size(); i++)
-	    declarations.add(new SingleDeclaration(type, (Identifier)(asigs.get(i).getLValue()), asigs.get(i).getExpression(), var));
+	    declarations.add(new SingleDeclaration(type, (Identifier)(asigs.get(i).getLValue()), asigs.get(i).getExpression(), var, st));
 	this.declarations = declarations;
     }
 
@@ -49,6 +51,8 @@ public class MultipleDeclaration extends Declaration {
 	return "MultipleDeclaration:" + ret;
     }
 
-    public void tox86(Genx86 generate) throws IOException {
+    public void tox86(Genx86 generate) throws IOException, InvalidCodeException {
+	for (int i = 0; i < declarations.size(); i++)
+	    ((SingleDeclaration)declarations.get(i)).tox86(generate);
     }
 }

@@ -189,9 +189,9 @@ def_decl     ::= DEF IDENTIFIER:id
                  fed
                  {:
 		     if (t != null)
-			 RESULT = new SingleDeclaration(new FunctionType(al,t,cb), id, null, false);
+			 RESULT = new SingleDeclaration(new FunctionType(al,t,cb), id, null, false, currentTable);
 		     else
-			 RESULT = new SingleDeclaration(new ProcedureType(al, cb), id, null, false);
+			 RESULT = new SingleDeclaration(new ProcedureType(al, cb), id, null, false, currentTable);
 		     currentTable=currentTable.getFather();
 		     cb.setSymTable(currentTable);
 		     if (t != null)
@@ -228,25 +228,25 @@ decl       ::= var_decl:vd                         {: RESULT = vd; :}
 
 var_decl   ::= VAR type:t dasig:a               {:
 		                                  if (a.isSingle())
-						      RESULT = new SingleDeclaration(t, ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), null, true);
+						      RESULT = new SingleDeclaration(t, ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), null, true, currentTable);
 						  else
-						      RESULT = new MultipleDeclaration(((MultipleAssignation)a), t, true);
+						      RESULT = new MultipleDeclaration(((MultipleAssignation)a), t, true, currentTable);
 						 currentTable.addDeclaration(RESULT);
 					        :}
 
              | VAR type:t decl_ident_list:ids   {:
 		                                  if (ids.size() == 1)
-						      RESULT = new SingleDeclaration(t, (String)(ids.get(0)), null, true);
+						      RESULT = new SingleDeclaration(t, (String)(ids.get(0)), null, true, currentTable);
 						  else 
-						      RESULT = new MultipleDeclaration(ids, t);
+						      RESULT = new MultipleDeclaration(ids, t, currentTable);
 						 currentTable.addDeclaration(RESULT);
 					        :}
              ;
 const_decl  ::=  type:t dasig:a                {:
 						if (a.isSingle())
-						    RESULT = new SingleDeclaration(t, ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false);
+						    RESULT = new SingleDeclaration(t, ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false, currentTable);
 						else
-						    RESULT = new MultipleDeclaration(((MultipleAssignation)a), t, false);
+						    RESULT = new MultipleDeclaration(((MultipleAssignation)a), t, false, currentTable);
 						currentTable.addDeclaration(RESULT);
 					       :}
                ;
