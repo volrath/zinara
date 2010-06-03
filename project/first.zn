@@ -7,7 +7,7 @@ Float b = 9.
 var Int c
 
 main:
-   [Int] d = []
+   [Int|10] d = []
    //a = d[2] + 1
    //d[1] = c
    //d[1] = [1,2,3] 
@@ -17,7 +17,7 @@ main:
    c = c * 2
    
    a=10
-   while a>=0 AND c<a AND True:
+   while a>=0 and c<a and True:
       print(1)
       a = a-1
    endwhile
@@ -31,8 +31,8 @@ main:
    print(4)
 
    var Bool x, y
-   Bool h,j,k
-   [Bool] db = [False]
+   //Bool h,j,k
+   [Bool|1] db = [False]
    x = True
    y = False
    //d[1] = x and y

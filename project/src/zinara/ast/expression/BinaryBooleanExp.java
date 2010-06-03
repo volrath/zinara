@@ -3,6 +3,7 @@ package zinara.ast.expression;
 import zinara.ast.type.*;
 import zinara.code_generator.*;
 import zinara.exceptions.TypeClashException;
+import zinara.exceptions.InvalidCodeException;
 import zinara.parser.sym;
 import zinara.parser.parser;
 
@@ -28,9 +29,7 @@ public class BinaryBooleanExp extends BooleanExp {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public void tox86(Genx86 generator) throws IOException {
-	if (left instanceof LValue) ((LValue)left).setAsBool(true);
-	if (right instanceof LValue) ((LValue)right).setAsBool(true);
+    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
 	switch(operator) {
 	case sym.AND:
 	    conjuntionToX86(generator, true);
@@ -49,7 +48,7 @@ public class BinaryBooleanExp extends BooleanExp {
 	}
     }
 
-    public void conjuntionToX86(Genx86 generator, boolean shortCircuit) throws IOException {
+    public void conjuntionToX86(Genx86 generator, boolean shortCircuit) throws IOException,InvalidCodeException {
 	left.yesLabel  = generator.newLabel();
 	left.noLabel   = (shortCircuit ? noLabel : left.yesLabel);
 	
@@ -73,7 +72,7 @@ public class BinaryBooleanExp extends BooleanExp {
 	generator.jz(left.noLabel);
     }
 
-    public void disjunctionToX86(Genx86 generator, boolean shortCircuit) throws IOException {
+    public void disjunctionToX86(Genx86 generator, boolean shortCircuit) throws IOException,InvalidCodeException {
 	left.noLabel   = generator.newLabel();
 	left.yesLabel  = (shortCircuit ? yesLabel : left.noLabel);
 
@@ -97,7 +96,7 @@ public class BinaryBooleanExp extends BooleanExp {
 	generator.jnz(left.yesLabel);
     }
 
-    public void xorToX86(Genx86 generator) throws IOException {
+    public void xorToX86(Genx86 generator) throws IOException,InvalidCodeException {
     // 	left.yesLabel  = yesLabel;
     // 	left.noLabel   = generator.newLabel();
     // 	right.yesLabel = yesLabel;

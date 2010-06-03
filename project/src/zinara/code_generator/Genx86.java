@@ -135,7 +135,7 @@ public class Genx86{
 	    this.file.write("BITS 64\n");
     }
 
-    public void generateProgram(Program program) throws IOException {
+    public void generateProgram(Program program) throws IOException,InvalidCodeException {
 	generateHeader(program.getSymTable());
 
 	// Generate code for all of its functions
@@ -152,7 +152,7 @@ public class Genx86{
 	closeFile();
     }
 
-    public void generateHeader(SymTable symtable) throws IOException {
+    public void generateHeader(SymTable symtable) throws IOException,InvalidCodeException {
 	String identifier;
 	SymValue symValue;
 

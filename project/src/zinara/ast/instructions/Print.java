@@ -25,10 +25,10 @@ public class Print extends Instruction{
 	return "<Print " + expr + ">";
     }
 
-    public void tox86(Genx86 generate) throws IOException{
+    public void tox86(Genx86 generate) throws IOException,InvalidCodeException{
 	//Por ahora solo sirve con numeros, bools, chars y flotantes
 	expr.register = register;
-	String expReg = generate.regName(expr.register);
+	String expReg = generate.addrRegName(expr.register);
 
 	expr.tox86(generate);
 

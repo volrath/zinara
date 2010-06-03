@@ -528,7 +528,7 @@ other_expr   ::=
              | LBRACET dict_vals:dv RBRACET /*dictionary*/ {:RESULT=new DictExp(dv);:}
              | LPAREN expr_tuple:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
     /* ----- LVALUE ----- */
-             | l_value:lv                                  {: lv.setAsExpression(true); RESULT = lv; :}
+             | l_value:lv                                  {: RESULT = lv; :}
     /* ----- Composite types operations ----- */
 //| IDENTIFIER LBRACKET expr RBRACKET                 // indexing
 //| IDENTIFIER LBRACKET other_expr DOUBLEDOT other_expr RBRACKET  // slicing

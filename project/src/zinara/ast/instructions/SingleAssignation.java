@@ -72,12 +72,12 @@ public class SingleAssignation extends Assignation {
 
 	//En caso de que bExpr necesite computarse
 	bExpr.register = register;
-	String bExprReg = generator.regName(bExpr.register,bExpr.type());
+	String bExprReg = generator.regName(bExpr.register,bExpr.type);
 
 	bExpr.tox86(generator);
 	if (!(bExpr instanceof BooleanExp)){
 	    generator.add(bExprReg,"0");
-	    generator.jz(left.noLabel);
+	    generator.jz(bExpr.noLabel);
 	}
 
 	lvalue.register = register;

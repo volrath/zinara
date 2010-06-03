@@ -4,6 +4,7 @@ import zinara.ast.type.BoolType;
 import zinara.ast.type.FloatType;
 import zinara.ast.type.IntType;
 import zinara.ast.type.ListType;
+import zinara.ast.type.DictType;
 import zinara.ast.type.Type;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
@@ -86,9 +87,9 @@ public class Identifier extends LValue {
         else if ((type.getType() instanceof ListType)||
 		 (type.getType() instanceof DictType))
             generator.write(generator.movAddr(currentReg,
-                                          generator.global_offset()+
-                                          "+"+
-                                          Integer.toString(getSymValue().getOffset())))
+					      generator.global_offset()+
+					      "+"+
+					      Integer.toString(getSymValue().getOffset())));
         else
             generator.write("Identificador para el tipo "+type.getType().toString()+" no implementado\n");
     }

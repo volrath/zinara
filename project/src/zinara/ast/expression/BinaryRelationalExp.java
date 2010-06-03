@@ -3,6 +3,7 @@ package zinara.ast.expression;
 import zinara.ast.type.*;
 import zinara.code_generator.*;
 import zinara.exceptions.TypeClashException;
+import zinara.exceptions.InvalidCodeException;
 import zinara.parser.sym;
 import zinara.parser.parser;
 
@@ -28,7 +29,7 @@ public class BinaryRelationalExp extends BooleanExp {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public void tox86(Genx86 generator) throws IOException {
+    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
 	left.register  = register;
 	right.register = register + 1;
 
@@ -66,25 +67,25 @@ public class BinaryRelationalExp extends BooleanExp {
 	generator.write(generator.jump(noLabel));
     }
 
-    public void lowerThan(Genx86 generator, String a, String b, boolean orEqual) throws IOException {
+    public void lowerThan(Genx86 generator, String a, String b, boolean orEqual) throws IOException,InvalidCodeException {
 	if (orEqual)
 	    generator.write(generator.jle(yesLabel));
 	else
 	    generator.write(generator.jl(yesLabel));
     }
 
-    public void greaterThan(Genx86 generator, String a, String b, boolean orEqual) throws IOException {
+    public void greaterThan(Genx86 generator, String a, String b, boolean orEqual) throws IOException,InvalidCodeException {
 	if (orEqual)
 	    generator.write(generator.jge(yesLabel));
 	else
 	    generator.write(generator.jg(yesLabel));
     }
 
-    public void equal(Genx86 generator, String a, String b, boolean deep) throws IOException {
+    public void equal(Genx86 generator, String a, String b, boolean deep) throws IOException,InvalidCodeException {
 	generator.write(generator.je(yesLabel));
     }
 
-    public void notEqual(Genx86 generator, String a, String b) throws IOException {
+    public void notEqual(Genx86 generator, String a, String b) throws IOException,InvalidCodeException {
 	generator.write(generator.jne(yesLabel));
     }
 
