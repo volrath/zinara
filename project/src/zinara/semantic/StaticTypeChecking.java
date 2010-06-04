@@ -11,6 +11,8 @@ import zinara.ast.expression.LValueTuple;
 import zinara.ast.expression.LValueDict;
 import zinara.ast.expression.Identifier;
 import zinara.ast.expression.FunctionCall;
+import zinara.ast.instructions.CodeBlock;
+import zinara.ast.instructions.Instruction;
 import zinara.ast.instructions.Return;
 import zinara.ast.instructions.ProcedureCall;
 import zinara.ast.type.Type;
@@ -66,8 +68,8 @@ public class StaticTypeChecking {
 
     /*
       Checks two things:
-      1. the return statement is inside of a function. If it's not
-      then throw an InvalidInstructionException
+      1. the return statement only can be inside of a function. If
+      it's not then throw an InvalidInstructionException
       2. the expression after the return statement is the same type of
       the defined function
      */
@@ -80,6 +82,20 @@ public class StaticTypeChecking {
 	    if (expr.getType().equals(idSymValue.getType())) return new Return(expr);
 	    else throw new TypeClashException("Tipo de retorno de la funcion " + idSymValue.getType() + " difiere del tipo de la expresion " + expr);
 	} else throw new InvalidInstructionException("Instruccion `return` no permitida en el main");
+    }
+
+    /*
+      The return statement has to be at least once inside the codeblock
+     */
+    public static void checkReturnStatement(String funcName, CodeBlock code) throws InvalidInstructionException {
+	boolean found = false;
+	Instruction inst;
+	for (int i = 0; i < code.getBlock().size(); i++) {
+	    inst = (Instruction)code.getBlock().get(i);
+	    found = found || (inst instanceof Return);
+	}
+	if (!found)
+	    throw new InvalidInstructionException("La función " + funcName + " no tiene return");
     }
 
     public static FunctionCall checkFunctionCall(String funcName, ArrayList expr_list, SymTable st)
@@ -166,6 +182,19 @@ public class StaticTypeChecking {
 	if (!(constructorType instanceof DictType))
 	    throw new InvalidAccessException("La expresion " + constructor + " no representa un diccionario y no puede ser indexado con un identificador.");
 	return new LValueDict(constructor, id);
+    }
+
+    public static int returnStaticInt(Expression expr) throws TypeClashException {
+	// Checks if the expression is statically known, and if it is,
+	// check if it's an integer..
+	if (!(expr.getType() instanceof IntType))
+	    throw new TypeClashException("La expresion es de tipo " + expr.getType() + " y es necesario que sea de tipo <INT> para ser tamano de una lista");
+	if (!expr.isStaticallyKnown())
+	    throw new TypeClashException("La expresion " + expr + " no puede ser calculada a tiempo de compilación");
+	Object s = expr.staticValue();
+	if (!(s instanceof Integer))
+	    throw new TypeClashException("La expresion " + expr + " no pudo ser reducida a un entero");
+	return ((Integer)s).intValue();
     }
 }
 

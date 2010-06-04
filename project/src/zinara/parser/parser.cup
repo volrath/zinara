@@ -100,7 +100,7 @@ terminal Main MAIN;
 terminal SEMI;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
-terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET;
+terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET, DOT, DOTDOT;
 terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, LITTLE_ARROW;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal AS, IN;
@@ -151,6 +151,8 @@ precedence left AND, SAND, OR, SOR, XOR;
 precedence right RPAREN;
 precedence right RBRACKET;
 
+precedence nonassoc DOTDOT;
+
 /* The grammar */
 
 /*
@@ -188,9 +190,10 @@ def_decl     ::= DEF IDENTIFIER:id
 		     code_block:cb 
                  fed
                  {:
-		     if (t != null)
+		     if (t != null) {
+			 StaticTypeChecking.checkReturnStatement(id, cb);
 			 RESULT = new SingleDeclaration(new FunctionType(al,t,cb), id, null, false, currentTable);
-		     else
+		     } else
 			 RESULT = new SingleDeclaration(new ProcedureType(al, cb), id, null, false, currentTable);
 		     currentTable=currentTable.getFather();
 		     cb.setSymTable(currentTable);
@@ -262,7 +265,7 @@ ident_list   ::= ident_list:il COMMA l_value:id        {: RESULT = il; il.add(id
 l_value      ::= IDENTIFIER:id                                                      {: SymTable finded = currentTable.getSymTableForIdOrDie(id); RESULT = new Identifier(id, finded); :}
                | l_value:lv LBRACKET expr:e RBRACKET                                {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
                | l_value:lv LBRACKET other_expr:e DOUBLEDOT other_expr RBRACKET     {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, e); :}
-               | l_value:lv LBRACKET IDENTIFIER:id RBRACKET                         {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, id, currentTable); :}
+               | l_value:lv DOT IDENTIFIER:id                                       {: RESULT = StaticTypeChecking.checkAndReturnLValue(lv, id, currentTable); :}
                ;
 
 // Types
@@ -275,7 +278,7 @@ type         ::=
 
     /* ----- Composite types ----- */
                | STRING                                       {: RESULT = new StringType(); :}
-               | LBRACKET type:t SOR INTEGER_V:size RBRACKET  {: RESULT = new ListType(t,size.intValue()); :}
+               | LBRACKET type:t SOR expr:size RBRACKET       {: RESULT = new ListType(t,StaticTypeChecking.returnStaticInt(size)); :}
                  // list - [type]
                | LPAREN type_list:tl RPAREN                   {: RESULT = new TupleType(tl); :}
                  // tuple - (type0, type1, ..., typen)
@@ -521,12 +524,13 @@ other_expr   ::=
              | IDENTIFIER:n LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkFunctionCall(n, new ArrayList(), currentTable); :}
 
     /* ----- Composite types ----- */
-             | STRING_V:e                                  {:RESULT=new StringExp(e);:}
-             | LBRACKET RBRACKET     /*[] empty list*/     {:RESULT=new ListExp();:}
-             | LBRACET RBRACET   /*{} empty dictionary*/ {:RESULT=new DictExp();:}
-             | LBRACKET expr_list:e RBRACKET   /*list*/    {:RESULT=new ListExp(e);:}
-             | LBRACET dict_vals:dv RBRACET /*dictionary*/ {:RESULT=new DictExp(dv);:}
-             | LPAREN expr_tuple:el RPAREN    /*tuple*/    {:RESULT=new TupleExp(el);:}
+             | STRING_V:e                                  {: RESULT = new StringExp(e); :}
+             | LBRACKET RBRACKET     /*[] empty list*/     {: RESULT = new ListExp(); :}
+             | LBRACET RBRACET   /*{} empty dictionary*/   {: RESULT = new DictExp(); :}
+             | LBRACKET expr_list:e RBRACKET   /*list*/    {: RESULT = new ListExp(e); :}
+             | other_expr:e1 DOTDOT other_expr:e2          {: RESULT = new ListExp(e1, e2); :}
+             | LBRACET dict_vals:dv RBRACET /*dictionary*/ {: RESULT = new DictExp(dv); :}
+             | LPAREN expr_tuple:el RPAREN    /*tuple*/    {: RESULT = new TupleExp(el); :}
     /* ----- LVALUE ----- */
              | l_value:lv                                  {: RESULT = lv; :}
     /* ----- Composite types operations ----- */

@@ -158,11 +158,11 @@ public class SymTable{
 	//SymValue idSymValue = getSymValueForIdOrDie(id);
 
 	//@ assume lv.getType() != null;
-
-	if (lv.getType().getType().equals(expr.getType().getType()))
-	    return new SingleAssignation(lv, expr);
-	else
+	if (lv.isConstant())
+	    throw new TypeClashException("El identificador " + lv + " fue declarado como constante y no puede ser usado en una asignacion");
+	if (!lv.getType().getType().equals(expr.getType().getType()))
 	    throw new TypeClashException("Conflicto de tipos entre el identificador " + lv + lv.getType() +" y la expresion " + expr + expr.getType());
+	return new SingleAssignation(lv, expr);
     }
 
     /*

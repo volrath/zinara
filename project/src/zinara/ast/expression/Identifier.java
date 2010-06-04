@@ -42,7 +42,7 @@ public class Identifier extends LValue {
 	// 			      generator.global_offset()+
 	// 			      "+"+
 	// 			      Integer.toString(getSymValue().getOffset())));
-	String reg = generator.regName(register,type);
+	String reg = generator.regName(register,getType());
 
 	storeValue(generator, reg);
 	// generator.write(generator.add(generator.regName(register),
@@ -104,5 +104,10 @@ public class Identifier extends LValue {
     public Object staticValue() {
 	SymValue sv = symtable.getSymbol(identifier);
 	return ((Constant)sv.getStatus()).getExpression().staticValue();
+    }
+
+    public boolean isConstant() {
+	SymValue sv = symtable.getSymbol(identifier);
+	return !sv.isVariable();
     }
 }
