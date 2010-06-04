@@ -184,6 +184,10 @@ public class Genx86{
 	write(main_header_str());
     }
 
+    public int stack_align(){
+	return Integer.parseInt(this.stackAlig);
+    }
+
     public String jump(String label) {
 	return "jmp " + label + "\n";
     }
