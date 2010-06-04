@@ -76,4 +76,6 @@ public class LValueDict extends LValue {
     }
 
     public Object staticValue() { return null; };
+
+    public boolean isConstant() { return constructor.isConstant(); }
 }

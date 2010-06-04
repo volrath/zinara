@@ -4,10 +4,7 @@ import zinara.ast.expression.Expression;
 import zinara.ast.expression.BooleanExp;
 import zinara.ast.expression.Identifier;
 import zinara.ast.expression.LValue;
-import zinara.ast.type.BoolType;
-import zinara.ast.type.IntType;
-import zinara.ast.type.FloatType;
-import zinara.ast.type.CharType;
+import zinara.ast.type.*;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.TypeClashException;
 import zinara.exceptions.InvalidCodeException;
@@ -108,6 +105,19 @@ public class SingleAssignation extends Assignation {
 	else if (lvalue.type.getType() instanceof CharType)
 	    generator.write(generator.movChar("[" + lvalueReg + "]",
 					      exprReg));
+	else if (lvalue.type.getType() instanceof ListType) {
+	    // save
+	    String spAddr1 = generator.addrRegName(register + 1);
+	    String spAddr2 = generator.addrRegName(register + 2);
+	    for (int i = ((ListType)lvalue.type.getType()).len(); i > 0; i--) {
+		generator.movAddr(spAddr1, "rsp");
+		generator.movInt(spAddr2, Integer.toString(i));
+		generator.imul(spAddr2, Integer.toString((i*((ListType)lvalue.type.getType()).getInsideType().size())));
+		generator.add(spAddr1, spAddr2);
+		storeValue(generator, lvalueReg + (i*((ListType)lvalue.type.getType()).getInsideType().size()), spAddr1);
+	    }
+	    // restore
+	}
 	else
 	    throw new InvalidCodeException("asignacion a lvalues del tipo "+lvalue.type.getType()+" no implementada\n");
 	    //generator.write("asignacion de valores del tipo "+lvalue.type.getType().toString()+" no implementado\n");

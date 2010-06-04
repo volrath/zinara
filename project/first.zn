@@ -2,33 +2,36 @@ def hola(ulo as Int, ula as Int):
     print(ula)
 enddef
 
-main:
-   var Int a = 0
-   Float b = 9.
-   var Int c
+Int a = 2
+Float b = 9.
+var Int c
 
-   [Int|10] d = []
+main:
+   //[Int|2] d = []
    //a = d[2] + 1
    //d[1] = c
-   //d[1] = [1,2,3] 
+   //d[1] = [1,2,3]
+   var Int a' = a
 
-   a = 1 + 1
+   [Int|5] x'' = 0 .. 5
+
    c = c + a
    c = c * 2
    
-   a=10
+   a'=10
    while a>=0 and c<a and True:
       print(1)
-      a = a-1
+      a' = a'-1
    endwhile
    
-   if a == 2:
-     a = 3
+   if a' == 2:
+     a' = 3
    elif a < 0:
-     a = 0
+     a' = 0
    endif
 
-   print(4)
+   print(a')
+   print(a)
 
    var Bool x, y
    //Bool h,j,k

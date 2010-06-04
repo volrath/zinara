@@ -22,7 +22,6 @@ public class MultipleAssignation extends Assignation {
 	
 	ArrayList asigs = new ArrayList();
 	for (int i = 0 ; i < ids.size() ; ++i){
-	    // FIX THIS: it should check types first!!
 	    asigs.add(new SingleAssignation(new Identifier((String)ids.get(i), null), (Expression)expressions.get(i)));
 	}
 	this.assignations = asigs;

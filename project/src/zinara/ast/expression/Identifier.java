@@ -4,7 +4,7 @@ import zinara.ast.type.BoolType;
 import zinara.ast.type.FloatType;
 import zinara.ast.type.IntType;
 import zinara.ast.type.ListType;
-import zinara.ast.type.Dictype;
+import zinara.ast.type.DictType;
 import zinara.ast.type.Type;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
@@ -42,7 +42,7 @@ public class Identifier extends LValue {
 	// 			      generator.global_offset()+
 	// 			      "+"+
 	// 			      Integer.toString(getSymValue().getOffset())));
-	String reg = generator.regName(register,type);
+	String reg = generator.regName(register,getType());
 
 	storeValue(generator, reg);
 	// generator.write(generator.add(generator.regName(register),
@@ -104,5 +104,10 @@ public class Identifier extends LValue {
     public Object staticValue() {
 	SymValue sv = symtable.getSymbol(identifier);
 	return ((Constant)sv.getStatus()).getExpression().staticValue();
+    }
+
+    public boolean isConstant() {
+	SymValue sv = symtable.getSymbol(identifier);
+	return !sv.isVariable();
     }
 }

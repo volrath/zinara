@@ -1,0 +1,15 @@
+Int fibmax = 5
+
+main:
+    var Int u = 0 
+    var Int v = 1 
+    var Int t
+    var Int i = 0
+    while i < fibmax:
+        t = u + v 
+        u = v 
+        v = t
+	print(v)
+	i = i + 1
+    end
+endmain

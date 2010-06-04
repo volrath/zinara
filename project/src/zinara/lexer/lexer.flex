@@ -58,6 +58,8 @@ Number      = {Digit}+
  ")"                             { return symbol(sym.RPAREN); }
  "["                             { return symbol(sym.LBRACKET); }
  "]"                             { return symbol(sym.RBRACKET); }
+ "."                             { return symbol(sym.DOT); }
+ ".."                            { return symbol(sym.DOTDOT); }
  "{"                             { return symbol(sym.LBRACET);}
  "}"                             { return symbol(sym.RBRACET);}
 
