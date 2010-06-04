@@ -1,0 +1,1232 @@
+\documentclass[12pt, spanish]{report}
+%\usepackage[latin1]{inputenc}
+\usepackage[spanish]{babel}
+\renewcommand{\baselinestretch}{1.3}
+\usepackage{graphicx}
+
+\begin{document}
+\title{Universidad Sim\'on Bol\'ivar \\ Lenguajes de Programaci\'on II \\ Zinara}
+\author{
+  Daniel Barreto - \#04-36723 \texttt{<daniel.barreto.n@gmail.com>} \\
+  Germ\'an Jaber - \#06-39743 \texttt{<german@ac.labf.usb.ve>}
+}
+\maketitle
+
+\tableofcontents
+
+\newpage
+\chapter{Introducci\'on}
+
+\chapter{Filosof\'ia y paradigma de programaci\'on}
+\label{chap:diseno}
+
+Este cap\'itulo describe cuales han sido las ideas principales que han
+sido tomadas en cuenta para realizar el dise\~no general de
+\emph{\textbf{Zinara}} y posteriormente se detalla como han sido
+tomadas estas ideas para ser plasmadas en la sintaxis y sem\'antica del
+lenguaje.
+
+\textbf{\emph{Zinara}} esta orientado a ser un lenguaje simple y
+sencillo de leer y aprender, cuyo paradigma de programaci\'on ser\'a
+\'unicamente imperativo.\\
+
+Los principales lineamientos tomados a la hora de desarrollar el
+dise\~no del lenguaje han sido:
+
+\begin{itemize}
+\item \emph{Lo expl\'icito es mejor que lo impl\'icito:}\\
+  \emph{\textbf{Zinara}} es un lenguaje fuertemente y est\'aticamente
+  tipeado, lo que le permite al programador establecer expl\'icitamente
+  todos los tipos de las variables de un programa, y asi poder
+  realizar a tiempo de compilaci\'on gran parte del chequeo del
+  funcionamiento del mismo.
+
+\item \emph{La legibilidad es importante:}\\
+  La sintaxis del lenguaje intentar\'a ser lo mas simple y minimalista
+  posible, sin perder poder de expresividad.
+
+\item \emph{\textbf{Zinara} debe ayudar al programador a sentirse
+    c\'omodo:}\\
+  El dise\~no de las estructuras y herramientas que ofrece
+  \emph{\textbf{Zinara}} estar\'a orientado a brindar flexibilidad y
+  poder de expresi\'on al usuario, sacrificando para esto parte del
+  rendimiento de los programas escritos en el lenguaje.
+\end{itemize}
+
+Como se menciona anteriormente, \emph{\textbf{Zinara}} trata de ser un
+lenguaje que sea facilmente le\'ible, por lo tanto su sintaxis est\'a
+pensada para ser simple y minimalista, buscando tener la menor
+cantidad de adornos posibles, a diferencia de los lenguajes de
+programaci\'on tradicionales\footnote{C/C++, Java, Pascal, entre
+  otros} que cuentan con una gran cantidad de signos de puntuaci\'on
+como delimitadores de instrucciones o declaraciones.\\
+
+Para conseguir este objetivo se tomaron las siguientes decisiones en
+cuanto a la sintaxis del lenguaje:
+
+\begin{itemize}
+\item Las instrucciones de un programa estar\'an delimitadas por un
+  salto de l\'inea, sin ning\'un tipo de signo de puntuaci\'on
+  divisorio.
+
+\item Las estructuras de control (que ser\'an detalladas m\'as
+  adelante) estar\'an delimitadas \'unicamente por una palabra clave
+  que representa dicha estructura, condiciones extras si son
+  requeridas, y la palabra clave de finalizaci\'on de estructura de
+  control: ``end''.
+
+\item Cuando sea posible y tenga sentido hacerlo, se dar\'a
+  preferencia a usar palabras del idioma ingl\'es como palabras clave
+  en donde los lenguajes de programaci\'on tradicionales utilizan
+  signos de puntuaci\'on.
+\end{itemize}
+
+\section{Notaci\'on}
+A continuaci\'on presentamos una notaci\'on para especificar la
+sint\'axis del lenguaje.\\
+\indent Note que las definiciones que se dan a
+continuaci\'on no son descripciones precisas de elementos del
+lenguaje, si no herramientas que usaremos para definir la sint\'axis del
+lenguaje:
+
+\begin{itemize}
+\item Una \texttt{secuencia de car\'acteres v\'alida} es aquella que
+  pertenece al lenguaje regular \texttt{[a-zA-Z0-9():\_\textbackslash
+    n]+}.
+       
+\item Un \texttt{elemento} es una \texttt{secuencia de car\'acteres
+    v\'alida} encerrada entre corchetes, entre \texttt{<} y
+  \texttt{>}, entre numerales o no encerrada.
+       
+\item Toda \texttt{secuencia de car\'acteres v\'alida} se tomar\'a
+  como literal a menos que est\'e encerrada entre \texttt{<} y
+  \texttt{>} o entre corchetes.
+
+\item Todo car\'acter que este precedido por un \textbackslash se
+  tomar\'a como literal, a\'un cuando no pertenezca al lenguaje de las
+  \texttt{secuencias de car\'acteres v\'alidas}.
+       
+\item Uno o m\'as \texttt{elementos} pueden estar encerrados entre
+  corchetes, esto querr\'a decir que ese grupo de \texttt{elementos},
+  en ese order, es opcional en el contexto en el que se encuentra
+  especificado.
+       
+% CHECK THIS!!
+\item Si uno o m\'as \texttt{elementos} est\'an encerrados entre
+  numerales, quiere decir que esos \texttt{elementos} deben ser
+  considerados un solo \texttt{elemento}.
+       
+\item Si dos \texttt{elementos} est\'an separados por \texttt{|}
+  indica que uno y solo uno de esos \texttt{elementos} puede aparecer
+  en ese contexto. El \texttt{|} act\'ua como un \emph{XOR} l\'ogico.
+       
+\item \texttt{<tipo>} representa un tipo cualquiera del lenguaje,
+  explicados en la secci\'on \ref{sec:tipos}.
+
+\item \texttt{<Int>},\texttt{<Float>},\texttt{<Bool>},\texttt{<Char>}
+  representan los tipos b\'asicos del lenguaje, descritos en
+  \ref{sec:tiposbasicos}.
+       
+\item \texttt{<identificador>}, \texttt{<id1>}, \texttt{<id2>}...
+  \texttt{<idN>} representan identificadores del lenguaje. El lenguaje
+  de los identificadores est\'a explicado en la secci\'on
+  \ref{sec:ident}
+       
+\item \texttt{<expresion>}, \texttt{<expr1>}, \texttt{<expr2>}...
+  \texttt{<exprN>} representan expresiones cualquiera del lenguaje, como
+  son explicadas en la secci\'on \ref{sec:expr}.
+       
+\item \texttt{<code\_block>}, \texttt{<code\_block1>},
+  \texttt{<code\_block2>}...  \texttt{<code\_blockN>} representan
+  bloques de c\'odigo del lenguaje, estos bloques de c\'odigo se
+  contruyen secuenciado intrucciones y estructuras de control del
+  lenguaje. La secuenciaci\'on esta explicada en la secci\'on
+  \ref{sec:instr}.
+       
+\item \texttt{<lista\_de\_argumentos>}, \texttt{<arg1>},
+  \texttt{<arg2>}...  \texttt{<argN>} representan par\'ametros formales
+  para las definiciones de funciones del lenguaje. El lenguaje de los
+  par\'ametros formales est\'a explicado en la secci\'on
+  \ref{sec:ident}, las funciones est\'an descritas con detalle en la
+  secci\'on \ref{sec:func}. Al igual que con los
+  \texttt{identificadores} y \texttt{expresiones}, note la posibilidad
+  de que la lista de argumentos lleve \'indices para hacer referencia a
+  su tama\~no de forma abstracta.
+
+\item Note que los n\'umeros representan \'indices sobre las listas
+  explicadas en los cuatro puntos anteriores. Si existen dos listas que
+  tiene \'indices iguales al comienzo y al final, asuma que ambas listas
+  tienen la m\'isma cantidad de elementos.
+       
+\item La cantidad de espacios que deben separar a dos palabras clave
+  es arbitraria, pero siempre mayor a cero. Por comodidad, en este
+  documento se usa un solo espacio.
+\end{itemize}
+
+
+\chapter{Estructura L\'exica}
+
+\section{Codificaci\'on del input del compilador}
+\label{sec:codif}
+La entrada del compilador viene en forma de car\'acteres
+codificados en ASCII extendido.
+
+\section{Estructura de una l\'inea}
+\label{sec:line_struct}
+Una l\'inea termina con un delimitador de l\'inea. Los elementos
+de las l\'ineas est\'an separados por espacios. Los elementos de una
+l\'inea (suponiendo que sea una l\'inea de un programa v\'alido del
+lenguaje) son elementos sint\'acticos del lenguaje. Tanto los delimitadores
+como los espacios est\'an descritos en las dos secciones siguientes.
+
+\subsection{Delimitadores de l\'ineas}
+\label{sec:line_terms}
+Un delimitador de l\'inea puede ser un salto de l\'inea (ASCII 0xA),
+retorno de carro (ASCII 0xD) y retorno de carro seguido de
+salto de l\'inea. No existe forma de separar una l\'inea en varias.
+
+\subsection{Espacios}
+\label{sec:spaces}
+Para los espacios se permiten los car\'acteres ASCII espacio,
+tabulador y formfeed (ASCII's 0x20, 0x9 y 0xC). Un comentario
+tambi\'en puede ser usado como espacio, los comentarios est\'an
+documentados en la secci\'on \ref{sec:comments}.\\
+\indent No importa el n\'umero de espacios que separan dos elementos,
+son tratados como un solo espacio.
+
+\section{Comentarios}
+\label{sec:comments}
+Existen dos tipos de comtentarios:
+
+\subsection{De una sola l\'inea}
+Los comentarios de una l\'inea puedes cubrir parte de una l\'inea
+o la l\'inea completa. La parte de la l\'inea donde comienza el
+comentario est\'a marcada con \texttt{//} y termina con el
+primer salto de l\'inea desde el comienzo del comentario. El salto de
+l\'inea no se incluye en el comentario, la cadena \texttt{//} que marca su
+comienzo si.\\
+\indent Un comentario, aunque no sea parseado por la gram\'atica ni
+convertido en un token, actua como un espacio a nivel sem\'antico.
+
+\subsection{De varias l\'ineas}
+Un comentario de varias l\'ineas comienza con la cadena \texttt{/.} y
+termina con la cadena \texttt{./}, ambos delimitadores est\'an incluidos
+en el comentario. Un comentario de varias l\'ineas puede nacer en cualquier parte
+de cualquier l\'inea y morir en cualquier parte de esa misma l\'inea;
+o en cualquier parte de cualquier l\'inea posterior.
+
+\section{Identificadores y par\'ametros formales}
+\label{sec:ident}
+Los identificadores y par\'ametros formales son aquellas frases que
+pertenecen al lenguaje regular \texttt{[a-zA-Z][a-zA-Z0-9\_']*}. Es
+decir, los identificadores deben comenzar por una letra may\'uscula o
+min\'uscula, a partir de ese punto cualquier combinaci\'on de letras
+may\'usculas y min\'usculas, n\'umeros, \texttt{\_} (piso) y
+\texttt{'} (comillas simples) es v\'alida.
+
+\section{Palabras clave}
+\label{sec:keywords}
+La lista de palabras clave de Zinara que coinciden con el lenguaje regular
+de identificadores y parametros formales (secci\'on \ref{sec:ident}) es la que sigue:
+\begin{itemize}
+\item and
+\item as
+\item Bool
+\item break
+\item Char
+\item continue
+\item copy
+\item def
+\item default
+\item elif
+\item else
+\item end
+\item enddef
+\item endfor
+\item endif
+\item endwhile
+\item False
+\item Float
+\item for
+\item if
+\item in
+\item Int
+\item or
+\item print
+\item read
+\item return
+\item String
+\item True
+\item var
+\item while
+\item xor
+\end{itemize}
+
+\section{Operadores}
+\label{sec:agrup}
+Las cadenas para los operadores son:
+\begin{itemize}
+\item \texttt{+}
+\item \texttt{-}
+\item \texttt{*}
+\item \texttt{/}
+\item \texttt{\%}
+\item \texttt{\^}
+\item \texttt{>}
+\item \texttt{<}
+\item \texttt{>=}
+\item \texttt{<=}
+\item \texttt{==}
+\item \texttt{<==>}
+\item \texttt{and}
+\item \texttt{or}
+\item \texttt{\&}
+\item \texttt{|}
+\item \texttt{xor}
+\item \texttt{!}
+\end{itemize}
+
+\chapter{Dise\~no de Tipos}
+\label{sec:tipos}
+
+\section{Tipos b\'asicos}
+\label{sec:tiposbasicos}
+
+Los tipos b\'asicos del lenguaje son:
+
+\begin{itemize}
+\item \textbf{Int}: Entero
+\item \textbf{Float}: Flotante
+\item \textbf{Bool}: Booleano
+\item \textbf{Char}: Caracter 
+\end{itemize}
+La semantica y compatibilidad de los operadores sobre 
+tipos b\'asicos est\'a documentada en la secci\'on \ref{subsec:comp-tipos}
+
+\subsection{Operadores Aritm\'eticos}
+\begin{itemize}
+\item Suma (\texttt{+})
+\item Resta    (\texttt{-})
+\item Producto (\texttt{*})
+\item Divisi\'on  (\texttt{/})
+\item M\'odulo (\texttt{\%})
+\item Potencia (\texttt{\^})
+\item Menos unario (\texttt{-})
+\end{itemize}
+
+\subsection{Operadores Relacionales}
+\begin{itemize}
+\item Mayor         (\texttt{>})
+\item Menor         (\texttt{<})
+\item Mayor o igual (\texttt{>=})
+\item Menor o igual (\texttt{<=})
+\item Igual (\texttt{==})
+\item Negaci\'on      (\texttt{!})
+\end{itemize}
+
+\subsection{Operadores L\'ogicos}
+\begin{itemize}
+\item And con corto-circuito (\texttt{and})
+\item And sin corto-circuito (\texttt{\&})
+\item Or con corto-circuito  (\texttt{or})
+\item Or sin corto-circuito  (\texttt{|})
+\item Xor (\texttt{xor})
+\end{itemize}
+
+\subsection{Precedencias y asociatividades de operadores}
+\label{sec:basic_preced}
+Todos los operadores asocian a la izquierda. Sus precedencias son:
+\begin{itemize}
+\item \texttt{and}, \texttt{\&}, \texttt{or}, \texttt{|}, \texttt{xor}
+\item \texttt{<} , \texttt{>} , \texttt{<=} , \texttt{>=} , \texttt{==} , \texttt{<=>} , \texttt{!}
+\item \texttt{-} (Unario)
+\item \texttt{\^}
+\item \texttt{*} ,  \texttt{/}, \texttt{\%}
+\item \texttt{+}, \texttt{-} (Binario)
+\item \texttt{Indexaci\'on} (Sobre tipos compuestos)
+\end{itemize}
+Las indexaciones se hacen sobre tipos compuestos (secci\'on \ref{sec:tiposcompuestos}).
+Todas las indexaciones tienen la misma precedencia.
+
+\section{Tipos compuestos}
+\label{sec:tiposcompuestos}
+
+Los tipos compuestos del lenguaje son:
+
+\begin{itemize}
+\item \textbf{String}: Cadena de car\'acteres.
+\item \textbf{List}: Listas de tama\~no fijo de elementos. Los
+  elementos que conforman la lista deben ser del m\'ismo tipo.
+\item \textbf{Tuple}: Tuplas de tama\~no fijo que contienen elementos de
+  cualquier tipo.
+\item \textbf{Dictionary}: Estructuras que contienen pares de
+  \emph{Clave/Valor}, d\'onde las claves son identificadores con los
+  cuales se puede indexar a los valores guardados en la
+  estructura. Los diccionarios son de tamaño fijo.
+\end{itemize}
+
+A continuaci\'on hablaremos brevemente de la sem\'antica y
+comportamiento de estos tipos.
+
+\subsection{Strings}
+\label{sec:strings}
+\begin{itemize}
+\item El tipo \emph{String} est\'a implementado como una lista de
+  \emph{Char}, dej\'andole la tarea al programador de construir
+  funciones que le permitan manipular \emph{Strings}
+\end{itemize}
+
+\subsection{Listas}
+\label{sec:lists}
+\begin{itemize}
+\item El tipo \emph{List} representa contenedores homogeneos,
+  mutables, de tama\~no fijo que pueden contener cualquier tipo
+  b\'asico o compuesto del lenguaje.
+\item La indexaci\'on de las listas se hace a trav\'es de \'indices
+  num\'ericos.
+\item Los indices de una lista deben ser conocidos a tiempo de
+  compilaci\'on.
+\end{itemize}
+
+\subsection{Tuplas}
+\label{sec:tuples}
+\begin{itemize}
+\item El tipo \emph{Tuple} representa contenedores heterogeneos,
+  mutables y de tama\~no fijo que pueden contener cualquier tipo
+  b\'asico o compuesto del lenguaje.
+\item Es necesario que cualquier tipo de indexamiento sobre una tupla
+  se realice con indices que puedan ser conocidos a tiempo de
+  compilaci\'on, para poder realizar el chequeo estatico de tipos
+  correspondiente.
+\item Deben tener, por lo menos, dos elementos.
+\item La indexaci\'on de las tuplas se hace a trav\'es de \'indices
+  num\'ericos, d\'onde el n\'umero del \'indice hace referencia al elemento
+  guardado en dicha posici\'on.
+\item Los \'indices de una tupla deben ser conocidos a tiempo de
+  compilaci\'on.
+\end{itemize}
+
+\subsection{Diccionarios}
+\label{sec:dics}
+\begin{itemize}
+\item El tipo \emph{Dictionary} representa contenedores heterogeneos,
+  mutables y de tama\~no fijo que pueden contener cualquier tipo
+  b\'asico o compuesto del lenguaje.
+\item Para recuperar un valor de un diccionario (indexarlo) se
+  utilizan \'indices alfanum\'ericos que pertenecen al lenguaje
+  regular de los identificadores del lenguaje tal como se describen en
+  la secci\'on \ref{sec:ident}.
+\item Durante la declaraci\'on de un diccionario se definen los
+  nombres de las entradas y el tipo correspondiente a cada una de
+  ellas; cada nombre de entrada puede tener un valor asociado que se
+  puede asignar despu\'es de declarado el diccionario, ese valor debe
+  ser del tipo asociado al nombre de la entrada. Los nombres de las
+  entradas deben pertenecer al lenguaje regular de los identificadores
+  del lenguaje (Secci\'on \ref{sec:ident}).
+\item Un diccionario no puede ser vac\'io, es decir, no puede no tener
+  ninguna entrada.
+\item No pueden ser consultados con \'indices no conocidos a tiempo de
+  compilaci\'on.
+\end{itemize}
+
+\subsection{Operadores sobre tipos compuestos}
+
+\subsubsection{Indexaci\'on de listas y tuplas}
+\label{sec:index_list}
+Las listas y tuplas se indexan con el operador \texttt{[]}.
+Es un operador binario que recibe un entero y una lista o tupla.
+Se usa de manera postfija con respecto a la lista o tupla y encierra
+entre corchetes una expresi\'on entera (Expresiones: \ref{sec:expr}, 
+Tipos b\'asicos: \ref{sec:tiposbasicos}).\\
+\indent El operador retorna el valor que esta en la posici\'on
+de la lista o tupla que contada desde cero que indica la
+expresi\'on entera.
+\indent Por ejemplo, para indexar la posici\'on cero
+de la lista \texttt{a} el c\'odigo podr\'ia ser \texttt{a[0]}.
+
+\subsubsection{Indexaci\'on de diccionarios}
+\label{sec:index_dict}
+Los diccionarios se indexan con el operador \texttt{. (punto)}. Es un operador
+binario infijo que recibe a la izquierda una expresion del tipo
+diccionario y a la derecha un identificador (Expresiones: \ref{sec:expr}, 
+Tipos compuestos: \ref{sec:tiposcompuestos}, Identificadores: \ref{sec:ident}).\\
+\indent Retorna el valor del campo del diccionario que tiene un nombre
+igual al del identificador que recibe a la derecha.
+
+\section{Tipos definidos por el usuario}
+\label{sec:tiposusuario}
+\emph{\textbf{Zinara}} permite al usuario declarar sus propios tipos,
+de tal manera que pueda abstraer el problema de la manera mas c\'omoda
+posible. Para permitir esto \emph{\textbf{Zinara}} usa un alias profundo
+para ligar un nombre definido por el usuario al sistema de tipos del
+lenguaje.\\
+\indent Los objetos de un tipo \texttt{A} definido por el usuario son
+compatibles \'unicamente con objetos del mismo tipo \texttt{A}.\\
+\indent Un nuevo tipo se puede crear a partir de cualquier tipo b\'asico
+o compuesto del lenguaje. La sintaxis para declarar un tipo nuevo es la
+que sigue:
+\begin{verbatim}
+newtype <tipo_nuevo> <tipo>
+\end{verbatim}
+\texttt{\textless tipo\_nuevo\textgreater} representa el nombre del tipo
+nuevo. Este nombre debe pertenecer al lenguaje regular
+\texttt{[a-zA-Z][a-zA-Z\_0-9]*}. \texttt{\textless tipo\textgreater} representa un
+tipo, b\'asico o compuesto, ya definido por el lenguaje.\\
+Cuando se operan dos tipos definidos por el usuario, el compilador
+revisa que la operaci\'on sea compatible con los tipos subyacentes.\\
+No se puede hacer newtype sobre un tipo definido por el usuario, solo
+sobre tipos definidos por el lenguaje.
+
+\subsubsection{Operaciones sobre tipos definidos por el usuario}
+Dado que los tipos definidos por el usuario son un alias, se operan
+igual que el tipo al cual se le hace el alias.
+
+\chapter{Compatiblidad de tipos}
+\label{subsec:comp-tipos}
+Se decidi\'o no usar un n\'umero elevado de coerciones para hacer el
+sistema de tipos m\'as \'util al momento de prevenir el uso incorrecto
+de variables y para ayudar al programador escribir una abstracci\'on del
+problema m\'as precisa.\\
+
+\indent Las cohersiones transforman al tipo donde se pierda menos informaci\'on.\\
+
+\indent A continuaci\'on presentamos las tablas de compatibilidad de
+tipos. Estas muestran el resultado de usar un operador binario o unario sobre
+todas las posibles combinaciones de tipos b\'asicos del lenguaje m\'as
+el tipo compuesto String.\\
+
+\textbf{Tipos B\'asicos:}
+\begin{itemize}
+\item
+\begin{tabular}{|c||ccccc|}
+	\hline
+\texttt{+}  &  Int    &        Float & Char         &      String  & Bool  \\
+	\hline \hline
+Int    & Int          & Float        & \emph{Error} & \emph{Error} & \emph{Error} \\
+Float  & Float        & Float        & \emph{Error} & \emph{Error} & \emph{Error}\\
+Char   & \emph{Error} & \emph{Error} & String       & String       & \emph{Error}\\
+String & \emph{Error} & \emph{Error} & String       & String       & \emph{Error}\\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error}\\
+	\hline
+\end{tabular}\\
+Notas: La suma de dos String los concatena, al igual que la suma de un String
+con un Char y de un Char con un Char.
+
+\item
+\begin{tabular}{|c||ccccc|}
+	\hline
+\texttt{-,*,\%,/,\^}  &  Int  & Float & Char  & String & Bool  \\
+	\hline \hline
+Int    & Int   & Float & \emph{Error} & \emph{Error} & \emph{Error}\\
+Float  & Float & Float & \emph{Error} & \emph{Error} & \emph{Error}\\
+Char   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+String & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+	\hline
+\end{tabular}\\
+
+Notas: Para flotantes y enteros esta operaci\'on representa el m\'odulo de la
+divisi\'on de los valores.\\
+
+\item
+\begin{tabular}{|c||ccccc|}
+	\hline
+\texttt{<,>,<=,>=,==}&  Int  & Float & Char & String & Bool  \\
+	\hline \hline
+Int      &  \emph{Bool} &  \emph{Bool} & \emph{Error} & \emph{Error} & \emph{Error}\\
+Float    &  \emph{Bool} &  \emph{Bool} & \emph{Error} & \emph{Error} & \emph{Error}\\
+Char     & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+String   & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool     & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+	\hline
+\end{tabular}
+
+\item
+\begin{tabular}{|c||ccccc|}
+	    \hline
+and,or,xor\texttt{|},\& &  Int&    Float     &     Char     &     String   & Bool  \\
+	    \hline \hline
+Int         & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Float       & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Char        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+String      & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} \\
+Bool        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Bool} \\
+	\hline
+\end{tabular}
+-
+\item
+\begin{tabular}{|c||cccc|}
+ \hline
+!       &  Int  & Float & Char  & Bool  \\
+ \hline \hline
+        & \emph{Error} & \emph{Error} & \emph{Error} & \emph{Bool} \\
+	\hline
+\end{tabular}
+\end{itemize}
+
+\chapter{Expresiones}
+\label{sec:expr}
+
+Las expresiones tienen un tipo asociado. El tipo de una expresi\'on es
+inferido o determinado en funci\'on de los elementos que formen parte
+de la misma. Se detallan a continuaci\'on:
+
+\begin{itemize}
+\item \textbf{Expresi\'on Binaria:} Es una expresion que est\'a
+  determinada por dos expresiones cualquiera y un operador que las
+  relaciona. El operador puede ser cualquiera de los operadores
+  binarios detallados en la secci\'on \ref{sec:ops}. El tipo
+  resultante de una expresi\'on binaria es obtenido utilizando las
+  tablas de compatibilidad explicadas en la secci\'on \ref{subsec:comp-tipos}.
+
+\item \textbf{Expresi\'on Unaria:} Es una expresi\'on que se encuentra
+  formada por alg\'una otra expresi\'on cualquiera y un operador que
+  act\'ua sobre ella. An\'alogamente que con las expresiones binarias,
+  el operador puede ser cualquiera de los operadores unarios
+  detallados en la secci\'on \ref{sec:ops}. Una operaci\'on bien
+  definida con el operador de ``negaci\'on'' tiene como tipo asociado
+  \emph{Bool} mientras que el tipo de una expresi\'on con el operador
+  ``menos unitario'' es \emph{Int} si la expresi\'on asociada tiene tipo
+  \emph{Int} \'o \emph{Float} si la expresi\'on asociada tiene tipo
+  \emph{Float}.
+
+\item Cualquier literal de los tipos b\'asicos del lenguaje es una
+  expresi\'on. Por ejemplo \texttt{42} en el caso de los \emph{Int},
+  \texttt{3.5} en el caso de los \emph{Float}, \texttt{'a'} en el caso
+  de los \emph{Char}, \texttt{True} en el caso de los \emph{Bool},
+  \texttt{``cadena de caracteres''} en el caso de los \emph{String},
+  \texttt{[1, 2, 3]} en el caso de los \emph{List}, \texttt{(True, [1,
+    2], 'a')} en el caso de los \emph{Tuple} y \texttt{{carro:
+      ``mazda'', id: 6}} en el caso de los \emph{Dictionary}.
+
+\item Cualquier identificador ya declarado de un programa puede ser
+  usado como una expresi\'on que tiene el mismo tipo de la
+  declaraci\'on del identificador y su valor es el valor que almacene
+  dicho identificador. El comportamiento del lenguaje si se usa un
+  identificador al cual no se le ha asignado ning\'un valor esta, por
+  los momentos, indefinido.
+
+\item Cualquier llamada a una funci\'on ya declarada es una
+  expresi\'on que tiene como valor resultante el valor devuelto por la
+  funci\'on, y su tipo es el tipo de retorno de la funci\'on.
+\end{itemize}
+
+\chapter{Declaraciones}
+\label{sec:decl}
+
+Las declaraciones se pueden realizar de dos formas:\\
+
+\textbf{Una a la vez}:
+\begin{verbatim}
+[var] <tipo> <identificador> [= <expresion>]
+\end{verbatim}
+
+\textbf{o de forma m\'ultiple}:
+\begin{verbatim}
+[var] <tipo> <id1>, <id2>, ..., <idN> [= <expr1>, <expr2>, ..., <exprN>]
+\end{verbatim}
+
+La palabra clave \texttt{var} denota si el identificador, o los
+indentificadores, que estan siendo declarados se comportar\'an como
+variables en el lenguaje de programaci\'on. Si \texttt{var} se omite,
+el identificador (o identificadores) ser\'a declarado como constante,
+y una vez que le sea asignado un valor de una expresi\'on, \'este
+ser\'a inmutable. Las palabras reservadas que pueden ir en el lugar de
+\textless tipo\textgreater son, para tipos b\'asicos y los String:
+
+\begin{itemize}
+\item Int
+\item Float
+\item Bool
+\item Char
+\item String
+\end{itemize}
+
+\section{Declaraci\'on de listas, tuplas y diccionarios}
+\label{sec:declc}
+A continuaci\'on describimos la manera en que se especifican los tipos
+de los tipos compuestos durante su declaraci\'on. La sintaxis de la
+declaraci\'on es exactamente igual a la anterior, lo que se especifica
+aqu\'i es la forma en que se indica el tipo compuesto a usar.\\
+
+\textbf{List:}\\
+Se declara encerrando entre corchetes el tipo de la
+lista. De esta forma una lista de Int seria \texttt{[Int]}, una lista
+de listas de Strings ser\'ia \texttt{[[String]]}.\\
+
+La sintaxis es:
+\begin{verbatim}
+[<tipo>]
+\end{verbatim}
+
+\textbf{Tuple:}\\
+Para declarar una tupla se cierra entre par\'entesis una lista de
+tipos separados por comas, uno por cada elemento que la tupla vaya a
+contener; el orden es importante. Una tupla de tres elementos donde el
+primero es una lista de Int, el segundo un Bool y el tercero una tupla
+de dos Int se escribir\'ia de la siguiente forma:
+\texttt{([Int],Bool,(Int,Int))}.\\
+
+La sintaxis es:
+\begin{verbatim}
+(<tipo1>,<tipo2>,...,<tipoN>)
+\end{verbatim}
+
+\textbf{Diccionarios:}\\
+Para los diccionarios se deben declarar los nombres de las entradas y
+los tipos asociados. Una entrada de diccionario se declara escribiendo
+el nombre de la entrada, luego dos puntos, y luego el tipo
+asociado. Un diccionario se declara encerrando entre llaves una lista
+de declaraciones de entradas de diccionario separadas por
+comas. As\'i, un diccionario con una entrada \texttt{carro} del tipo
+String y otra entrada \texttt{color} del tipo Int se declarar\'ia
+\texttt{\{carro:String, color:Int\}}\\
+
+La sintaxis es:
+\begin{verbatim}
+{<id1>:<tipo1> , <id2>:<tipo2> ,..., <idN>:<tipoN>}
+\end{verbatim}
+ % PORQUE?!
+
+Existe un tercer tipo de declaraci\'on: \emph{Declaraci\'on de
+  funciones}, el cual es explicado en la secci\'on \ref{sec:func}.
+
+\section{Alcanze}
+\label{sec:scope}
+Una variable s\'olo es alcanzable dentro del bloque de c\'odigo donde
+es declarada. Tambi\'en es alcanzable desde los bloques de c\'odigo
+internos al bloque de c\'odigo donde esta declarada siempre y cuando
+no halla declaraciones de variables con un identificador igual al de
+la variable.
+
+\section{Dominio de nombres}
+\label{sec:namespaces}
+Las varibles, constantes, funciones y procedimientos comparten un mismo
+espacio de nombres.
+
+\chapter{Instrucciones}
+\label{sec:instr}
+
+Las instrucciones del lenguaje que se pueden realizar sobre los tipos
+definidos en la secci\'on \ref{sec:tipos} y dentro de las estructuras
+de control definidas en la secci\'on pasada son las siguientes:
+
+\begin{itemize}
+\item Secuenciaci\'on
+\item Asignaci\'on
+\item Return
+\item Break
+\item Continue
+\item Estructuras de control (explicadas con detalle en la secci\'on \ref{sec:ecntrl})
+\item Impresi\'on
+\end{itemize}
+
+Adicionalmente, las declaraciones de identificadores o funciones
+tambi\'en cuentan como instrucciones del lenguaje y pueden ir en
+cualquier lugar donde pueda ir una instrucci\'on.
+
+\section{Secuenciaci\'on}
+Se secuenci\'an varias instrucciones y estructuras de control
+separandolas con saltos de l\'inea. No importa que la \'ultima
+instrucci\'on tenga tambi\'en un salto de l\'inea.
+
+\section{Asignaci\'on}
+Sintaxis:
+Las asignaciones se pueden realizar de dos formas:\\
+
+\textbf{Una a la vez}:
+\begin{verbatim}
+<identificador> [= <expresion>]
+\end{verbatim}
+
+\textbf{O de forma m\'ultiple}:
+\begin{verbatim}
+<id1>, <id2>, ..., <idN> [= <expr1>, <expr2>, ..., <exprN>]
+\end{verbatim}
+
+\section{Return}
+\label{sec:return}
+Sintaxis:
+\begin{verbatim}
+return <expr>
+\end{verbatim}
+
+Esta instrucci\'on solo puede ser usada dentro de una funci\'on. Lo
+que hace es detener el flujo de la funci\'on y hacer que esta devuelva
+la expresi\'on \texttt{<expr>}. Es importante destacar que el chequeo
+de tipos asegura que el tipo inferido de la expresi\'on \texttt{expr}
+sea igual al tipo de retorno de la funci\'on en la que se encuentra.
+
+\section{Break}
+\label{sec:return}
+Sintaxis:
+\begin{verbatim}
+break
+\end{verbatim}
+
+Esta instrucci\'on solo puede ser usada dentro de una
+iteraci\'on. Ocasiona que la iteraci\'on deje de ejecutarse.
+Si la estructura est\'a anidada dentro de otra iteraci\'on,
+solo la estructura de control m\'as interna termina.
+
+\section{Continue}
+\label{sec:return}
+Sintaxis:
+\begin{verbatim}
+continue
+\end{verbatim}
+
+Esta instrucci\'on solo puede ser usada dentro de una
+iteraci\'on. Ocasiona que las instrucciones pertenecientes a la
+iteraci\'on y posteriores a esta instrucci\'on sean ignoradas y se
+comienza un nuevo ciclo en la estructura de control iterativa.  Al
+igual que la instrucci\'on \texttt{break}, si la iteraci\'on est\'a
+anidada dentro de otra iteraci\'on, solo la estructura m\'as interna
+se ve afectada por esta instrucci\'on.
+
+\section{Impresi\'on}
+Sintaxis:
+\begin{verbatim}
+print ( <expr> )
+\end{verbatim}
+
+Imprime la expresion entre par\'entesis a la salida
+est\'andar. \texttt{expr} puede tener cualquier tipo del lenguaje.
+
+\chapter{Estructuras de control}
+\label{sec:ecntrl}
+\emph{\textbf{Zinara}} tiene 4 estructuras de control
+\begin{itemize}
+\item \texttt{if}: para ramificar el flujo del programa
+\item \texttt{while}: para ciclos gen\'ericos
+\item \texttt{cycle}: tambi\'en para ciclos gen\'ericos
+\item \texttt{for}: para iterar sobre listas del lenguaje
+\end{itemize}
+
+Los bloques de las estructuras de control son finalizados con la
+palabra clave \texttt{end}. Opcionalmente, pueden ser finalizados con
+un terminador espec\'ifico a ese bloque. Esto es \'util cuando existen
+muchos bloques de estructuras de control anidados, ya que permite
+saber exactamente que tipo de estructura se esta cerrando.\\
+
+Estas dos opciones le permiten al programador elegir entre darle m\'as
+legibilidad al c\'odigo, o simplemente tipear menos car\'acteres para
+finalizar sus bloques de control de flujo.\\
+
+Ahora se revisar\'a la sintaxis de las estructuras de control, la
+notaci\'on para escribir la sint\'axis es la misma que fu\'e definida al
+principio de la secci\'on \ref{sec:synsem}.
+
+\section{If}
+Sintaxis:
+\begin{verbatim}
+   if <expr> :
+       <code_block1>
+  [elif <expr> :
+       <code_block2>]
+   .
+   .
+   .
+  [else :
+       <code_blockN>]
+   end|endif
+\end{verbatim}
+
+\section{While}
+Sintaxis:
+\begin{verbatim}
+   while <expr> :
+       <code_block>
+   end|endwhile
+\end{verbatim}
+
+\section{Cycle}
+Sintaxis:
+\begin{verbatim}
+   cycle:
+     [code_block]
+     [on <expr1> :
+          <code_block1>]
+     [on <expr2> :
+          <code_block2>]
+      .
+      .
+      .
+      # default :
+         <code_blockN> #|
+      # on <exprn> :
+         <code_blockN> #
+   end|endcycle
+\end{verbatim}
+
+Esta estructura de control iterativa recorrera cada una de las
+clausulas \texttt{on} probando el valor de la expresi\'on, tomar\'a la
+primera que sea cierta y cuando termine la ejecuci\'on del bloque de
+c\'odigo asociado a esa clausula volver\'a a recorrerlas. La
+estructura se detiene cuando ninguna clausula se cumple. Opcionalmente
+se puede agregar un bloque de c\'odigo al pricipio de todas las
+clausulas \texttt{on} que se ejecutar\'a al pricipio de todos los
+ciclos.
+
+\section{For}
+Sintaxis:
+\begin{verbatim}
+   for <id> in <expr> :
+       <code_block>
+   end
+\end{verbatim}
+
+Esta estructura esta dise\~nada para recorrer listas del lenguaje,
+por lo que el valor de \texttt{expr} s\'olo puede ser una lista.
+El elemento actual de la iteraci\'on solo se puede accesar a trav\'es
+del identificador \texttt{id} dentro del ciclo. Ni el elemento iterado
+\texttt{expr} ni el \'indice \texttt{id} pueden ser modificados dentro
+de esta estructura de control.\\
+
+
+\chapter{Funciones}
+\label{sec:func}
+
+Las funciones en \emph{\textbf{Zinara}} son declaradas de la siguiente
+forma:
+
+\begin{verbatim}
+def <identificador>(<lista_de_argumentos>) returns \<<tipoR>\>:
+[code_block]
+end|enddef
+\end{verbatim}
+
+D\'onde \texttt{<tipoR>} es el tipo de retorno, y
+\texttt{<lista\_de\_argumentos>} es la lista de los argumentos de la
+funci\'on definida de la siguiente forma:
+
+\begin{verbatim}
+[copy] <arg1> as <tipo1>, ..., [copy] <argN> as <tipoN>
+\end{verbatim}
+
+Las funciones recibir\'an todos sus par\'ametros por referencia. En la
+declaraci\'on de una funci\'on se tienen que declarar expl\'icitamente los
+tipos de cada uno de los argumentos y adicionalmente se proporciona la
+inclusi\'on opcional de la palabra clave \texttt{copy} antes de la
+declaraci\'on de alg\'un argumento para forzar al lenguaje a hacer una
+copia del valor de dicho argumento y no modificar su referencia
+durante la ejecuci\'on del c\'odigo de la funci\'on.\\
+
+Las funciones invocan de la siguiente forma:
+
+\begin{verbatim}
+<identificador>(<expr1>, ..., <exprN>)
+\end{verbatim}
+
+Las llamadas a funciones pueden ser usadas como expresiones y como
+instrucciones (para el caso en que tengan efectos de borde).
+
+\chapter{Representaci\'on de los datos}
+\label{chap:impl}
+\begin{itemize}
+\item \textbf{Int}: Enteros de 32bits.
+\item \textbf{Float}: Flotante del 64bits si la arquitectura es de
+                      64bits, de 32 si la arquitectura es de 32bits.
+\item \textbf{Bool}: Booleano, se representan en unos o ceros de 32bits.
+\item \textbf{Char}: Caracter ASCII. Se guardan en un (1) byte.
+\item \textbf{Listas}: Se guardan como arreglos lineales continuos en memoria.
+\item \textbf{Tuplas}: Se guardan como arreglos lineales continuos en memoria.
+\item \textbf{Diccionarios}: Se guardan como estructuras que respetan el alineamiento
+                       de memoria.
+\end{itemize}
+
+\chapter{IO}
+\label{chap:io}
+
+\chapter{Requerimientos}
+\label{sec:requ}
+
+Para la compilaci\'on y ejecuci\'on del proyecto es necesario cumplir con
+los siguientes requerimientos m\'inimos:
+
+\begin{itemize}
+\item M\'aquina virtual y kit de desarrollo de \emph{Java 1.4.2}.
+\item Instalaci\'on est\'andar de \emph{JFlex}.
+\item Instalaci\'on est\'andar de \emph{JavaCup}.
+\item Instalaci\'on est\'andar de \emph{Apache Ant} (\'Unicamente para
+  compilaci\'on).
+\end{itemize}
+
+\chapter{Compilaci\'on y ejecuci\'on del compilador}
+\section{Compilaci\'on del compilador}
+\label{sec:compilacion}
+Para compilar \emph{\textbf{Zinara}}, una vez que haya sido editado
+alg\'un archivo del c\'odigo fuente, se ejecutan las siguientes l\'ineas de
+comando en una consola UNIX.
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/
+[$> ant clean # para limpiar la compilaci\'on anterior]
+$> ant dist
+\end{verbatim}
+
+Esto se encargar\'a de compilar y empaquetar adecuadamente el proyecto,
+y un ejecutable \texttt{.jar} ser\'a colocado dentro de la carpeta
+\texttt{bin/}.\\
+
+Es importante destacar que si se editan alguno de los archivos
+\texttt{parser.cup} o \texttt{lexer.flex}, es necesario ejecutar sobre
+ellos la herramienta \emph{JavaCUP} o la herramienta \emph{JFlex}
+segÃºn sea el caso, para poder generar los archivos \texttt{.java}
+correspondientes.\\
+
+La ejecuci\'on de las herramientas \emph{JavaCUP} y \emph{JFlex} no ser\'a
+documentada en este informe pu\'es existen formas diversas de hacerlo, y
+var\'ian seg\'un el sistema operativo donde se ejecute y la instalaci\'on
+que se haya realizado de ellas en cada computadora. Para m\'as
+informaci\'on referirse a \cite{javacup} y \cite{jflex}.\\
+
+En \cite{github} se encuentra un repositorio con el mismo c\'odigo
+fuente adjunto (posiblemente m\'as actualizado) y el c\'odigo fuente de
+las herramientas que estan siendo utilizadas para el desarrollo de
+\emph{\textbf{Zinara}}.
+
+\section{Ejecuci\'on del compilador}
+\label{sec:zejecucion}
+Los pasos para ejecutar el proyecto en una consola UNIX son los
+siguientes:
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/classes/
+$> java zinara.Main archivo_de_prueba.zn
+\end{verbatim}
+
+Opcionalmente se puede ejecutar el proyecto desde el un archivo
+\emph{jar} realizando los siguientes pasos:
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/bin/
+$> java -jar zinara.jar archivo_de_prueba.zn
+\end{verbatim}
+
+
+Es importante recordar que para la ejecuci\'on del proyecto, dada la
+elecci\'on de cualquiera de los dos m\'etodos de ejecuci\'on explicados
+anteriormente, es necesario tener bien establecidas las variables de
+ambiente requeridas por las herramientas utilizadas. Referirse a
+\cite{javacup} y \cite{jflex} para m\'as informaci\'on.
+
+\chapter{Compilaci\'on y ejecuci\'on del c\'odigo generado}
+
+\chapter{Corrida de Pruebas}
+\label{sec:pruebas}
+Para probar la efectividad del programa tenemos varios casos de
+prueba. Para correr todos los casos de prueba solo se debe ejecutar el
+script \texttt{allTests.sh} (asegurandose que tenga permisos de
+ejecuci\'on) que se encuentra en la carpeta \texttt{project}.
+
+\begin{verbatim}
+$> cd Zinara-Barreto-Jaber/project/
+$> ./allTests.sh
+\end{verbatim}
+
+Los archivos de prueba se encuentran en la carpeta
+\texttt{Zinara-Barreto-Jaber/test\_files/}.
+Para que el script pueda correr adecuadamente, se deben tener las clases
+de JUnit en el classpath.
+
+\chapter{Herramientas utilizadas}
+\label{sec:herramientas}
+Este cap\'itulo describe brevemente las herramientas que fueron
+utilizadas para la realizaci\'on del analizador sint\'actico
+(\emph{parser}) y el analizador lexicogr\'afico (\emph{lexer}) de
+\emph{\textbf{Zinara}}, as\'i como el resto de las herramientas que han
+sido utilizadas en todo el desarrollo del lenguaje.
+
+\begin{itemize}
+\item Para generar el analizador lexicogr\'afico se utiliz\'o
+  \emph{JFlex}\cite{jflex}, una herramienta que recibe una
+  especificaci\'on de \emph{tokens} o palabras claves y genera c\'odigo en
+  \emph{Java} que se encarga de hacer el reconocimiento de dichos
+  \emph{tokens} dada una entrada de texto cualquiera.
+
+\item Para el analizador sint\'actico se utiliz\'o la herramienta
+  \emph{JavaCUP}\cite{javacup}, un generador de \emph{parsers} LALR(1)
+  que recibe una especificaci\'on de gram\'atica con sintaxis similar
+  al conocido \emph{YACC} y genera el aut\'omata encargado en
+  reconocer dicha gram\'atica en c\'odigo \emph{Java}.\\
+
+  Ambas herramientas est\'an bien documentadas y ofrecen facilidades
+  para interactuar y comunicarse entre ellas, lo cual tuvo un gran
+  peso en la decisi\'on de elegirlas para el desarrollo de
+  \emph{\textbf{Zinara}}.
+
+\item Para simplificar el proceso de compilaci\'on se utiliza
+  \emph{Apache Ant}\cite{ant}, una herramienta de compilaci\'on para
+  compilaci\'on dirigida en \emph{Java}.
+
+\item Para el manejo colaborativo del c\'odigo se utiliza
+  \emph{GIT}\cite{git}, un controlador de versiones distribuido
+  dise\~nado para manejar grandes y peque\~nos proyectos de forma
+  r\'apida.
+
+\item Para la realizaci\'on de pruebas utilizamos framework de pruebas
+  \emph{JUnit}, un framework en Java que permite correr de forma
+  r\'apida, ordenada y automatizada un conjunto de pruebas unitarias
+  definido.
+\end{itemize}
+
+\chapter{Detalles de implementaci\'on}
+\label{sec:codigo}
+
+Para la realizaci\'on del proyecto se organiz\'o el c\'odigo fuente en
+un paquete de java llamado \texttt{zinara} el cual esta estructurado
+de la siguiente manera:
+
+\begin{itemize}
+\item \texttt{zinara.ast}: Paquete d\'onde se encuentran las clases
+  necesarias para representar el \'arbol sint\'actico abstracto y la
+  tabla de s\'imbolos. Estas clases son explicadas con m\'as detalle a
+  continuaci\'on en las secciones \ref{sec:ast} y \ref{sec:st}.
+
+\item \texttt{zinara.lexer}: Paquete d\'onde se encuentra el archivo
+  \texttt{lexer.flex}, que representa la descripci\'on lexicogr\'afica
+  de los \emph{tokens} de \emph{\textbf{Zinara}}. En este paquete se
+  guarda un archivo llamado \texttt{Scanner.java} que contiene el
+  c\'odigo generado por la herramienta \emph{JFlex} al ser aplicada
+  sobre el archivo \texttt{lexer.flex}.
+
+\item \texttt{zinara.parser}: Paquete que contiene el archivo
+  \texttt{parser.cup} que describe la gram\'atica de
+  \emph{\textbf{Zinara}}. An\'alogamente al paquete
+  \texttt{zinara.lexer}, en \texttt{zinara.parser} se guardan los
+  archivos \texttt{parser.java} y \texttt{sym.java} que son generados
+  por la aplicaci\'on de la herramienta \emph{JavaCUP} sobre el
+  archivo \texttt{parser.cup}.
+
+\item \texttt{zinara.tests}: Paquete con las clases que creamos para
+  JUnit. Se encuentran separadas por categorias y cada una ataca un
+  aspecto espec\'ifico del lenguaje.
+
+\item \texttt{zinara.symtable}: Paquete con las clases que permiten
+  crear, consultar y llenar las tablas de s\'imbolos del lenguaje.
+
+\item \texttt{zinara.exceptions}: Paquete con las clases que de las
+  excepciones espec\'ificas al problema que se crearon para controlar
+  de forma correcta la aparici\'on de errores.
+
+\item \texttt{zinara.semantic}: Paquete con las clases que realizan
+  las partes m\'as sensibles del chequeo de tipos.
+
+
+\end{itemize}
+
+La clase principal de ejecuci\'on del proyecto se encuentra en
+\texttt{zinara.Main}, la cual espera recibir como par\'ametro de entrada
+un archivo de texto que contenga c\'odigo escrito para
+\emph{\textbf{Zinara}}. Esta clase se encarga de invocar tanto al
+analizador lexicogr\'afico como al analizador sint\'actico y ejecutarlos
+adecuadamente sobre el contenido del archivo recibido. Actualmente
+\'esta clase principal no realiza ning\'un tipo de chequeo extra a parte
+de los mencionados.
+
+\section{\'Arbol sint\'actico abstracto}
+\label{sec:ast}
+
+El \'arbol sint\'actico abstracto se encuentra implementado como una
+jerarqu\'ia de clases que establecen la representaci\'on sint\'actica de
+cada uno de los elementos del lenguaje.\\
+
+Las clases del \'arbol sint\'actico abstracto est\'an dividas en tres
+conjuntos principales: \emph{expressions} para las expresiones,
+\emph{instructions} para las instrucciones y \emph{types} para los
+tipos. Dentro de cada una de las dos primeras divisiones se encuentran
+clases que representan sint\'acticamente las estructuras explicadas en
+las secciones \ref{sec:expr} y \ref{sec:instr} respectivamente.\\
+
+En el conjunto \emph{types} se encuentran clases que representan los 4
+tipos b\'asicos mencionados en la secci\'on \ref{sec:tiposbasicos}, los 4
+tipos compuestos mencionados en la secci\'on \ref{sec:tiposcompuestos} y una
+clase para representar el tipo de una funci\'on que es compuesto entre
+los tipos de sus argumentos y su tipo de retorno.\\
+
+La clase \emph{Type} modela una estructura en forma de \'arbol para
+poder representar los tipos compuestos. En dicho \'arbol, los tipos
+b\'asicos se representan como hojas y los tipos compuestos como nodos.
+
+\section{Tabla de s\'imbolos}
+\label{sec:st}
+
+Las clases que manejan la tabla de s\'imbolos estan en los archivos
+\texttt{Symtable.java} y \texttt{SymValue.java}, y se encuentran en el paquete
+\texttt{zinara.symtable}
+
+\begin{itemize}
+\item \texttt{Symtable.java}: es un encapsulador(\emph{wrapper}) para
+  HashTable. Simplemente da nombres semanticamente mas coherentes con
+  el manejo de s\'imbolos que los de HashTable. Los pares clave/valor
+  guardados en la tabla de hash son del tipo String/SymValue.
+
+\item \texttt{SymValue.java}: es un contenedor que guarda un Type y un
+  boolean. El Type simplemente indica el tipo del objeto y el boolean
+  indica si el s\'imbolo es variable o no.
+\end{itemize}
+
+\section{C\'odigo adjunto del proyecto}
+\label{sec:correr}
+
+Este proyecto tiene adjunto un archivo comprimido llamado\\
+
+\texttt{zinara-barreto-jaber-entrega1.tar.gz}\\
+
+y dentro de \'este archivo se encuentra una \'unica carpeta llamada
+\textbf{Zinara-Barreto-Jaber/}. Una vez descomprimido el archivo se
+encontrar\'a la siguiente estructura de directorios:
+
+\begin{itemize}
+ \item \textbf{labs/}: Directorio donde se guardan los laboratorios
+       asignados en clases.
+ \item \textbf{project/}: Directorio principal del proyecto, donde se
+       encuentra el codigo fuente y los binarios para la ejecuci\'on.
+ \begin{itemize}
+  \item \textbf{project/bin/}: Directorio donde se guardan los
+	archivos ejecutables para correr el proyecto.
+  \item \textbf{project/classes/}: Directorio donde en encuentran los
+	archivos \texttt{.class} del proyecto.
+  \item \textbf{project/lib/}: Directorio donde se guardan las
+	librerias externas usadas en el desarrollo del proyecto. Para esta
+	entrega no se ha agregado ninguna.
+  \item \textbf{project/src/}: Directorio donde se encuentra el c\'odigo
+	fuente del proyecto.
+  \item \textbf{project/test\_files/}: Directorio donde se encuentran los
+	casos de prueba con los que se comprueba la efectividad de la implementaci\'on.
+ \end{itemize}
+ \item \textbf{reports/}: Directorio donde se guarda el c\'odigo fuente
+       del presente informe, as\'i como su versi\'on en \emph{pdf}.
+\end{itemize}
+
+\chapter{Estado actual del lenguaje}
+\label{chap:estado}
+
+Actualmente \emph{\textbf{Zinara}} cuenta con un funcionamiento
+correcto en su analizador lexicogr\'afico y su analizador sint\'actico. A
+parte de esto tambi\'en construye el \'arbol sint\'actico abstracto y la
+tabla de s\'imbolos de un programa dado. El chequeo de tipos est\'a completo.\\
+\indent Respecto a la generaci\'on de c\'odigo, se cuenta con declaraciones,
+asignaciones, if, while, expresiones booleanas, aritmeticas, reales y chars,
+adem\'as de un IO muy limitado.\\
+\indent En estos momentos existes varias funcionalidades no
+implementadas en el lenguaje, estas son:
+\begin{itemize}
+\item Chequear que no existas returns dentro del cuerpo del main, ya que
+      no tiene sentido hacer return desde el main.
+\item Implementar, tanto en la gram\'atica como en el \'arbol, el manejo
+      de la instrucci\'on newtype para crear tipos de datos definidos
+      por el usuario.
+\item La construcci\'on de las listas, tuplas y diccionarios no esta hecha,
+      pero si el calculo de sus lvalues
+\item IO solo puede imprimir n\'umeros de un solo d\'igito que vivan en el
+      \'area est\'atica. No se puede leer.
+\item Los for no funcionan correctamente debido a la construcci\'on defectuosa
+      de las listas.
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+\end{document}
