@@ -5,6 +5,7 @@ import java.io.IOException;
 import zinara.ast.ASTNode;
 import zinara.ast.type.Type;
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
 import zinara.ast.expression.Identifier;
 import zinara.ast.type.*;
 import zinara.code_generator.Genx86;
@@ -68,49 +69,70 @@ public class SingleDeclaration extends Declaration {
 
     public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
 	if (expr != null) {
-	    String exprReg;
-	    String lvalueReg;
 	    SymValue sv = symTable.getSymbol(identifier);
-	    
-// 	    if (lvalue.type.equals(new BoolType())) {
-// 		booleanAssignationToX86(generator);
-// 		return;
-// 	    }
+	    String exprReg;
+	    String lvalueAddr = generator.global_offset()+"+"+sv.getOffset();
 	    
 	    expr.register = register;
+	    if (type.equals(new BoolType())) {
+		booleanAssignationToX86(generator,lvalueAddr);
+		return;
+	    }
+
 	    expr.tox86(generator);
-	    
-	    storeValue(generator, generator.regName(expr.register, sv.getType()));
+
+	    exprReg = generator.regName(expr.register,expr.type);
+
+	    storeValue(generator,lvalueAddr,exprReg);
 	}
     }
 
-    private void storeValue(Genx86 generator, String currentReg) throws IOException, InvalidCodeException {
-	SymValue sv = symTable.getSymbol(identifier);
-	Type type = sv.getType();
-        //Si es un tipo numerico o boleano, se copian los contenidos
-        if (type.getType() instanceof IntType)
-            generator.write(generator.movInt(currentReg,
-                                          "[" + generator.global_offset() +
-                                          "+" + sv.getOffset() + 
-                                          "]"));
-        else if (type.getType() instanceof FloatType)
-            generator.write(generator.movReal(currentReg,
-                                          "[" + generator.global_offset() +
-                                          "+" + sv.getOffset() + 
-                                          "]"));
-        else if (type.getType() instanceof BoolType)
-            generator.write(generator.movBool(currentReg,
-                                          "[" + generator.global_offset() +
-                                          "+" + sv.getOffset() + 
-                                          "]"));
-        //Si es una lista o diccionario, devuelvo su direccion
-        else if ((type.getType() instanceof ListType)||
-		 (type.getType() instanceof DictType))
-            generator.write(generator.movAddr(currentReg,
-					      generator.global_offset()+
-					      "+"+
-					      Integer.toString(sv.getOffset())));
-        else
-            generator.write("Identificador para el tipo "+type.getType().toString()+" no implementado\n");
+    // This one can be improved =S
+    public void booleanAssignationToX86(Genx86 generator, String lvalueAddr) throws IOException,InvalidCodeException {
+	BooleanExp bExpr = (BooleanExp)expr;
+	String nextDecl = generator.newLabel();
+
+	bExpr.yesLabel  = generator.newLabel();
+	bExpr.noLabel   = generator.newLabel();
+
+	//En caso de que bExpr necesite computarse
+	bExpr.register = register;
+	String bExprReg = generator.regName(bExpr.register,bExpr.type);
+
+	bExpr.tox86(generator);
+	if (!(bExpr instanceof BooleanExp)){
+	    generator.add(bExprReg,"0");
+	    generator.jz(bExpr.noLabel);
+	}
+
+	generator.writeLabel(bExpr.yesLabel);
+
+	// Missing save and restore
+	generator.write(generator.movBool("[" + lvalueAddr + "]", "1"));
+
+	generator.write(generator.jump(nextDecl));
+
+	generator.writeLabel(bExpr.noLabel);
+
+	// Missing save and restore
+	generator.write(generator.movBool("[" + lvalueAddr + "]", "0"));
+
+	generator.writeLabel(nextDecl);
+    }
+
+    private void storeValue(Genx86 generator, String lvalueAddr, String exprReg)
+	throws IOException,InvalidCodeException{
+	if (type.getType() instanceof IntType)
+	    generator.write(generator.movInt("[" + lvalueAddr + "]",
+					     exprReg));
+	else if (type.getType() instanceof FloatType)
+	    generator.write(generator.movReal("[" + lvalueAddr + "]",
+					      exprReg));
+	else if (type.getType() instanceof CharType)
+	    generator.write(generator.movChar("[" + lvalueAddr + "]",
+					      exprReg));
+	else
+	    throw new InvalidCodeException("asignacion a lvalues del tipo "+type.getType()+" no implementada\n");
+	    //generator.write("asignacion de valores del tipo "+lvalue.type.getType().toString()+" no implementado\n");
     }
 }

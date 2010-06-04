@@ -2,11 +2,11 @@ def hola(ulo as Int, ula as Int):
     print(ula)
 enddef
 
-var Int a = 0
-Float b = 9.
-var Int c
-
 main:
+   var Int a = 0
+   Float b = 9.
+   var Int c
+
    [Int|10] d = []
    //a = d[2] + 1
    //d[1] = c
