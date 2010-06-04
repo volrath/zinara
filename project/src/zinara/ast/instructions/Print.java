@@ -2,11 +2,12 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 import zinara.code_generator.*;
-import zinara.exceptions.InvalidCodeException;
 import zinara.ast.type.IntType;
 import zinara.ast.type.FloatType;
 import zinara.ast.type.CharType;
 import zinara.ast.type.BoolType;
+import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 
 import java.io.IOException;
 
@@ -62,19 +63,23 @@ public class Print extends Instruction{
        // Por ahora se asume que todas las expresiones son numeros enteros
         //de un solo digito.
         String code = "";
-        String expReg = generate.regName(register,expr.type);
 
         expr.tox86(generate);
 
         //"Transformo" a ASCII
-        code += generate.add(expReg,"48");
-
-        code += generate.save_print_regs();
-
-        //Necesita ser generico, esperando que asm_io funcione
-        code += generate.movInt("["+generate.stack_pointer()+"]",expReg);
-        // Pongo el valor de la expresion en la pila, ya que la llamada
-        //sys_write necesita que el String este en memoria.
+	try {
+	    String expReg = generate.regName(register,expr.getType());
+	    code += generate.add(expReg,"48");
+	    
+	    code += generate.save_print_regs();
+	    
+	    //Necesita ser generico, esperando que asm_io funcione
+	    code += generate.movInt("["+generate.stack_pointer()+"]",expReg);
+	    // Pongo el valor de la expresion en la pila, ya que la llamada
+	    //sys_write necesita que el String este en memoria.
+	} catch (TypeClashException e) {
+	    System.out.println("HEY!!!");
+	}
         
         code += generate.setup_print(generate.stack_pointer(),"1","4");
         code += generate.syscall();

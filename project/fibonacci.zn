@@ -5,6 +5,7 @@ main:
     var Int v = 1 
     var Int t
     var Int i = 2
+    print(fibmax)
     while i < fibmax:
         t = u + v 
         u = v 
@@ -12,4 +13,5 @@ main:
 	print(v)
 	i = i + 1
     end
+    print(1)
 endmain

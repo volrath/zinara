@@ -102,7 +102,6 @@ Number      = {Digit}+
  "for"                           { return symbol(sym.FOR);}
  "in"                            { return symbol(sym.IN);}
  "endfor"                        { return symbol(sym.ENDFOR);}
- "def"                           { return symbol(sym.DEF);}
  "as"                            { return symbol(sym.AS); }
  "enddef"                        { return symbol(sym.ENDDEF);}
  "while"                         { return symbol(sym.WHILE);}
