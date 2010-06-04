@@ -4,7 +4,7 @@ import zinara.ast.type.BoolType;
 import zinara.ast.type.FloatType;
 import zinara.ast.type.IntType;
 import zinara.ast.type.ListType;
-import zinara.ast.type.Dictype;
+import zinara.ast.type.DictType;
 import zinara.ast.type.Type;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;

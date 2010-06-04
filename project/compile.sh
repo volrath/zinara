@@ -15,6 +15,8 @@ if test "$bits" != "64" -a "$bits" != "32" -a "$bits" != ""; then
     exit 1
 fi
 
-nasm -g -f elf${bits} $1 && \
+./run.sh Main ../$1
+
+nasm -g -f elf${bits} x86.asm && \
 nasm -g -f elf${bits} asm_io.asm && \
-gcc -o ${file%".asm"} ${file%".asm"}.o asm_io.o -lc
+gcc -o x86 x86.o asm_io.o -lc
