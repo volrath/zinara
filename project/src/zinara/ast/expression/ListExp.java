@@ -67,7 +67,7 @@ public class ListExp extends Expression {
 	    expr = (Expression)value.get(i);
 	    expr.register = register;
 	    expr.tox86(generator);
-	    generator.push(generator.regName(expr.register, ((ListType)type).getInsideType()));
+	    generator.write(generator.pushq(generator.regName(expr.register, ((ListType)type).getInsideType())));
 	}
     }
 

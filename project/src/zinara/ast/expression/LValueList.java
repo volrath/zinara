@@ -35,14 +35,16 @@ public class LValueList extends LValue {
 
 	constructor.register = register;
 	index.register       = register + 1;
-	String constructorReg = generator.addrRegName(constructor.register);
-	String valueReg       = generator.regName(constructor.register,type);
-	String indexReg       = generator.intRegName(index.register);
+	try {
+	    String constructorReg = generator.addrRegName(constructor.register);
+	    String valueReg       = generator.regName(constructor.register, getType());
+	    String indexReg       = generator.intRegName(index.register);
 
-	//Deja la direccion en constructorReg
-	currentDirection(generator);
+	    //Deja la direccion en constructorReg
+	    currentDirection(generator);
 
-	storeValue(generator, valueReg, constructorReg);
+	    storeValue(generator, valueReg, constructorReg);
+	} catch(TypeClashException e) {}
 
 	generator.write("; E-----\n");
     }

@@ -11,11 +11,13 @@ main:
    //a = d[2] + 1
    //d[1] = c
    //d[1] = [1,2,3]
-   var Int a' = a
+   //var Int a' = a
 
    [Int|5] x'' = 0 .. 5
+   Int x' = 5
+   print(x')
 
-   c = c + a
+/.   c = c + a
    c = c * 2
    
    a'=10
@@ -35,9 +37,8 @@ main:
 
    var Bool x, y
    //Bool h,j,k
-   [Bool|1] db = [False]
    x = True
    y = False
    //d[1] = x and y
-
+./
 endmain
