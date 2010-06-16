@@ -28,6 +28,8 @@ public class CodeBlock extends Instruction{
 
     public void setSymTable(SymTable st) { this.symTable = st; }
 
+    public SymTable getSymTable() { return this.symTable; }
+
     public String toString() {
 	String ret = "<CodeBlock:";
 	for (int i = 0; i < block.size(); i++)

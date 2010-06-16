@@ -166,16 +166,18 @@ public class Genx86{
 	    symValue.setOffset(total_size);
 	    total_size += symValue.type.size();
 	}
+
 	// then for main variables
 	SymTable mainSymTable = symtable.getSon(symtable.getSons().size()-1);
- 	keyIt = mainSymTable.keySet().iterator();
-	while(keyIt.hasNext()) {
-	    identifier = (String)keyIt.next();
-	    symValue = mainSymTable.getSymbol(identifier);
-	    if (symValue.type.size() == 0) continue;
-	    symValue.setOffset(total_size);
-	    total_size += symValue.type.size();
-	}
+	total_size = mainSymTable.reserve_mem(total_size);
+ 	// keyIt = mainSymTable.keySet().iterator();
+	// while(keyIt.hasNext()) {
+	//     identifier = (String)keyIt.next();
+	//     symValue = mainSymTable.getSymbol(identifier);
+	//     if (symValue.type.size() == 0) continue;
+	//     symValue.setOffset(total_size);
+	//     total_size += symValue.type.size();
+	// }
 
 	// .ASM HEADER
 	//  El espacio para variables, texto de las funciones
@@ -318,13 +320,6 @@ public class Genx86{
 	return regs[next_reg%n_regs];
     }
 
-    //Resta a next_reg.
-    public void prevs_regs(int n) {
-	String exception = "";
-	this.next_reg -= n;
-	exception = regs[next_reg];
-    }
-
     //Reserva tanta memoria como le pidan. data_size es la cantidad
     //de bytes. 
     public String reserve_space_str(String label, int data_size){
@@ -348,6 +343,24 @@ public class Genx86{
 	}
     }
 
+    //Push con resta arbitrari
+    public String push (String thing, int size){
+	String code = "";
+
+	code += mov("["+this.stackp+"]",thing);
+	code += sub(this.stackp,Integer.toString(size));
+	return code;
+    }
+
+    //Push de 1 byte (word)
+    public String pushb (String thing){
+	String code = "";
+
+	code += mov("["+this.stackp+"]",thing);
+	code += sub(this.stackp,"1");
+	return code;
+    }
+
     //Push de 32 bits (word)
     public String pushw (String thing){
 	String code = "";
@@ -356,7 +369,7 @@ public class Genx86{
 	    return "push "+thing+"\n";
 	else{
 	    code += mov("[rsp]",thing);
-	    code += sub("rsp",Integer.toString(Integer.parseInt(stackAlig)/2));
+	    code += sub("rsp","4");
 	    return code;
 	}
     }
@@ -395,11 +408,47 @@ public class Genx86{
     //que se deben mover. Si los bits son vacios
     //nasm deduce cuantos se deben mover, si puede.
     // Independiente de la arquitectura
-    public String pop (String thing, String bits){
+    public String pop (String thing, String size_mod)
+	throws InvalidCodeException{
+	String size;
+	if (size_mod.compareTo("qword")==0){
+	    if (this.bits != 64)
+		throw new InvalidCodeException("pop de un qword en 32 bits");
+	    size = "8";
+	}
+	else if (size_mod.compareTo("dword")==0){ 
+	    size = "4";
+	}
+	else if (size_mod.compareTo("word")==0){
+	    size = "2";
+	}
+	else if (size_mod.compareTo("byte")==0){
+	    size = "1";
+	}
+	else
+	    throw new InvalidCodeException("modificador de tamano invalido");
+    
 	String code = "";
-	code += add(this.stackp,this.stackAlig);
-	code += mov(thing,this.stackp,bits);
+	code += add(this.stackp,size);
+	code += mov(thing,"["+this.stackp+"]",size_mod);
 	return code;
+    }
+
+    public String push(String t, Type type) throws InvalidCodeException{
+	if (type instanceof IntType)
+	    return pushInt(t);
+	else if (type instanceof FloatType)
+	    return pushReal(t);
+	else if (type instanceof BoolType)
+	    return pushInt(t);
+	// else if (type instanceof CharType)
+	//     return pushChar(t);
+	else if ((type instanceof ListType)||
+		 (type instanceof DictType)||
+		 (type instanceof StringType))
+	    return pushAddr(t);
+	else
+	    throw new InvalidCodeException("No se tiene push para el tipo "+type);
     }
 
     public String pushInt (String in){
@@ -431,15 +480,69 @@ public class Genx86{
 	}
     }
 
-    public String pushChar (String ch){
-	if (this.bits == 32)
-	    return push(ch)+mov("["+this.stackp+"-4]","0h","byte");
-	else
-	    return pushw(ch)+mov("["+this.stackp+"-4]","0h","byte");
-    }
+    // public String pushChar (String ch){
+    // 	    return push(ch,"byte");
+    // }
 
     public String pushAddr (String addr){
 	return push(addr);
+    }
+
+    public String pop(String t, Type type) throws InvalidCodeException{
+	if (type instanceof IntType)
+	    return popInt(t);
+	else if (type instanceof FloatType)
+	    return popReal(t);
+	else if (type instanceof BoolType)
+	    return popInt(t);
+	else if (type instanceof CharType)
+	    return popChar(t);
+	else if ((type instanceof ListType)||
+		 (type instanceof DictType)||
+		 (type instanceof StringType))
+	    return popAddr(t);
+	else
+	    throw new InvalidCodeException("No se tiene pop para el tipo "+type);
+    }
+
+    public String popInt (String in)
+	throws InvalidCodeException{
+	    return pop(in,"dword");
+    }
+
+    public String popReal (String real)
+	throws InvalidCodeException{
+	if (this.bits == 32)
+	    return popFloat(real);
+	else
+	    return popDouble(real);
+    }
+
+    public String popFloat (String flo)
+	throws InvalidCodeException{
+	    return pop(flo,"dword");
+    }
+
+    public String popDouble (String dou)
+	throws InvalidCodeException{
+	if (this.bits == 64)
+	    return pop(dou,"qword");
+	else{
+	    throw new InvalidCodeException("popDouble en 32 bits");
+	}
+    }
+
+    public String popChar (String ch)
+	throws InvalidCodeException{
+	return pop(ch,"byte");
+    }
+
+    public String popAddr (String addr)
+	throws InvalidCodeException{
+	if (this.bits == 32)
+	    return pop(addr,"dword");
+	else
+	    return pop(addr,"qword");
     }
 
     // Usando este mov, nasm deducira la cantidad de
@@ -455,10 +558,7 @@ public class Genx86{
     }
 
     public String movInt(String dst, String orig){
-	if (this.bits == 32)
-	    return mov(dst,orig,"dword");
-	else
-	    return mov(dst,orig,"dword");	    
+	return mov(dst,orig,"dword");
     }
 
     public String movReal(String dst, String orig){
@@ -481,6 +581,24 @@ public class Genx86{
 	    return mov(dst,orig,"dword");
 	else
 	    return mov(dst,orig,"qword");
+    }
+
+    public String mov(String dst, String orig, Type type)
+	throws InvalidCodeException{
+	if (type instanceof IntType)
+	    return movInt(dst,orig);
+	else if (type instanceof FloatType)
+	    return movReal(dst,orig);
+	else if (type instanceof BoolType)
+	    return movBool(dst,orig);
+	else if (type instanceof CharType)
+	    return movChar(dst,orig);
+	else if ((type instanceof ListType)||
+		 (type instanceof DictType)||
+		 (type instanceof StringType))
+	    return movAddr(dst,orig);
+	else
+	    throw new InvalidCodeException("No se tiene mov para el tipo "+type);
     }
 
     public String fst(String dst, String size){

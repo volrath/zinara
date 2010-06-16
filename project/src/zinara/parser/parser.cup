@@ -245,7 +245,7 @@ var_decl   ::= VAR type:t dasig:a               {:
 						 currentTable.addDeclaration(RESULT);
 					        :}
              ;
-const_decl  ::=  type:t dasig:a                {:
+const_decl  ::= type:t dasig:a                 {:
 						if (a.isSingle())
 						    RESULT = new SingleDeclaration(t, ((Identifier)((SingleAssignation)a).getLValue()).getIdentifier(), ((SingleAssignation)a).getExpression(), false, currentTable);
 						else
@@ -307,7 +307,7 @@ def_type ::= LITTLE_ARROW type:t {: RESULT = t; :}
 
 /* --- Code blocks --- */
 code_block    ::= code_block:cb instruction:i SEMI          {: cb.addInst(i); RESULT = cb;:}
-                | instruction:i SEMI                        {: RESULT = new CodeBlock(); RESULT.addInst(i); :}
+                | instruction:i SEMI                        {: RESULT = new CodeBlock(); RESULT.setSymTable(currentTable); RESULT.addInst(i); :}
                 ;
 
 instruction   ::= asig:a                                    {: RESULT = a; :}
@@ -322,7 +322,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
 
 //Codeblocks special for loops because loops can't have function declarations
 code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i); RESULT = cb;:}
-                    | instruction_loop:i SEMI                     {:RESULT = new CodeBlock(); RESULT.addInst(i);:}
+                    | instruction_loop:i SEMI                     {:RESULT = new CodeBlock();  RESULT.setSymTable(currentTable); RESULT.addInst(i);:}
                     ;
 
 instruction_loop  ::= asig:a                                      {: RESULT = a; :}

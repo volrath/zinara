@@ -67,11 +67,11 @@ public class Operators {
 	this.table.put(new OP(this.relational, new FloatType(), new IntType()).toString(), new BoolType());
 
 	// Logical
-	this.table.put(new OP(this.logical, new IntType(), new IntType()).toString(), new BoolType());
-	this.table.put(new OP(this.logical, new FloatType(), new FloatType()).toString(), new BoolType());
+	//this.table.put(new OP(this.logical, new IntType(), new IntType()).toString(), new BoolType());
+	//this.table.put(new OP(this.logical, new FloatType(), new FloatType()).toString(), new BoolType());
 	this.table.put(new OP(this.logical, new BoolType(), new BoolType()).toString(), new BoolType());
-	this.table.put(new OP(this.logical, new IntType(), new FloatType()).toString(), new BoolType());
-	this.table.put(new OP(this.logical, new FloatType(), new IntType()).toString(), new BoolType());
+	//this.table.put(new OP(this.logical, new IntType(), new FloatType()).toString(), new BoolType());
+	//this.table.put(new OP(this.logical, new FloatType(), new IntType()).toString(), new BoolType());
 
 	/*
 	  Unary Operators

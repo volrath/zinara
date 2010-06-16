@@ -63,12 +63,19 @@ public class ListExp extends Expression {
 
     public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
 	Expression expr;
-	for (int i = 0; i < value.size(); i++) {
+	Type listType =  ((ListType)type).getInsideType();
+	String reg = generator.regName(register,listType);
+	String regAddr = generator.addrRegName(register);
+
+	for (int i = value.size()-1; i >= 0 ; i--) {
 	    expr = (Expression)value.get(i);
 	    expr.register = register;
 	    expr.tox86(generator);
-	    generator.write(generator.pushq(generator.regName(expr.register, ((ListType)type).getInsideType())));
+	    generator.write(generator.push(reg,listType.size()));
 	}
+
+	generator.write(generator.mov(regAddr,generator.stack_pointer()));
+	generator.write(generator.add(regAddr,Integer.toString(listType.size())));
     }
 
     public boolean isStaticallyKnown() {

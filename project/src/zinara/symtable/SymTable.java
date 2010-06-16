@@ -203,4 +203,28 @@ public class SymTable{
     public Set keySet() {
 	return table.keySet();
     }
+
+    public int reserve_mem(int offset){
+ 	Iterator keyIt = keySet().iterator();
+	String identifier;
+	SymValue symValue;
+	int total_size = offset;
+	int aux;
+
+	while(keyIt.hasNext()) {
+	    identifier = (String)keyIt.next();
+	    symValue = getSymbol(identifier);
+	    if (symValue.type.size() == 0) continue;
+	    symValue.setOffset(total_size);
+	    total_size += symValue.type.size();
+	}
+	
+	for (int i = 0; i < sons.size(); i++){
+	    aux = ((SymTable)sons.get(i)).reserve_mem(total_size);
+	    if (aux > total_size)
+		total_size = aux;
+	}
+
+	return total_size;
+    }
 }

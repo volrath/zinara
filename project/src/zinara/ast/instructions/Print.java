@@ -63,7 +63,8 @@ public class Print extends Instruction{
        // Por ahora se asume que todas las expresiones son numeros enteros
         //de un solo digito.
         String code = "";
-
+	
+	expr.register = register;
         expr.tox86(generate);
 
         //"Transformo" a ASCII

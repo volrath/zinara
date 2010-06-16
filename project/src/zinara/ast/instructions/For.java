@@ -2,9 +2,13 @@ package zinara.ast.instructions;
 import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
+import zinara.ast.type.Type;
+import zinara.ast.type.ListType;
+import zinara.exceptions.InvalidCodeException;
 import zinara.symtable.SymTable;
 import zinara.symtable.SymValue;
-import zinara.ast.type.Type;
+
+import java.io.IOException;
 
 public class For extends Instruction{
     private Expression expr;
@@ -33,6 +37,23 @@ public class For extends Instruction{
 	return "<For " + i + " in " + expr + ": " + code + ">";
     }   
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generator)
+	throws IOException, InvalidCodeException{
+	Type listType = ((ListType)expr.type).getInsideType();
+	String exprAddr = generator.addrRegName(register);
+	String iteration_var = generator.regName(register+1, listType);
+	String iteration_var_addr = generator.global_offset();
+	iteration_var_addr += "+"+code.getSymTable().getSymbol(this.i).getOffset();
+
+	expr.register = register;
+	code.register = register+2;
+
+	expr.tox86(generator);
+	for(int i = 0; i< ((ListType)expr.type).len(); ++i){
+	    generator.write(generator.mov(iteration_var,"["+exprAddr+"]",listType));
+	    generator.write(generator.mov("["+iteration_var_addr+"]",iteration_var,listType));
+	    code.tox86(generator);
+	    generator.write(generator.add(exprAddr,Integer.toString(listType.size())));
+	}
     }
 }

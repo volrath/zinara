@@ -122,38 +122,72 @@ public class SingleDeclaration extends Declaration {
 
     private void storeValue(Genx86 generator, Type t, String lvalueAddr, String exprReg)
 	throws IOException,InvalidCodeException{
-	if (t.getType() instanceof IntType)
-	    generator.write(generator.movInt("[" + lvalueAddr + "]",
-					     exprReg));
-	else if (t.getType() instanceof FloatType)
-	    generator.write(generator.movReal("[" + lvalueAddr + "]",
-					      exprReg));
-	else if (t.getType() instanceof CharType)
-	    generator.write(generator.movChar("[" + lvalueAddr + "]",
-					      exprReg));
-	else if (t.getType() instanceof BoolType)
-	    booleanAssignationToX86(generator, lvalueAddr);
-	else if (t.getType() instanceof ListType) {
+	
+	if (t.getType() instanceof ListType) {
 	    // save
-	    String spAddr1     = generator.addrRegName(register + 1), expReg2;
-	    String lvalueAddr2 = generator.addrRegName(register + 2);
+	    Type listType = ((ListType)t.getType()).getInsideType();
+	    String auxReg = generator.regName(register+1,listType);
+	    String lvalueReg = generator.addrRegName(register+2);
+
+	    generator.write(generator.mov(lvalueReg,lvalueAddr));
 	    int j = 1;
 	    for (int i = ((ListType)t.getType()).len(); i > 0; i--) {
-		generator.write(generator.movAddr(spAddr1, "rsp"));
-		generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
+		generator.write(generator.mov(auxReg,"["+exprReg+"]",listType));
+		generator.write(generator.mov("["+lvalueReg+"]",auxReg,listType));
 
-		generator.write(generator.movAddr(lvalueAddr2, lvalueAddr));
-		generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*((ListType)t.getType()).getInsideType().size()))));
+		generator.write(generator.add(lvalueReg,Integer.toString(listType.size())));
+		generator.write(generator.add(exprReg,Integer.toString(listType.size())));
+		// generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
 
-		expReg2 = generator.regName(register + 1, ((ListType)t.getType()).getInsideType());
+		// generator.write(generator.movAddr(lvalueAddr2, lvalueReg));
+		// generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*listType.size()))));
 
-		storeValue(generator, ((ListType)t.getType()).getInsideType(), lvalueAddr2, expReg2);
-		j++;
+		// expReg2 = generator.regName(register + 1,listType);
+
+		// storeValue(generator, listType, lvalueAddr2, expReg2);
+		// j++;
 	    }
 	    // restore
 	}
-	else
-	    throw new InvalidCodeException("asignacion a lvalues del tipo "+t.getType()+" no implementada\n");
-	    //generator.write("asignacion de valores del tipo "+lvalue.type.getType().toString()+" no implementado\n");
+	else{
+	    generator.write(generator.mov("[" + lvalueAddr + "]",
+					  exprReg, t.getType()));
+	}
     }
+    // private void storeValue(Genx86 generator, Type t, String lvalueAddr, String exprReg)
+    // 	throws IOException,InvalidCodeException{
+    // 	if (t.getType() instanceof IntType)
+    // 	    generator.write(generator.movInt("[" + lvalueAddr + "]",
+    // 					     exprReg));
+    // 	else if (t.getType() instanceof FloatType)
+    // 	    generator.write(generator.movReal("[" + lvalueAddr + "]",
+    // 					      exprReg));
+    // 	else if (t.getType() instanceof CharType)
+    // 	    generator.write(generator.movChar("[" + lvalueAddr + "]",
+    // 					      exprReg));
+    // 	else if (t.getType() instanceof BoolType)
+    // 	    booleanAssignationToX86(generator, lvalueAddr);
+    // 	else if (t.getType() instanceof ListType) {
+    // 	    // save
+    // 	    String spAddr1     = generator.addrRegName(register + 1), expReg2;
+    // 	    String lvalueAddr2 = generator.addrRegName(register + 2);
+    // 	    int j = 1;
+    // 	    for (int i = ((ListType)t.getType()).len(); i > 0; i--) {
+    // 		generator.write(generator.movAddr(spAddr1, "rsp"));
+    // 		generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
+
+    // 		generator.write(generator.movAddr(lvalueAddr2, lvalueAddr));
+    // 		generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*((ListType)t.getType()).getInsideType().size()))));
+
+    // 		expReg2 = generator.regName(register + 1, ((ListType)t.getType()).getInsideType());
+
+    // 		storeValue(generator, ((ListType)t.getType()).getInsideType(), lvalueAddr2, expReg2);
+    // 		j++;
+    // 	    }
+    // 	    // restore
+    // 	}
+    // 	else
+    // 	    throw new InvalidCodeException("asignacion a lvalues del tipo "+t.getType()+" no implementada\n");
+    // 	    //generator.write("asignacion de valores del tipo "+lvalue.type.getType().toString()+" no implementado\n");
+    // }
 }

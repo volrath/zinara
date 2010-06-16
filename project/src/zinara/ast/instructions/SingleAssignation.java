@@ -36,7 +36,8 @@ public class SingleAssignation extends Assignation {
 	return "<" + lvalue + " = " +  expr + ">";
     }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException {
 	String exprReg;
 	String lvalueReg;
 
@@ -54,10 +55,14 @@ public class SingleAssignation extends Assignation {
 
 	lvalue.currentDirection(generator);
 	storeValue(generator, lvalue.type, lvalueReg, exprReg);
+	if (lvalue.type.getType() instanceof ListType) {
+	    generator.write(generator.add(generator.stack_pointer(),Integer.toString(lvalue.type.getType().size())));
+	}
     }
 
     // This one can be improved =S
-    public void booleanAssignationToX86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void booleanAssignationToX86(Genx86 generator)
+	throws IOException,InvalidCodeException {
 	String lvalueReg;
 
 	BooleanExp bExpr = (BooleanExp)expr;
@@ -95,37 +100,35 @@ public class SingleAssignation extends Assignation {
 	generator.write(generator.movBool("[" + lvalueReg + "]", "0"));
     }
 
-    private void storeValue(Genx86 generator, Type t, String lvalueReg, String exprReg)  throws IOException,InvalidCodeException{
-	if (t.getType() instanceof IntType)
-	    generator.write(generator.movInt("[" + lvalueReg + "]",
-					     exprReg));
-	else if (t.getType() instanceof FloatType)
-	    generator.write(generator.movReal("[" + lvalueReg + "]",
-					      exprReg));
-	else if (t.getType() instanceof CharType)
-	    generator.write(generator.movChar("[" + lvalueReg + "]",
-					      exprReg));
-	else if (t.getType() instanceof ListType) {
+    private void storeValue(Genx86 generator, Type t, String lvalueReg, String exprReg)
+	throws IOException,InvalidCodeException{
+	if (t.getType() instanceof ListType) {
 	    // save
-	    String spAddr1     = generator.addrRegName(register + 1), expReg2;
-	    String lvalueAddr2 = generator.addrRegName(register + 2);
+	    Type listType = ((ListType)t.getType()).getInsideType();
+	    String auxReg = generator.regName(register+2,listType);
+	    //String spAddr1     = generator.addrRegName(register + 1), expReg2;
+	    //String lvalueAddr2 = generator.addrRegName(register + 2);
 	    int j = 1;
 	    for (int i = ((ListType)t.getType()).len(); i > 0; i--) {
-		generator.write(generator.movAddr(spAddr1, "rsp"));
-		generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
+		generator.write(generator.mov(auxReg,"["+exprReg+"]",listType));
+		generator.write(generator.mov("["+lvalueReg+"]",auxReg,listType));
 
-		generator.write(generator.movAddr(lvalueAddr2, lvalueReg));
-		generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*((ListType)t.getType()).getInsideType().size()))));
+		generator.write(generator.add(lvalueReg,Integer.toString(listType.size())));
+		generator.write(generator.add(exprReg,Integer.toString(listType.size())));
+		// generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
 
-		expReg2 = generator.regName(register + 1, ((ListType)t.getType()).getInsideType());
+		// generator.write(generator.movAddr(lvalueAddr2, lvalueReg));
+		// generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*listType.size()))));
 
-		storeValue(generator, ((ListType)t.getType()).getInsideType(), lvalueAddr2, expReg2);
-		j++;
+		// expReg2 = generator.regName(register + 1,listType);
+
+		// storeValue(generator, listType, lvalueAddr2, expReg2);
+		// j++;
 	    }
 	    // restore
 	}
 	else
-	    throw new InvalidCodeException("asignacion a lvalues del tipo "+t.getType()+" no implementada\n");
-	    //generator.write("asignacion de valores del tipo "+lvalue.type.getType().toString()+" no implementado\n");
+	    generator.write(generator.mov("[" + lvalueReg + "]",
+					  exprReg, t.getType()));
     }
 }
