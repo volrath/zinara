@@ -182,7 +182,6 @@ def_decl     ::= DEF IDENTIFIER:id
 		  currentTable.checkDoubleDeclaration(id);
 		  currentTable = currentTable.newTable();
 		 :}
-//                 LPAREN args_list:al RPAREN RETURNS LT type:t GT DOUBLEDOTTERM
                    LPAREN args_list:al RPAREN def_type:t DOUBLEDOTTERM
 		 {:
 		     currentTable.addSymbol("return", new SymValue(t,new Constant(null)));
@@ -190,13 +189,13 @@ def_decl     ::= DEF IDENTIFIER:id
 		     code_block:cb 
                  fed
                  {:
+		     cb.setSymTable(currentTable);
+		     currentTable=currentTable.getFather();
 		     if (t != null) {
 			 StaticTypeChecking.checkReturnStatement(id, cb);
 			 RESULT = new SingleDeclaration(new FunctionType(al,t,cb), id, null, false, currentTable);
 		     } else
 			 RESULT = new SingleDeclaration(new ProcedureType(al, cb), id, null, false, currentTable);
-		     currentTable=currentTable.getFather();
-		     cb.setSymTable(currentTable);
 		     if (t != null)
 			 currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), new Constant(null)));
 		     else
@@ -313,9 +312,9 @@ code_block    ::= code_block:cb instruction:i SEMI          {: cb.addInst(i); RE
 instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
-                | var_decl:d                              {: RESULT = new DecInst(d); :}
-                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
-                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
+                | var_decl:d                                {: RESULT = new DecInst(d); :}
+                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, globalTable); :}
+                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), globalTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
                 ;
@@ -328,7 +327,7 @@ code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i
 instruction_loop  ::= asig:a                                      {: RESULT = a; :}
                     | PRINT LPAREN expr:e RPAREN                  {: RESULT = new Print(e); :}
                     | const_decl:d                                {: RESULT = new DecInst(d); :}
-                    | var_decl:d                                {: RESULT = new DecInst(d); :}
+                    | var_decl:d                                  {: RESULT = new DecInst(d); :}
                     | IDENTIFIER:id LPAREN expr_list:el RPAREN    {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
                     | IDENTIFIER:id LPAREN RPAREN                 {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                     | ctrl_struct:cs                              {: RESULT = cs; :}

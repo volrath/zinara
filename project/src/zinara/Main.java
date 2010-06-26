@@ -68,7 +68,7 @@ public class Main {
 	    System.out.println("oops..., classcastE: " + e.toString());
 	    e.printStackTrace();
 	}
-	catch (InvalidArchitectureException e) { System.out.println(e.getMessage());System.exit(1);}
+	//catch (InvalidArchitectureException e) { System.out.println(e.getMessage());System.exit(1);}
 	//catch (InvalidCodeException e) { System.out.println(e.getMessage());System.exit(1);}
 	catch (IdentifierNotDeclaredException e) { System.out.println(e.getMessage());System.exit(1);}
 	catch (IdentifierAlreadyDeclaredException e) { System.out.println(e.getMessage());System.exit(1);}

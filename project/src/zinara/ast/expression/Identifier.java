@@ -38,22 +38,9 @@ public class Identifier extends LValue {
 	// if (isExpression() && !getSymValue().isKnownConstant())
 	//     generator.write(getSymValue().knownConstant(generator));
 
-	// generator.write(generator.mov(generator.regName(register),
-	// 			      generator.global_offset()+
-	// 			      "+"+
-	// 			      Integer.toString(getSymValue().getOffset())));
 	String reg = generator.regName(register,getType());
 
 	storeValue(generator, reg);
-	// generator.write(generator.add(generator.regName(register),
-	// 			      generator.global_space()));
-
-	// if (isExpression()) {
-	//     if (isBool())
-	// 	writeBooleanExpression(generator);
-	//     else
-	// 	writeExpression(generator);
-	// }
     }
 
     public void currentDirection(Genx86 generator) throws IOException{

@@ -117,7 +117,8 @@ public class StaticTypeChecking {
     public static ProcedureCall checkProcedureCall(String procName, ArrayList expr_list, SymTable st)
 	throws TypeClashException, IdentifierNotDeclaredException {
 	SymValue idSymValue = st.getSymValueForIdOrDie(procName);
-	if (!(idSymValue.getType() instanceof ProcedureType)) throw new TypeClashException("El identificador " + procName + " no es un procedimiento");
+	if (!(idSymValue.getType() instanceof ProcedureType))
+	    throw new TypeClashException("El identificador " + procName + " no es un procedimiento");
 	ProcedureType procType = (ProcedureType)idSymValue.getType();
 
 	// Check every argument
@@ -127,7 +128,7 @@ public class StaticTypeChecking {
 	    if (!currentExpr.getType().equals(procType.getArgument(i)))
 		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + procName);
 	}
-	return new ProcedureCall(procName, expr_list);
+	return new ProcedureCall(procName, expr_list, st);
     }
 
     /*

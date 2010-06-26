@@ -68,6 +68,21 @@ public class SingleDeclaration extends Declaration {
     }
 
     public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
+
+	if (type instanceof RoutineType){
+	    String label = generator.newLabel();
+	    RoutineType routine_type = (RoutineType)(symTable.getSymbol(identifier).type);
+	
+	    make_proc(generator,label);
+
+	    //Set del label del procedimiento en el Symtable
+	    ((RoutineType)type).label = label;
+	    routine_type.label = label;
+
+	    return;
+	}
+
+	
 	if (expr != null) {
 	    SymValue sv = symTable.getSymbol(identifier);
 	    String exprReg;
@@ -137,15 +152,6 @@ public class SingleDeclaration extends Declaration {
 
 		generator.write(generator.add(lvalueReg,Integer.toString(listType.size())));
 		generator.write(generator.add(exprReg,Integer.toString(listType.size())));
-		// generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
-
-		// generator.write(generator.movAddr(lvalueAddr2, lvalueReg));
-		// generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*listType.size()))));
-
-		// expReg2 = generator.regName(register + 1,listType);
-
-		// storeValue(generator, listType, lvalueAddr2, expReg2);
-		// j++;
 	    }
 	    // restore
 	}
@@ -154,40 +160,29 @@ public class SingleDeclaration extends Declaration {
 					  exprReg, t.getType()));
 	}
     }
-    // private void storeValue(Genx86 generator, Type t, String lvalueAddr, String exprReg)
-    // 	throws IOException,InvalidCodeException{
-    // 	if (t.getType() instanceof IntType)
-    // 	    generator.write(generator.movInt("[" + lvalueAddr + "]",
-    // 					     exprReg));
-    // 	else if (t.getType() instanceof FloatType)
-    // 	    generator.write(generator.movReal("[" + lvalueAddr + "]",
-    // 					      exprReg));
-    // 	else if (t.getType() instanceof CharType)
-    // 	    generator.write(generator.movChar("[" + lvalueAddr + "]",
-    // 					      exprReg));
-    // 	else if (t.getType() instanceof BoolType)
-    // 	    booleanAssignationToX86(generator, lvalueAddr);
-    // 	else if (t.getType() instanceof ListType) {
-    // 	    // save
-    // 	    String spAddr1     = generator.addrRegName(register + 1), expReg2;
-    // 	    String lvalueAddr2 = generator.addrRegName(register + 2);
-    // 	    int j = 1;
-    // 	    for (int i = ((ListType)t.getType()).len(); i > 0; i--) {
-    // 		generator.write(generator.movAddr(spAddr1, "rsp"));
-    // 		generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
 
-    // 		generator.write(generator.movAddr(lvalueAddr2, lvalueAddr));
-    // 		generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*((ListType)t.getType()).getInsideType().size()))));
+    private void make_proc(Genx86 generator,String label)
+	throws InvalidCodeException,IOException{
+	String asm = "";
+	
+	asm += label+":\n";
+	asm += generator.sub("rsp","8"); //pork call no actualiza rsp
+	asm += generator.push(generator.frame_pointer());
+	asm += generator.mov(generator.frame_pointer(),
+			     generator.stack_pointer());
+	//Vars locales
+	asm += generator.save_regs_callee(register);
+	generator.write(asm);
 
-    // 		expReg2 = generator.regName(register + 1, ((ListType)t.getType()).getInsideType());
+	((RoutineType)type).codeBlock.register = 0;
+	((RoutineType)type).codeBlock.tox86(generator);
 
-    // 		storeValue(generator, ((ListType)t.getType()).getInsideType(), lvalueAddr2, expReg2);
-    // 		j++;
-    // 	    }
-    // 	    // restore
-    // 	}
-    // 	else
-    // 	    throw new InvalidCodeException("asignacion a lvalues del tipo "+t.getType()+" no implementada\n");
-    // 	    //generator.write("asignacion de valores del tipo "+lvalue.type.getType().toString()+" no implementado\n");
-    // }
+	asm = "";
+	asm += generator.restore_regs_callee(register);
+	//vars locales
+	asm += generator.pop(generator.frame_pointer());
+	asm += generator.add("rsp","8");//para que en el tope este la direccion de retorno
+	asm += generator.ret();
+	generator.write(asm);
+    }
 }

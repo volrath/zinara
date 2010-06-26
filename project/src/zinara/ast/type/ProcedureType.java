@@ -4,10 +4,7 @@ import java.util.ArrayList;
 
 import zinara.ast.instructions.CodeBlock;
 
-public class ProcedureType extends Type {
-    public ArrayList argsTypes; // arraylist of Type
-    public CodeBlock codeBlock;
-
+public class ProcedureType extends RoutineType {
     public ProcedureType(ArrayList al, CodeBlock cb) { 
 	this.argsTypes = al;
 	this.codeBlock = cb;

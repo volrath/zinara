@@ -36,7 +36,8 @@ public class Genx86{
     private String save;
     private String restore;
 
-    public Genx86(int bits, String fileName) throws InvalidArchitectureException, IOException{
+    public Genx86(int bits, String fileName)
+	throws InvalidArchitectureException, IOException{
 	if (bits == 64){
 	    regs = new String[14];
 	    dwordRegs = new String[14];
@@ -135,12 +136,9 @@ public class Genx86{
 	    this.file.write("BITS 64\n");
     }
 
-    public void generateProgram(Program program) throws IOException,InvalidCodeException {
-	generateHeader(program.getSymTable());
-
-	// Generate code for all of its functions
-	// ...
-	// And then main
+    public void generateProgram(Program program)
+	throws IOException,InvalidCodeException {
+	// Main
 	program.getMain().register = 0;
 	program.getMain().getCode().nextInst = "halt";
 
@@ -152,7 +150,8 @@ public class Genx86{
 	closeFile();
     }
 
-    public void generateHeader(SymTable symtable) throws IOException,InvalidCodeException {
+    public void generateHeader(SymTable symtable)
+	throws IOException,InvalidCodeException {
 	String identifier;
 	SymValue symValue;
 
@@ -162,7 +161,8 @@ public class Genx86{
 	while(keyIt.hasNext()) {
 	    identifier = (String)keyIt.next();
 	    symValue = symtable.getSymbol(identifier);
-	    if (symValue.type.size() == 0) continue;
+	    if (symValue.type.size() == 0){continue;}
+
 	    symValue.setOffset(total_size);
 	    total_size += symValue.type.size();
 	}
@@ -170,20 +170,156 @@ public class Genx86{
 	// then for main variables
 	SymTable mainSymTable = symtable.getSon(symtable.getSons().size()-1);
 	total_size = mainSymTable.reserve_mem(total_size);
- 	// keyIt = mainSymTable.keySet().iterator();
-	// while(keyIt.hasNext()) {
-	//     identifier = (String)keyIt.next();
-	//     symValue = mainSymTable.getSymbol(identifier);
-	//     if (symValue.type.size() == 0) continue;
-	//     symValue.setOffset(total_size);
-	//     total_size += symValue.type.size();
-	// }
 
 	// .ASM HEADER
 	//  El espacio para variables, texto de las funciones
 	//  y el comienzo del texto del main se crean aca
 	write(reserve_space_str(global_offset, total_size));
 	write(main_header_str());
+    }
+
+    //Reserva tanta memoria como le pidan. data_size es la cantidad
+    //de bytes. 
+    public String reserve_space_str(String label, int data_size){
+	return "section .bss\n   "+label+": resb "+data_size+"\n";
+    }
+
+    public String main_header_str(){
+	return "section .text\n   global main\nmain:\n";
+    }
+
+    //El llamado guarda los registros rbx y r12-r15 para x86_64
+    //El llamado guarda los registros eax,ecx y edx para x86
+    public String save_regs_callee(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //eax
+	    if (reg > 0)
+		code += push(regs[0]);
+
+	    //ecx
+	    if (reg > 2)
+		code += push(regs[2]);
+
+	    //edx
+	    if (reg > 3)
+		code += push(regs[3]);
+	}
+	else{
+	    //rbx
+	    if (reg > 1) 
+		code += push(regs[1]);
+	    
+	    //r12 - r15
+	    for(int i=10; i<reg && i<=13 ; ++i){
+		code += push(regs[i]);
+	    }
+	}
+	
+	return code;
+    }
+
+    //El llamado guarda los registros rbx y r12-r15 para x86_64
+    //El llamado guarda los registros eax,ecx y edx para x86
+    public String restore_regs_callee(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //edx
+	    if (reg > 3)
+		code += pop(regs[3]);
+
+	    //ecx
+	    if (reg > 2)
+		code += pop(regs[2]);
+
+	    //eax
+	    if (reg > 0)
+		code += pop(regs[0]);
+	}
+	else{	    
+	    //r12 - r15
+	    for(int i=min(13,reg); i >= 10; --i){
+		code += pop(regs[i]);
+	    }
+
+	    //rbx
+	    if (reg > 1) 
+		code += pop(regs[1]);
+	}
+	
+	return code;	
+    }
+
+    /*El llamador guarda los registros rax, rcx, rdx, rsi, rdi
+      y r8-r11 para x86_64.*/
+    //El llamador solo guarda los registros ebx, esi y edi para x86
+    public String save_regs_caller(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //ebx
+	    if (reg > 1)
+		code += push(regs[1]);
+
+	    //esi
+	    if (reg > 4)
+		code += push(regs[4]);
+
+	    //edi
+	    if (reg > 5)
+		code += push(regs[5]);
+	}
+	else{
+	    //rax
+	    if (reg > 0) 
+		code += push(regs[0]);
+
+	    //rcx - r11
+	    for(int i=2; i<reg && i<=9 ; ++i){
+		code += push(regs[i]);
+	    }
+	}
+	
+	return code;
+    }
+
+    /*El llamador guarda los registros rax, rcx, rdx, rsi, rdi
+      y r8-r11 para x86_64.*/
+    //El llamador solo guarda los registros ebx, esi y edi para x86
+    public String restore_regs_caller(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //ebx
+	    if (reg > 5)
+		code += pop(regs[5]);
+
+	    //esi
+	    if (reg > 4)
+		code += pop(regs[4]);
+
+	    //edi
+	    if (reg > 1)
+		code += pop(regs[1]);
+	}
+	else{	    
+	    //rcx - r11
+	    for(int i=min(9,reg); i >= 2; --i){
+		code += pop(regs[i]);
+	    }
+
+	    //rax
+	    if (reg > 0) 
+		code += pop(regs[0]);
+	}
+	
+	return code;	
     }
 
     public int stack_align(){
@@ -279,55 +415,23 @@ public class Genx86{
 	return global_offset;
     }
 
-    public String save(){
-	String save;
-
-	if (this.save != null){
-	    save = this.save;
-	    this.save = null;
-	    return save;
-	}
-	else
-	    return "";
-    }
-
-    public String restore(){
-	String restore;
-
-	if (this.restore != null){
-	    restore = this.restore;
-	    this.restore = null;
-	    return restore;
-	}
-	else
-	    return "";
-    }
 
     public String get_reg(int reg){
 	return regs[reg%n_regs];
     }
 
-    //Suma 1 a next_reg y devuelve el string correspondiente.
-    public String next_reg() {
-	this.next_reg += 1;	
-
-	//Seteo save y restore si es necesario
-    	if (next_reg >= n_regs){
-	    this.save = pushw(get_reg(next_reg));
-	    this.restore = pop(get_reg(next_reg));
-	}
-
-	return regs[next_reg%n_regs];
+    public String save(int reg) throws InvalidCodeException{
+	if (this.bits == 32)
+	    return pushw(regId(reg));
+	else
+	    return pushq(regId(reg));
     }
 
-    //Reserva tanta memoria como le pidan. data_size es la cantidad
-    //de bytes. 
-    public String reserve_space_str(String label, int data_size){
-	return "section .bss\n   "+label+": resb "+data_size+"\n";
-    }
-
-    public String main_header_str(){
-	return "section .text\n   global main\nmain:\n";
+    public String restore(int reg) throws InvalidCodeException{
+	if (this.bits == 32)
+	    return pop(regId(reg),"dword");
+	else
+	    return pop(regId(reg),"qword");
     }
 
     //Push
@@ -343,7 +447,7 @@ public class Genx86{
 	}
     }
 
-    //Push con resta arbitrari
+    //Push con resta arbitraria
     public String push (String thing, int size){
 	String code = "";
 
@@ -857,6 +961,14 @@ public class Genx86{
 	return "jle "+label+"\n";
     }
 
+    public String call(String label){
+	return "call "+label+"\n";
+    }
+
+    public String ret(){
+	return "ret\n";
+    }
+
     public String save_print_regs() throws InvalidCodeException{
 	String code = "";
 	if (this.bits == 32){
@@ -951,5 +1063,12 @@ public class Genx86{
 
     public String toReal(float F){
 	return DataTranslator.toReal(F);
+    }
+
+    public int min(int a,int b){
+	if (a>b)
+	    return b;
+	else
+	    return a;
     }
 }

@@ -1,5 +1,6 @@
-def hola(ulo as Int, ula as Int):
-    print(ula)
+def hola():
+    print(156)
+    print(87)
 enddef
 
 Int a = 2
@@ -20,14 +21,16 @@ main:
       print(x''[x'])
       x' = x'+1
    end
-./
+
    for i in [1,2,3,4,5]:
       print(i)
    endfor
+./
+   hola()
+   print(90)
 
-   //print(x')
-
-/.   c = c + a
+/.
+   c = c + a
    c = c * 2
    
    a'=10

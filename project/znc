@@ -10,13 +10,13 @@ if test -z $1; then
     exit 1
 fi
 
-if test "$bits" != "64" -a "$bits" != "32" -a "$bits" != ""; then
-    echo Arquitectura no soportada
-    exit 1
-fi
+#if test "$bits" != "64" -a "$bits" != "32" -a "$bits" != ""; then
+#    echo Arquitectura no soportada
+#    exit 1
+#fi
 
 ./run.sh Main ../$1
 
 nasm -g -f elf${bits} x86.asm && \
 nasm -g -f elf${bits} asm_io.asm && \
-gcc -o x86 x86.o asm_io.o -lc
+gcc -g -o x86 x86.o asm_io.o -lc

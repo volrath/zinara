@@ -14,6 +14,7 @@ import zinara.symtable.SymTable;
 
 public class MultipleDeclaration extends Declaration {
     public ArrayList declarations; // arraylist of SingleDeclaration
+    private Type type;
 
     public MultipleDeclaration(ArrayList ds) { this.declarations = ds; }
 
@@ -22,6 +23,7 @@ public class MultipleDeclaration extends Declaration {
 	for (int  i = 0; i < ids.size(); i++)
 	    declarations.add(new SingleDeclaration(type, ((String)ids.get(i)), null, true, st));
 	this.declarations = declarations;
+	this.type = type;
     }
 
     public MultipleDeclaration(MultipleAssignation asigs, Type type, boolean var, SymTable st) throws TypeClashException {
@@ -29,6 +31,7 @@ public class MultipleDeclaration extends Declaration {
 	for (int i = 0; i < asigs.assignations.size(); i++)
 	    declarations.add(new SingleDeclaration(type, (Identifier)(asigs.get(i).getLValue()), asigs.get(i).getExpression(), var, st));
 	this.declarations = declarations;
+	this.type = type;
     }
 
     public boolean isSingle(){
@@ -41,6 +44,10 @@ public class MultipleDeclaration extends Declaration {
 
     public int size(){
 	return this.declarations.size();
+    }
+    
+    public Type getType(){
+	return this.type;
     }
 
     public String toString() {

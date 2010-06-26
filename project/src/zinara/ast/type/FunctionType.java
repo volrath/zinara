@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 import zinara.ast.instructions.CodeBlock;
 
-public class FunctionType extends Type {
-    public ArrayList argsTypes; // arraylist of Type
+public class FunctionType extends RoutineType {
     public Type returnType;
-    public CodeBlock codeBlock;
 
     public FunctionType(ArrayList al, Type rt, CodeBlock cb) { 
 	this.argsTypes = al;
