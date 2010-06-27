@@ -43,7 +43,7 @@ public class ProcedureCall extends Instruction{
 	code += generate.save_regs_caller(register);
 	//params
 
-	routine = (RoutineType)(symTable.getSymbol(func_name).type);
+	routine = (RoutineType)(symTable.getSymValueForId(func_name).type);
 	code += generate.call(routine.label);
 	
 	//params

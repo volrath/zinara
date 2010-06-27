@@ -313,8 +313,8 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | PRINT LPAREN expr:e RPAREN                {: RESULT = new Print(e); :}
                 | const_decl:d                              {: RESULT = new DecInst(d); :}
                 | var_decl:d                                {: RESULT = new DecInst(d); :}
-                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, globalTable); :}
-                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), globalTable); :}
+                | IDENTIFIER:id LPAREN expr_list:el RPAREN  {: RESULT = StaticTypeChecking.checkProcedureCall(id, el, currentTable); :}
+                | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
                 ;
