@@ -68,12 +68,16 @@ public class ListExp extends Expression {
 	String regAddr = generator.addrRegName(register);
 
 	for (int i = value.size()-1; i >= 0 ; i--) {
+	    //Se genera el valor
 	    expr = (Expression)value.get(i);
 	    expr.register = register;
 	    expr.tox86(generator);
+	    
+	    //Se pushea en la pila
 	    generator.write(generator.push(reg,listType.size()));
 	}
 
+	//Por ultimo, devuelvo la direccion donde comienza la lista
 	generator.write(generator.mov(regAddr,generator.stack_pointer()));
 	generator.write(generator.add(regAddr,Integer.toString(listType.size())));
     }

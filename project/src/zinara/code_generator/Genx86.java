@@ -188,146 +188,8 @@ public class Genx86{
 	return "section .text\n   global main\nmain:\n";
     }
 
-    //El llamado guarda los registros rbx y r12-r15 para x86_64
-    //El llamado guarda los registros eax,ecx y edx para x86
-    public String save_regs_callee(int reg)
-	throws InvalidCodeException{
-	String code = "";
-
-	if (this.bits == 32){
-	    //eax
-	    if (reg > 0)
-		code += push(regs[0]);
-
-	    //ecx
-	    if (reg > 2)
-		code += push(regs[2]);
-
-	    //edx
-	    if (reg > 3)
-		code += push(regs[3]);
-	}
-	else{
-	    //rbx
-	    if (reg > 1) 
-		code += push(regs[1]);
-	    
-	    //r12 - r15
-	    for(int i=10; i<reg && i<=13 ; ++i){
-		code += push(regs[i]);
-	    }
-	}
-	
-	return code;
-    }
-
-    //El llamado guarda los registros rbx y r12-r15 para x86_64
-    //El llamado guarda los registros eax,ecx y edx para x86
-    public String restore_regs_callee(int reg)
-	throws InvalidCodeException{
-	String code = "";
-
-	if (this.bits == 32){
-	    //edx
-	    if (reg > 3)
-		code += pop(regs[3]);
-
-	    //ecx
-	    if (reg > 2)
-		code += pop(regs[2]);
-
-	    //eax
-	    if (reg > 0)
-		code += pop(regs[0]);
-	}
-	else{	    
-	    //r12 - r15
-	    for(int i=min(13,reg); i >= 10; --i){
-		code += pop(regs[i]);
-	    }
-
-	    //rbx
-	    if (reg > 1) 
-		code += pop(regs[1]);
-	}
-	
-	return code;	
-    }
-
-    /*El llamador guarda los registros rax, rcx, rdx, rsi, rdi
-      y r8-r11 para x86_64.*/
-    //El llamador solo guarda los registros ebx, esi y edi para x86
-    public String save_regs_caller(int reg)
-	throws InvalidCodeException{
-	String code = "";
-
-	if (this.bits == 32){
-	    //ebx
-	    if (reg > 1)
-		code += push(regs[1]);
-
-	    //esi
-	    if (reg > 4)
-		code += push(regs[4]);
-
-	    //edi
-	    if (reg > 5)
-		code += push(regs[5]);
-	}
-	else{
-	    //rax
-	    if (reg > 0) 
-		code += push(regs[0]);
-
-	    //rcx - r11
-	    for(int i=2; i<reg && i<=9 ; ++i){
-		code += push(regs[i]);
-	    }
-	}
-	
-	return code;
-    }
-
-    /*El llamador guarda los registros rax, rcx, rdx, rsi, rdi
-      y r8-r11 para x86_64.*/
-    //El llamador solo guarda los registros ebx, esi y edi para x86
-    public String restore_regs_caller(int reg)
-	throws InvalidCodeException{
-	String code = "";
-
-	if (this.bits == 32){
-	    //ebx
-	    if (reg > 5)
-		code += pop(regs[5]);
-
-	    //esi
-	    if (reg > 4)
-		code += pop(regs[4]);
-
-	    //edi
-	    if (reg > 1)
-		code += pop(regs[1]);
-	}
-	else{	    
-	    //rcx - r11
-	    for(int i=min(9,reg); i >= 2; --i){
-		code += pop(regs[i]);
-	    }
-
-	    //rax
-	    if (reg > 0) 
-		code += pop(regs[0]);
-	}
-	
-	return code;	
-    }
-
     public int stack_align(){
 	return Integer.parseInt(this.stackAlig);
-    }
-
-    public String jump(String label) {
-	return "jmp " + label + "\n";
     }
 
     public String newLabel() {
@@ -418,20 +280,6 @@ public class Genx86{
 
     public String get_reg(int reg){
 	return regs[reg%n_regs];
-    }
-
-    public String save(int reg) throws InvalidCodeException{
-	if (this.bits == 32)
-	    return pushw(regId(reg));
-	else
-	    return pushq(regId(reg));
-    }
-
-    public String restore(int reg) throws InvalidCodeException{
-	if (this.bits == 32)
-	    return pop(regId(reg),"dword");
-	else
-	    return pop(regId(reg),"qword");
     }
 
     //Push
@@ -925,6 +773,10 @@ public class Genx86{
 	return "xor "+a+","+b+"\n";
     }
 
+    public String jump(String label){
+        return "jmp " + label + "\n";
+    }
+
     public String cmp(String a, String b){
 	return "cmp "+a+","+b+"\n";
     }
@@ -969,6 +821,27 @@ public class Genx86{
 	return "ret\n";
     }
 
+    public String syscall(){
+	if (this.bits == 32)
+	    return "int 80h\n";
+	else
+	    return "syscall\n";
+    }
+
+    public String save(int reg) throws InvalidCodeException{
+	if (this.bits == 32)
+	    return pushw(regId(reg));
+	else
+	    return pushq(regId(reg));
+    }
+
+    public String restore(int reg) throws InvalidCodeException{
+	if (this.bits == 32)
+	    return pop(regId(reg),"dword");
+	else
+	    return pop(regId(reg),"qword");
+    }
+
     public String save_print_regs() throws InvalidCodeException{
 	String code = "";
 	if (this.bits == 32){
@@ -1007,6 +880,140 @@ public class Genx86{
 	return code;
     }
 
+    //El llamado guarda los registros rbx y r12-r15 para x86_64
+    //El llamado guarda los registros eax,ecx y edx para x86
+    public String save_regs_callee(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //eax
+	    if (reg > 0)
+		code += push(regs[0]);
+
+	    //ecx
+	    if (reg > 2)
+		code += push(regs[2]);
+
+	    //edx
+	    if (reg > 3)
+		code += push(regs[3]);
+	}
+	else{
+	    //rbx
+	    if (reg > 1) 
+		code += push(regs[1]);
+	    
+	    //r12 - r15
+	    for(int i=10; i<reg && i<=13 ; ++i){
+		code += push(regs[i]);
+	    }
+	}
+	
+	return code;
+    }
+
+    //El llamado guarda los registros rbx y r12-r15 para x86_64
+    //El llamado guarda los registros eax,ecx y edx para x86
+    public String restore_regs_callee(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //edx
+	    if (reg > 3)
+		code += pop(regs[3]);
+
+	    //ecx
+	    if (reg > 2)
+		code += pop(regs[2]);
+
+	    //eax
+	    if (reg > 0)
+		code += pop(regs[0]);
+	}
+	else{	    
+	    //r12 - r15
+	    for(int i=min(13,reg); i >= 10; --i){
+		code += pop(regs[i]);
+	    }
+
+	    //rbx
+	    if (reg > 1) 
+		code += pop(regs[1]);
+	}
+	
+	return code;	
+    }
+
+    /*El llamador guarda los registros rax, rcx, rdx, rsi, rdi
+      y r8-r11 para x86_64.*/
+    //El llamador solo guarda los registros ebx, esi y edi para x86
+    public String save_regs_caller(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //ebx
+	    if (reg > 1)
+		code += push(regs[1]);
+
+	    //esi
+	    if (reg > 4)
+		code += push(regs[4]);
+
+	    //edi
+	    if (reg > 5)
+		code += push(regs[5]);
+	}
+	else{
+	    //rax
+	    if (reg > 0) 
+		code += push(regs[0]);
+
+	    //rcx - r11
+	    for(int i=2; i<reg && i<=9 ; ++i){
+		code += push(regs[i]);
+	    }
+	}
+	
+	return code;
+    }
+
+    /*El llamador guarda los registros rax, rcx, rdx, rsi, rdi
+      y r8-r11 para x86_64.*/
+    //El llamador solo guarda los registros ebx, esi y edi para x86
+    public String restore_regs_caller(int reg)
+	throws InvalidCodeException{
+	String code = "";
+
+	if (this.bits == 32){
+	    //ebx
+	    if (reg > 5)
+		code += pop(regs[5]);
+
+	    //esi
+	    if (reg > 4)
+		code += pop(regs[4]);
+
+	    //edi
+	    if (reg > 1)
+		code += pop(regs[1]);
+	}
+	else{	    
+	    //rcx - r11
+	    for(int i=min(9,reg); i >= 2; --i){
+		code += pop(regs[i]);
+	    }
+
+	    //rax
+	    if (reg > 0) 
+		code += pop(regs[0]);
+	}
+	
+	return code;	
+    }
+
     //El addr, si es un label, debe venir sin corchetes
     public String setup_print(String addr, String desc, String bytes){
 	String code = "";
@@ -1041,13 +1048,6 @@ public class Genx86{
 	code += syscall();
 
 	write(code);
-    }
-
-    public String syscall(){
-	if (this.bits == 32)
-	    return "int 80h\n";
-	else
-	    return "syscall\n";
     }
 
     public String toASCII(char C){

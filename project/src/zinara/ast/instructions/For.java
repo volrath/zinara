@@ -40,7 +40,7 @@ public class For extends Instruction{
     public void tox86(Genx86 generator)
 	throws IOException, InvalidCodeException{
 	Type listType = ((ListType)expr.type).getInsideType();
-	String exprAddr = generator.addrRegName(register);
+	String exprAddr = generator.addrRegName(register);  //direccion del la lista
 	String iteration_var = generator.regName(register+1, listType);
 	String iteration_var_addr = generator.global_offset();
 	iteration_var_addr += "+"+code.getSymTable().getSymbol(this.i).getOffset();
@@ -48,12 +48,26 @@ public class For extends Instruction{
 	expr.register = register;
 	code.register = register+2;
 
+	//save
+	generator.write(generator.save(register+1));
+	generator.write(generator.save(register+2));
+
 	expr.tox86(generator);
 	for(int i = 0; i< ((ListType)expr.type).len(); ++i){
+	    //Muevo el siguiente valor de la lista un registro
+	    //y de ahi a la direccion de la variable de iteracion
 	    generator.write(generator.mov(iteration_var,"["+exprAddr+"]",listType));
 	    generator.write(generator.mov("["+iteration_var_addr+"]",iteration_var,listType));
+
+	    //Genero el codigo
 	    code.tox86(generator);
+
+	    //Muevo exprAddr a apuntar a la siguiente posicion de la lista
 	    generator.write(generator.add(exprAddr,Integer.toString(listType.size())));
 	}
+
+	//restore
+	generator.write(generator.restore(register+2));
+	generator.write(generator.restore(register+1));
     }
 }

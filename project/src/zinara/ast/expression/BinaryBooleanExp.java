@@ -60,16 +60,22 @@ public class BinaryBooleanExp extends BooleanExp {
 	String leftReg = generator.regName(left.register,left.type);
 	String rightReg = generator.regName(right.register,left.type);
 
-	// saving and restoring register missing
 	left.tox86(generator);
-	generator.add(leftReg,"0");
-	generator.jz(left.noLabel);
+	generator.write(generator.add(leftReg,"0"));
+	generator.write(generator.jz(left.noLabel));
 
 	generator.writeLabel(left.yesLabel);
 
+	//save
+	generator.write(generator.save(register+1));
+
 	right.tox86(generator);
-	generator.add(rightReg,"0");
-	generator.jz(left.noLabel);
+	generator.write(generator.add(rightReg,"0"));
+
+	//restore
+	generator.write(generator.restore(register+1));
+
+	generator.write(generator.jz(left.noLabel));
     }
 
     public void disjunctionToX86(Genx86 generator, boolean shortCircuit) throws IOException,InvalidCodeException {
@@ -86,29 +92,42 @@ public class BinaryBooleanExp extends BooleanExp {
 
 	// saving and restoring register missing
 	left.tox86(generator);
-	generator.add(leftReg,"0");
-	generator.jnz(left.yesLabel);
+	generator.write(generator.add(leftReg,"0"));
+	generator.write(generator.jnz(left.yesLabel));
 
 	generator.writeLabel(left.noLabel);
 
+	//save
+	generator.write(generator.save(register+1));
+
 	right.tox86(generator);
-	generator.add(rightReg,"0");
-	generator.jnz(left.yesLabel);
+	generator.write(generator.add(rightReg,"0"));
+
+	//restore
+	generator.write(generator.restore(register+1));
+
+	generator.write(generator.jnz(left.yesLabel));
     }
 
     public void xorToX86(Genx86 generator) throws IOException,InvalidCodeException {
-    // 	left.yesLabel  = yesLabel;
-    // 	left.noLabel   = generator.newLabel();
-    // 	right.yesLabel = yesLabel;
-    // 	right.noLabel  = noLabel;
+    	left.register  = register;
+    	right.register = register + 1;
+	String leftReg = generator.regName(left.register,type);
+	String rightReg = generator.regName(right.register,type);
 
-    // 	left.register  = register;
-    // 	right.register = register + 1;
+	//save
+	generator.write(generator.save(register+1));
 
-    // 	// saving and restoring register missing
-    // 	left.tox86(generator);
-    // 	generator.writeLabel(left.noLabel);
-    // 	right.tox86(generator);
+    	left.tox86(generator);
+    	right.tox86(generator);
+	generator.write(generator.xor(leftReg,rightReg));
+
+	//restore
+	generator.write(generator.restore(register+1));
+
+	generator.write(generator.add(leftReg,"0"));
+	generator.write(generator.jnz(yesLabel));
+	generator.write(generator.jump(noLabel));
     }
 
     public boolean isStaticallyKnown() { return left.isStaticallyKnown() && right.isStaticallyKnown(); }

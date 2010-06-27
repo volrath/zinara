@@ -43,20 +43,26 @@ public class LValueDict extends LValue {
 	//Deja en constructorReg la direccion del LValue
 	currentDirection(generator);
 
-	if (type.getType() instanceof IntType)
-	    generator.write(generator.movInt(indexValue,
-					     "[" + constructorReg + "]"));
-	else if (type.getType() instanceof FloatType)
-	    generator.write(generator.movReal(indexValue,
-					      "[" + constructorReg + "]"));
-	else if (type.getType() instanceof BoolType)
-	    generator.write(generator.movBool(indexValue,
-					      "[" + constructorReg + "]"));
-	else if ((type.getType() instanceof ListType)||
-		 (type.getType() instanceof DictType)){
-	    generator.write("; E-----\n");
-	    return;
-	}
+	generator.write(generator.mov(indexValue,
+				      "[" + constructorReg + "]",
+				      type.getType()
+				      )
+			);
+
+	// if (type.getType() instanceof IntType)
+	//     generator.write(generator.movInt(indexValue,
+	// 				     "[" + constructorReg + "]"));
+	// else if (type.getType() instanceof FloatType)
+	//     generator.write(generator.movReal(indexValue,
+	// 				      "[" + constructorReg + "]"));
+	// else if (type.getType() instanceof BoolType)
+	//     generator.write(generator.movBool(indexValue,
+	// 				      "[" + constructorReg + "]"));
+	// else if ((type.getType() instanceof ListType)||
+	// 	 (type.getType() instanceof DictType)){
+	//     generator.write("; E-----\n");
+	//     return;
+	// }
     }
 
     public void currentDirection(Genx86 generator) throws InvalidCodeException, IOException{

@@ -46,40 +46,39 @@ public class LValueTuple extends LValue {
 	generator.write("; E-----\n");
     }
 
-    private void storeValue(Genx86 generator, String valueReg, String addrReg)  throws IOException {
-	if (type.getType() instanceof IntType)
-	    generator.write(generator.movInt(valueReg,
-					     "[" + addrReg + "]"));
-	else if (type.getType() instanceof FloatType)
-	    generator.write(generator.movReal(valueReg,
-					  "[" + addrReg + "]"));
-	else if (type.getType() instanceof BoolType)
-	    generator.write(generator.movBool(valueReg,
-					  "[" + addrReg + "]"));
-	else if ((type.getType() instanceof ListType)||
-		 (type.getType() instanceof DictType)){
-	    generator.write("; E-----\n");
-	    return;
-	}
-	else
-	    generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
+    private void storeValue(Genx86 generator, String valueReg, String addrReg)
+	throws IOException,InvalidCodeException {
+	generator.write(generator.mov(valueReg,
+				      "[" + addrReg + "]",
+				      type.getType()
+				      )
+			);
+
+	// if (type.getType() instanceof IntType)
+	//     generator.write(generator.movInt(valueReg,
+	// 				     "[" + addrReg + "]"));
+	// else if (type.getType() instanceof FloatType)
+	//     generator.write(generator.movReal(valueReg,
+	// 				  "[" + addrReg + "]"));
+	// else if (type.getType() instanceof BoolType)
+	//     generator.write(generator.movBool(valueReg,
+	// 				  "[" + addrReg + "]"));
+	// else if ((type.getType() instanceof ListType)||
+	// 	 (type.getType() instanceof DictType)){
+	//     generator.write("; E-----\n");
+	//     return;
+	// }
+	// else
+	//     generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
     }
 
     public void currentDirection(Genx86 generator) throws InvalidCodeException, IOException{
 	String constructorReg = generator.addrRegName(constructor.register);
 	constructor.currentDirection(generator);
 
-	// Save again, it seems, dont really know.
-	// Restore something
 	generator.write(generator.add(constructorReg,
 				      Integer.toString(calculateOffsetForIndex())));
-	// And restore again	
     }
-    /*****NOTA*****/
-    /* Los enteros, para 64bits, son de 32bits, pero las direcciones
-    son de 64bits, no puedes sumar registros de 32 y 64, asi que
-    necesito el nombre del registro de 64bits donde esta guardado
-    en indice*/
 
     public int calculateOffsetForIndex() {
 	int offset = 0;

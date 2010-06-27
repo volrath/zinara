@@ -122,14 +122,12 @@ public class SingleDeclaration extends Declaration {
 
 	generator.writeLabel(bExpr.yesLabel);
 
-	// Missing save and restore
 	generator.write(generator.movBool("[" + lvalueAddr + "]", "1"));
 
 	generator.write(generator.jump(nextDecl));
 
 	generator.writeLabel(bExpr.noLabel);
 
-	// Missing save and restore
 	generator.write(generator.movBool("[" + lvalueAddr + "]", "0"));
 
 	generator.writeLabel(nextDecl);
@@ -139,10 +137,13 @@ public class SingleDeclaration extends Declaration {
 	throws IOException,InvalidCodeException{
 	
 	if (t.getType() instanceof ListType) {
-	    // save
 	    Type listType = ((ListType)t.getType()).getInsideType();
 	    String auxReg = generator.regName(register+1,listType);
 	    String lvalueReg = generator.addrRegName(register+2);
+
+	    //save
+	    generator.write(generator.save(register+1));
+	    generator.write(generator.save(register+2));
 
 	    generator.write(generator.mov(lvalueReg,lvalueAddr));
 	    int j = 1;
@@ -153,7 +154,10 @@ public class SingleDeclaration extends Declaration {
 		generator.write(generator.add(lvalueReg,Integer.toString(listType.size())));
 		generator.write(generator.add(exprReg,Integer.toString(listType.size())));
 	    }
-	    // restore
+
+	    //restore
+	    generator.write(generator.restore(register+2));
+	    generator.write(generator.restore(register+1));
 	}
 	else{
 	    generator.write(generator.mov("[" + lvalueAddr + "]",

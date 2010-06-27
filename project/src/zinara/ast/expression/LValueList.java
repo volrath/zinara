@@ -33,14 +33,11 @@ public class LValueList extends LValue {
     public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
 	generator.write("; B-----\n");
 
-	constructor.register = register;
-	index.register       = register + 1;
 	try {
 	    String constructorReg = generator.addrRegName(constructor.register);
 	    String valueReg       = generator.regName(constructor.register, getType());
-	    String indexReg       = generator.intRegName(index.register);
 
-	    //Deja la direccion en constructorReg
+	    //Esto deja la direccion en constructorReg
 	    currentDirection(generator);
 
 	    storeValue(generator, valueReg, constructorReg);
@@ -49,23 +46,30 @@ public class LValueList extends LValue {
 	generator.write("; E-----\n");
     }
 
-    private void storeValue(Genx86 generator, String valueReg, String addrReg)  throws IOException{
-	if (type.getType() instanceof IntType)
-	    generator.write(generator.movInt(valueReg,
-					     "[" + addrReg + "]"));
-	else if (type.getType() instanceof FloatType)
-	    generator.write(generator.movReal(valueReg,
-					  "[" + addrReg + "]"));
-	else if (type.getType() instanceof BoolType)
-	    generator.write(generator.movBool(valueReg,
-					  "[" + addrReg + "]"));
-	else if ((type.getType() instanceof ListType)||
-		 (type.getType() instanceof DictType)){
-	    generator.write("; E-----\n");
-	    return;
-	}
-	else
-	    generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
+    private void storeValue(Genx86 generator, String valueReg, String addrReg)
+	throws IOException,InvalidCodeException{
+	generator.write(generator.mov(valueReg,
+				      "[" + addrReg + "]",
+				      type.getType()
+				      )
+			);
+
+	// if (type.getType() instanceof IntType)
+	//     generator.write(generator.movInt(valueReg,
+	// 				     "[" + addrReg + "]"));
+	// else if (type.getType() instanceof FloatType)
+	//     generator.write(generator.movReal(valueReg,
+	// 				  "[" + addrReg + "]"));
+	// else if (type.getType() instanceof BoolType)
+	//     generator.write(generator.movBool(valueReg,
+	// 				  "[" + addrReg + "]"));
+	// else if ((type.getType() instanceof ListType)||
+	// 	 (type.getType() instanceof DictType)){
+	//     generator.write("; E-----\n");
+	//     return;
+	// }
+	// else
+	//     generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
     }
 
     public void currentDirection(Genx86 generator)throws InvalidCodeException, IOException{
@@ -79,17 +83,19 @@ public class LValueList extends LValue {
 
 	constructor.currentDirection(generator);
 
-	// Save, i dont know how to do this
+	//save
+	generator.write(generator.save(register+1));
+
 	index.tox86(generator);
 
-	// Save again, it seems, dont really know.
 	generator.write(generator.imul(indexReg,
 				       Integer.toString(new IntType().size())));
 
-	// Restore something
 	generator.write(generator.add(constructorReg,
 				      offsetReg));
-	// And restore again	
+
+	//restore
+	generator.write(generator.restore(register+1));
     }
     /*****NOTA*****/
     /* Los enteros, para 64bits, son de 32bits, pero las direcciones

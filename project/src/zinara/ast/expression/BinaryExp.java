@@ -37,8 +37,10 @@ public class BinaryExp extends Expression {
 	right.register = register + 1;
 	
 	left.tox86(generate);
-	// Save and restore missing;
-	//generate.write(generate.save());
+
+	//save
+	generate.write(generate.save(register+1));
+
 	right.tox86(generate);
 
 	if (type instanceof IntType)
@@ -50,8 +52,8 @@ public class BinaryExp extends Expression {
 	    System.exit(1);
 	}
 
-	// restore!
-	//generate.write(generate.restore());
+	//restore
+	generate.write(generate.restore(register+1));
     }
 
     private String intOps(Genx86 generate) throws InvalidCodeException{
