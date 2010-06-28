@@ -3,6 +3,7 @@ package zinara.ast;
 import zinara.ast.type.RoutineType;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 import zinara.symtable.SymTable;
 import zinara.symtable.SymValue;
 
@@ -37,21 +38,24 @@ public class Program extends ASTNode {
 	return this.declarations;
     }
 
-    public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
-	for (int i = 0; i < declarations.size(); i++){
-	    Declaration d = (Declaration)(declarations.get(i));
-	    if (d.getType() instanceof RoutineType)
-		d.tox86(generator);
-	}
+    public void tox86(Genx86 generator)
+	throws IOException, InvalidCodeException, TypeClashException {
+	if (declarations != null)
+	    for (int i = 0; i < declarations.size(); i++){
+		Declaration d = (Declaration)(declarations.get(i));
+		if (d.getType() instanceof RoutineType)
+		    d.tox86(generator);
+	    }
 
 	// Reserva de espacio y etiqueta del main
 	generator.generateHeader(symtable);
 
-	for (int i = 0; i < declarations.size(); i++){
-	    Declaration d = (Declaration)(declarations.get(i));
-	    if (! (d.getType() instanceof RoutineType))
-		d.tox86(generator);
-	}
+	if (declarations != null)
+	    for (int i = 0; i < declarations.size(); i++){
+		Declaration d = (Declaration)(declarations.get(i));
+		if (! (d.getType() instanceof RoutineType))
+		    d.tox86(generator);
+	    }
 
 	main.tox86(generator);
     }

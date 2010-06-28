@@ -4,6 +4,7 @@ import zinara.ast.expression.Expression;
 import zinara.ast.instructions.IfCase;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 
 import java.util.ArrayList;
 import java.io.IOException;
@@ -26,7 +27,16 @@ public class If extends Instruction{
 	return (ret + ">");
     }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void checkNoReturns(){
+	IfCase ifc;
+	for(int i = 0; i<cases.size(); i++){
+	    ifc=((IfCase)cases.get(i));
+	    ifc.checkNoReturns();
+	}
+    }
+
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException{
 	IfCase ic;
 	for (int i = 0; i < cases.size(); i++) {
 	    ic = (IfCase)cases.get(i);

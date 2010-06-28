@@ -4,9 +4,9 @@ main:
 Bool h = False
 
 for i in [True,False,True,True]:
-   Bool h
+   Bool h = False
    print(h)
-   Bool i'=True
+   Bool j = True
 endfor
 
 for i in [1,2,3,4,5]:

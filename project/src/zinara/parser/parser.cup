@@ -26,6 +26,16 @@ SymTable globalTable = new SymTable();
 SymTable mainTable = new SymTable(globalTable);
 SymTable currentTable = globalTable;
 int cycles_depth = 0;
+
+public void badContinue(){
+    System.out.println("Continue fuera de lugar");
+    System.exit(1);
+}
+
+public void badBreak(){
+    System.out.println("Break fuera de lugar");
+    System.exit(1);
+}
 :}
 
 parser code {:
@@ -162,7 +172,11 @@ program   ::= main:m               {: RESULT = new Program(currentTable, m);    
             | decl_list:ds main:m  {: RESULT = new Program(currentTable, m, ds); :}
             ;
 
-main      ::= MAIN {: currentTable = currentTable.newTable(); :} code_block:cb {: currentTable = currentTable.getFather(); RESULT = new Main(cb); :} ENDMAIN
+main      ::= MAIN {: currentTable = currentTable.newTable(); :} 
+              code_block:cb {: currentTable = currentTable.getFather();
+                               RESULT = new Main(cb); 
+                               ((Main)RESULT).checkNoReturns();:}
+              ENDMAIN
             ;
 
 /*
@@ -194,8 +208,10 @@ def_decl     ::= DEF IDENTIFIER:id
 		     if (t != null) {
 			 StaticTypeChecking.checkReturnStatement(id, cb);
 			 RESULT = new SingleDeclaration(new FunctionType(al,t,cb), id, null, false, currentTable);
-		     } else
+		     } else{
+                         cb.checkNoReturns();
 			 RESULT = new SingleDeclaration(new ProcedureType(al, cb), id, null, false, currentTable);
+                     }
 		     if (t != null)
 			 currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), new Constant(null)));
 		     else
@@ -317,9 +333,19 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
                 | IDENTIFIER:id LPAREN RPAREN               {: RESULT = StaticTypeChecking.checkProcedureCall(id, new ArrayList(), currentTable); :}
                 | ctrl_struct:cs                            {: RESULT = cs; :}
                 | RETURN expr:e                             {: RESULT = StaticTypeChecking.checkReturnValue(e, currentTable); :}
+                | CONTINUE                                  {: if (cycles_depth > 0)
+                                                                  RESULT = new Continue();
+							       else
+							          badContinue();
+						            :}
+                | BREAK                                     {: if (cycles_depth > 0)
+                                                                  RESULT = new Break(); 
+							       else
+							          badBreak();
+                                                            :}
                 ;
 
-//Codeblocks special for loops because loops can't have function declarations
+//Codeblocks special for loops because only loops have break and continue
 code_block_loop   ::= code_block_loop:cb instruction_loop:i SEMI  {:cb.addInst(i); RESULT = cb;:}
                     | instruction_loop:i SEMI                     {:RESULT = new CodeBlock();  RESULT.setSymTable(currentTable); RESULT.addInst(i);:}
                     ;

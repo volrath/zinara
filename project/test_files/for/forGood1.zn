@@ -1,10 +1,10 @@
 main:
-    [Int] x = [1, 2, 3]
+    [Int|3] x = [1, 2, 3]
     for e in x:
     	print(e)
     end
 
-    [Int] y = []
+    [Int|1] y = [5]
     for e in y:
     	print(e)
     end

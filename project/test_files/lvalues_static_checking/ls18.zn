@@ -1,4 +1,4 @@
-(Char, Int) x
+var (Char, Int) x
 Char y = 'a'
 
 main:

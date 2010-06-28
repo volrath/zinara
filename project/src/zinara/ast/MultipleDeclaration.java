@@ -58,7 +58,8 @@ public class MultipleDeclaration extends Declaration {
 	return "MultipleDeclaration:" + ret;
     }
 
-    public void tox86(Genx86 generate) throws IOException, InvalidCodeException {
+    public void tox86(Genx86 generate)
+	throws IOException,InvalidCodeException,TypeClashException {
 	for (int i = 0; i < declarations.size(); i++)
 	    ((SingleDeclaration)declarations.get(i)).tox86(generate);
     }

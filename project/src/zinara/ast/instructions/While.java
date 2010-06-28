@@ -3,6 +3,7 @@ package zinara.ast.instructions;
 import zinara.ast.expression.BooleanExp;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 
 import java.io.IOException;
 
@@ -25,7 +26,12 @@ public class While extends Instruction{
 
     public String toString() { return "While " + expr + ": " + code + ">"; }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void checkNoReturns(){
+	code.checkNoReturns();
+    }
+
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException{
 	expr.yesLabel = generator.newLabel();
 	expr.noLabel  = nextInst;
 

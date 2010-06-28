@@ -1,19 +1,19 @@
-def holamundo (string as Char, copy times as Int) returns<Char>:
+def holamundo (string as Char, times as Int) -> Char:
     print(string)
     times = times + 5
     return string
 end
 
-def goodbye () returns<Int>:
+def goodbye ():
     Int google = 90
     print(google)
-    return google
 end
 
 main:
     Char a = 'g'
-    Int b
+    var Char c
+    var Int b
     b = 90
-    holamundo(a,b)
+    c = holamundo(a,b)
     goodbye()
 endmain

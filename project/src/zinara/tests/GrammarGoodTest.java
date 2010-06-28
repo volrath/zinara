@@ -42,16 +42,6 @@ public class GrammarGoodTest extends TestCase {
 	}
     }
 
-    public void testCycle() {
-	try {
-	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_cycle.zn");
-	}
-	catch (Exception e) { // any other exception
-	    e.printStackTrace();
-	    fail("Should not raise anything");
-	}
-    }
-
     public void testDefs() {
 	try {
 	    Main.testStaticFail(STATIC_TC_DIR + "/struct_insts/g_defs.zn");

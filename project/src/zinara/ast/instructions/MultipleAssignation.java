@@ -8,6 +8,7 @@ import zinara.ast.expression.Expression;
 import zinara.ast.expression.Identifier;
 import zinara.exceptions.InvalidAssignationException;
 import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 
 public class MultipleAssignation extends Assignation {
     public ArrayList assignations; // Array of SingleAssignation
@@ -43,7 +44,8 @@ public class MultipleAssignation extends Assignation {
 	return "<MultipleAssignation:" + ret + ">";
     }
 
-    public void tox86(Genx86 generate) throws IOException,InvalidCodeException{
+    public void tox86(Genx86 generate)
+	throws IOException,InvalidCodeException,TypeClashException{
 	for (int i = 0; i < assignations.size(); i++)
 	    ((SingleAssignation)assignations.get(i)).tox86(generate);
     }

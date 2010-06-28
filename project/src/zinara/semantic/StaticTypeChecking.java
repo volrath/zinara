@@ -79,9 +79,15 @@ public class StaticTypeChecking {
 	throws TypeClashException, InvalidInstructionException {
 	SymValue idSymValue = st.getSymValueForId("return");
 	if (idSymValue != null) { // we're inside a funtion
-	    if (expr.getType().equals(idSymValue.getType())) return new Return(expr);
-	    else throw new TypeClashException("Tipo de retorno de la funcion " + idSymValue.getType() + " difiere del tipo de la expresion " + expr);
-	} else throw new InvalidInstructionException("Instruccion `return` no permitida en el main");
+	    if (idSymValue.getType() == null)
+		throw new InvalidInstructionException("Instruccion `return` no permitida en un procedimiento");
+	    else if (expr.getType().equals(idSymValue.getType()))
+		return new Return(expr);
+	    else 
+		throw new TypeClashException("Tipo de retorno de la funcion " + idSymValue.getType() + " difiere del tipo de la expresion " + expr);
+	}
+	else 
+	    throw new InvalidInstructionException("Instruccion `return` no permitida en el main");
     }
 
     /*

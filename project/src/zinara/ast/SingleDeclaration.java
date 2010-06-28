@@ -67,7 +67,8 @@ public class SingleDeclaration extends Declaration {
 	return "(Declaration: " + type + " " + identifier + " [" + status + "])";
     }
 
-    public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException, InvalidCodeException, TypeClashException {
 
 	if (type instanceof RoutineType){
 	    String label = generator.newLabel();
@@ -166,7 +167,7 @@ public class SingleDeclaration extends Declaration {
     }
 
     private void make_proc(Genx86 generator,String label)
-	throws InvalidCodeException,IOException{
+	throws InvalidCodeException,IOException,TypeClashException{
 	String asm = "";
 	
 	asm += label+":\n";

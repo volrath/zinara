@@ -22,10 +22,17 @@ main:
       x' = x'+1
    end
 
-   for i in [1,2,3,4,5]:
-      print(i)
-   endfor
 ./
+   for i in [1,2,3,4,5]:
+      if i<2:
+      while True:
+        break
+      endwhile
+      endif
+      print(i)
+      break 
+   endfor
+
    hola()
    print(90)
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import zinara.ast.instructions.DecInst;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 import zinara.symtable.SymTable;
 
 public class CodeBlock extends Instruction{
@@ -37,7 +38,21 @@ public class CodeBlock extends Instruction{
 	return (ret.substring(0, ret.length()-1) + ">");
     }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException{
+    public void checkNoReturns(){
+	Instruction ins;
+	for(int i = 0; i<block.size(); i++){
+	    ins=((Instruction)block.get(i));
+	    if (ins instanceof Return){
+		System.out.println("return fuera de una funcion");
+		System.exit(1);
+	    }
+	    else
+		ins.checkNoReturns();
+	}
+    }
+
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException{
 	Instruction inst;
 	
 	for (int i = 0; i < block.size(); i++) {
