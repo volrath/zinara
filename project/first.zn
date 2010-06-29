@@ -11,9 +11,12 @@ enddef
 Int a = 2
 Float b = 9.
 var Int c
+newtype Entero as Int
 
 main:
    var Float b' = function(c)
+   var Entero ent
+   ent = 1
 
    //[Int|2] d = []
    //a = d[2] + 1

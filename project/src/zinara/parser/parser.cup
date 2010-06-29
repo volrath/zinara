@@ -192,7 +192,7 @@ decl_list    ::= decl_list:ds decl:d SEMI        {: RESULT = ds; RESULT.add(d); 
                | def_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d); :}
                | newtype {: RESULT = new ArrayList(); :}
                ;
-newtype      ::= NEWTYPE IDENTIFIER:id AS type:t ;
+newtype      ::= NEWTYPE IDENTIFIER:id AS type:t {: typeTable.checkAndAdd(id, t); :};
 
 /* --- Functions declarations --- */
 def_decl     ::= DEF IDENTIFIER:id 
