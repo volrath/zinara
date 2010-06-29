@@ -37,7 +37,7 @@ public class SingleAssignation extends Assignation {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException {
+	throws IOException,InvalidCodeException {
 	String exprReg;
 	String lvalueReg;
 
@@ -50,7 +50,7 @@ public class SingleAssignation extends Assignation {
 
 	expr.tox86(generator);
 
-	exprReg = generator.regName(expr.register,expr.getType());
+	exprReg = generator.regName(expr.register,expr.type);
 	lvalueReg = generator.addrRegName(lvalue.register);
 
 	lvalue.currentDirection(generator);

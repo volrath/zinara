@@ -16,10 +16,13 @@ public class FunctionCall extends Expression {
 	this.name = name;
 	arguments = s;
 	symtable = st;
-	type = symtable.getSymValueForId(this.name).getType();
     }
 
-    public Type getType() { return ((FunctionType)type).getReturnType(); }
+    public Type getType() {
+	if (type != null) return type;
+	type = ((FunctionType)symtable.getSymValueForId(this.name).getType()).getReturnType();
+	return type;
+    }
 
     public String toString() { return name + "(" + arguments + ")"; }
 

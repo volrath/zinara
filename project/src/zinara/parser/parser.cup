@@ -25,6 +25,7 @@ action code{:
 SymTable globalTable = new SymTable();
 SymTable mainTable = new SymTable(globalTable);
 SymTable currentTable = globalTable;
+TypeTable typeTable = new TypeTable();
 int cycles_depth = 0;
 
 public void badContinue(){
@@ -109,7 +110,7 @@ terminal String STRING_V;
 terminal Main MAIN;
 terminal SEMI;
 terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
-terminal INTEGER, FLOAT, CHAR, BOOL, STRING;
+terminal INTEGER, FLOAT, CHAR, BOOL, STRING, NEWTYPE;
 terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET, DOT, DOTDOT;
 terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, LITTLE_ARROW;
 terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
@@ -135,7 +136,7 @@ nonterminal ArrayList args_list, args_list2; // arraylist of types
 nonterminal Type arg;
 nonterminal HashMap dict_vals;
 nonterminal ArrayList dict_val;
-nonterminal fi, elihw, elcyc, rof, fed;
+nonterminal fi, elihw, elcyc, rof, fed, newtype;
 
 
 // Cambiar cuando se creen los tipos necesarios
@@ -183,12 +184,15 @@ main      ::= MAIN {: currentTable = currentTable.newTable(); :}
       DECLARATIONS
  */
 /* --- Basic structure --- */
-decl_list    ::= decl_list:ds decl:d SEMI  {: RESULT = ds; RESULT.add(d);:}
-               | decl_list:ds def_decl:d SEMI    {: RESULT = ds; RESULT.add(d);:}
-               | const_decl:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d);:}
-               | var_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d);:}
-               | def_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d);:}
+decl_list    ::= decl_list:ds decl:d SEMI        {: RESULT = ds; RESULT.add(d); :}
+               | decl_list:ds def_decl:d SEMI    {: RESULT = ds; RESULT.add(d); :}
+               | decl_list:ds newtype SEMI       {: RESULT = ds; :}
+               | const_decl:d SEMI               {: RESULT = new ArrayList(); RESULT.add(d); :}
+               | var_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d); :}
+               | def_decl:d SEMI                 {: RESULT = new ArrayList(); RESULT.add(d); :}
+               | newtype {: RESULT = new ArrayList(); :}
                ;
+newtype      ::= NEWTYPE IDENTIFIER:id AS type:t ;
 
 /* --- Functions declarations --- */
 def_decl     ::= DEF IDENTIFIER:id 
@@ -290,6 +294,9 @@ type         ::=
                | FLOAT                      {: RESULT = new FloatType(); :}
                | CHAR                       {: RESULT = new CharType(); :}
                | BOOL                       {: RESULT = new BoolType(); :}
+
+    /* ----- New Types ----- */
+               | IDENTIFIER:id              {: RESULT = typeTable.get(id); :}
 
     /* ----- Composite types ----- */
                | STRING                                       {: RESULT = new StringType(); :}

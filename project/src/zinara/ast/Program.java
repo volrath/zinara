@@ -39,7 +39,7 @@ public class Program extends ASTNode {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException, InvalidCodeException, TypeClashException {
+	throws IOException, InvalidCodeException {
 	if (declarations != null)
 	    for (int i = 0; i < declarations.size(); i++){
 		Declaration d = (Declaration)(declarations.get(i));

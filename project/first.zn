@@ -3,11 +3,18 @@ def hola():
     print(87)
 enddef
 
+def function(a as Int) -> Float:
+    print(a)
+    return 0.
+enddef
+
 Int a = 2
 Float b = 9.
 var Int c
 
 main:
+   var Float b' = function(c)
+
    //[Int|2] d = []
    //a = d[2] + 1
    //d[1] = c
