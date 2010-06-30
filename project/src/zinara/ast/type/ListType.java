@@ -29,4 +29,7 @@ public class ListType extends Type {
     public Type getType() { return this; }
 
     public int len() { return len; }
+
+    public void setName(String n) { name = n; }
+    public String getName() { return name; }
 }

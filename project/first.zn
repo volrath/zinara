@@ -12,11 +12,15 @@ Int a = 2
 Float b = 9.
 var Int c
 newtype Entero as Int
+newtype OtroEntero as Int
+aliastype TuplaEntero as (Entero, Entero)
 
 main:
    var Float b' = function(c)
-   var Entero ent
+   var OtroEntero ent
+   var TuplaEntero tupla
    ent = 1
+   tupla = (ent, 2)
 
    //[Int|2] d = []
    //a = d[2] + 1

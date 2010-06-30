@@ -78,5 +78,8 @@ public class DictType extends Type {
 	}
 	return true;
     }
+
+    public void setName(String n) { name = n; }
+    public String getName() { return name; }
 }
 

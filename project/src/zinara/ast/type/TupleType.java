@@ -37,4 +37,7 @@ public class TupleType extends Type {
 	    if (!get(i).equals(otherTuple.get(i))) return false;
 	return true;
     }
+
+    public void setName(String n) { name = n; }
+    public String getName() { return name; }
 }
