@@ -17,4 +17,7 @@ public class ProcedureType extends RoutineType {
     public boolean equals(Type other) {
 	return false;
     }
+
+    public void setName(String n) { name = n; }
+    public String getName() { return name; }
 }

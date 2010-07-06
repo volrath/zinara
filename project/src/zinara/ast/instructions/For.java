@@ -43,7 +43,7 @@ public class For extends Instruction{
     }
 
     public void tox86(Genx86 generator)
-	throws IOException, InvalidCodeException,TypeClashException{
+	throws IOException, InvalidCodeException {
 	Type listType = ((ListType)expr.type).getInsideType();
 	String exprAddr = generator.addrRegName(register);  //direccion del la lista
 	String iteration_var = generator.regName(register+1, listType);

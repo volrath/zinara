@@ -49,6 +49,7 @@ public class DictType extends Type {
     public Integer getOffsetFor(String key) { return (Integer)offsets.get(key); }
 
     public String toString() {
+	if (!name.equals("")) return "<" + name + ">";
 	String ret = "<{";
 	Set keySet = table.keySet();
 	Iterator it = keySet.iterator();
@@ -65,6 +66,7 @@ public class DictType extends Type {
     public boolean equals(Type other) {
 	if (!(other instanceof DictType)) return false;
 	DictType otherDict = (DictType)other;
+	if (!otherDict.getName().equals("") && !name.equals("")) return  otherDict.getName().equals(name);
 	// Checks internally
 	if (size() != otherDict.size()) return false;
 	Iterator it1 = getIterator();
@@ -78,5 +80,8 @@ public class DictType extends Type {
 	}
 	return true;
     }
+
+    public void setName(String n) { name = n; }
+    public String getName() { return name; }
 }
 

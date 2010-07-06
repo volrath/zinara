@@ -31,7 +31,11 @@ public class FunctionCall extends Expression {
 	this.type = symTable.getSymValueForId(this.func_name).getType();
     }
 
-    public Type getType() { return ((FunctionType)type).getReturnType(); }
+    public Type getType() {
+	if (type != null) return type;
+	type = ((FunctionType)symtable.getSymValueForId(this.name).getType()).getReturnType();
+	return type;
+    }
 
     public String toString() { return func_name + "(" + expr_list + ")"; }
 

@@ -40,7 +40,6 @@ public class Program extends ASTNode {
 
     public void tox86(Genx86 generator)
 	throws IOException, InvalidCodeException, TypeClashException {
-	
 	// Generacion de subrutinas
 	if (declarations != null)
 	    for (int i = 0; i < declarations.size(); i++){

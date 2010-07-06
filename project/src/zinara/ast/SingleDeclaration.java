@@ -69,7 +69,7 @@ public class SingleDeclaration extends Declaration {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException, InvalidCodeException, TypeClashException {
+	throws IOException, InvalidCodeException {
 
 	if (this.type instanceof RoutineType){
 	    String label = generator.newLabel();

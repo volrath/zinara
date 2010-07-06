@@ -27,4 +27,7 @@ public class FunctionType extends RoutineType {
 	    if (!getArgument(i).equals(otherFunction.getArgument(i))) return false;
 	return returnType.equals(otherFunction.getReturnType());
     }
+
+    public void setName(String n) { name = n; }
+    public String getName() { return name; }
 }

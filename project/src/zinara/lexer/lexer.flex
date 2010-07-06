@@ -68,6 +68,8 @@ Number      = {Digit}+
  "Char"                          { return symbol(sym.CHAR); }
  "String"                        { return symbol(sym.STRING); }
  "Bool"                          { return symbol(sym.BOOL); }
+ "newtype"                       { return symbol(sym.NEWTYPE); }
+ "aliastype"                     { return symbol(sym.ALIASTYPE); }
  "var"                           { return symbol(sym.VAR); }
  "def"                           { return symbol(sym.DEF); }
  ":" "\ "* {LineTerminator}      { return symbol(sym.DOUBLEDOTTERM); }
