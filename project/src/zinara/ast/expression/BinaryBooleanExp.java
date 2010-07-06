@@ -29,7 +29,8 @@ public class BinaryBooleanExp extends BooleanExp {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException {
 	switch(operator) {
 	case sym.AND:
 	    conjuntionToX86(generator, true);
@@ -48,7 +49,8 @@ public class BinaryBooleanExp extends BooleanExp {
 	}
     }
 
-    public void conjuntionToX86(Genx86 generator, boolean shortCircuit) throws IOException,InvalidCodeException {
+    public void conjuntionToX86(Genx86 generator, boolean shortCircuit)
+	throws IOException,InvalidCodeException,TypeClashException {
 	left.yesLabel  = generator.newLabel();
 	left.noLabel   = (shortCircuit ? noLabel : left.yesLabel);
 	
@@ -78,7 +80,8 @@ public class BinaryBooleanExp extends BooleanExp {
 	generator.write(generator.jz(left.noLabel));
     }
 
-    public void disjunctionToX86(Genx86 generator, boolean shortCircuit) throws IOException,InvalidCodeException {
+    public void disjunctionToX86(Genx86 generator, boolean shortCircuit)
+	throws IOException,InvalidCodeException,TypeClashException{
 	left.noLabel   = generator.newLabel();
 	left.yesLabel  = (shortCircuit ? yesLabel : left.noLabel);
 
@@ -109,7 +112,8 @@ public class BinaryBooleanExp extends BooleanExp {
 	generator.write(generator.jnz(left.yesLabel));
     }
 
-    public void xorToX86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void xorToX86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException{
     	left.register  = register;
     	right.register = register + 1;
 	String leftReg = generator.regName(left.register,type);

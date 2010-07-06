@@ -7,8 +7,9 @@ import java.util.Iterator;
 
 import zinara.ast.ASTNode;
 import zinara.ast.Declaration;
-import zinara.ast.SingleDeclaration;
 import zinara.ast.MultipleDeclaration;
+import zinara.ast.SingleDeclaration;
+import zinara.ast.Param;
 import zinara.ast.expression.Expression;
 import zinara.ast.expression.LValue;
 import zinara.ast.instructions.Assignation;
@@ -204,7 +205,15 @@ public class SymTable{
 	return table.keySet();
     }
 
-    public int reserve_mem(int offset){
+    public int reserve_mem_main(int offset, String area){
+	return reserve_mem(offset,area,"+");
+    }
+
+    public int reserve_mem_stack(int offset, String area){
+	return reserve_mem(offset,area,"-");
+    }
+
+    public int reserve_mem(int offset, String area, String direction){
  	Iterator keyIt = keySet().iterator();
 	String identifier;
 	SymValue symValue;
@@ -214,17 +223,50 @@ public class SymTable{
 	while(keyIt.hasNext()) {
 	    identifier = (String)keyIt.next();
 	    symValue = getSymbol(identifier);
-	    if (symValue.type.size() == 0) continue;
-	    symValue.setOffset(total_size);
+	    if (symValue.isParam()||
+		symValue.isReturn()||
+		symValue.type.size() == 0)
+		continue;
+	    symValue.setOffset(direction + total_size);
+	    symValue.setArea(area);
 	    total_size += symValue.type.size();
 	}
 	
 	for (int i = 0; i < sons.size(); i++){
-	    aux = ((SymTable)sons.get(i)).reserve_mem(total_size);
+	    aux = ((SymTable)sons.get(i)).reserve_mem(total_size,area,direction);
 	    if (aux > total_size)
 		total_size = aux;
 	}
 
 	return total_size;
+    }
+
+    public void set_params_offset(String area, 
+				  int addrSize, 
+				  ArrayList params){
+	String identifier;
+	SymValue symValue;
+	Param current_param;
+	int params_offset = 2*addrSize;
+	/*Porque antes de los parametros
+	  esta la cadena dinamica y la 
+	  direccion de retorno*/
+	
+	for (int i = params.size()-1; i>=0; --i){
+	    current_param =((Param)params.get(i)); 
+	    identifier = current_param.getId();
+	    symValue = getSymbol(identifier);
+
+	    if (symValue.type.size() == 0)
+		continue;
+
+	    symValue.setOffset("+"+params_offset);
+	    symValue.setArea(area);	    
+
+	    if (current_param.byValue())
+		params_offset += symValue.type.size();
+	    else
+		params_offset += addrSize;
+	}
     }
 }

@@ -18,6 +18,8 @@ public class FloatExp extends Expression {
  	generate.write(generate.movReal(reg,generate.toReal(value)));
     }
 
+    public void negative(){ this.value *= -1; }
+
     public boolean isStaticallyKnown() { return true; }
 
     public Object staticValue() { return new Float(value); };

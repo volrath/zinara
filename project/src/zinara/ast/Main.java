@@ -4,6 +4,7 @@ import zinara.ast.ASTNode;
 import zinara.ast.instructions.CodeBlock;
 import zinara.code_generator.*;
 import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 
 
 import java.io.IOException;
@@ -25,7 +26,8 @@ public class Main extends ASTNode {
 	code.checkNoReturns();
     }
 
-    public void tox86(Genx86 generate) throws IOException,InvalidCodeException{
+    public void tox86(Genx86 generate)
+	throws IOException,InvalidCodeException,TypeClashException{
 	this.code.register = register;
 	this.code.tox86(generate);
     }

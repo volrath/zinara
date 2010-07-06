@@ -3,7 +3,10 @@ package zinara.ast.expression;
 import zinara.ast.type.Type;
 import zinara.code_generator.Genx86;
 import zinara.parser.parser;
+import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
+
+import java.io.IOException;
 
 public class UnaryExp extends Expression {
     public int operator;
@@ -23,7 +26,13 @@ public class UnaryExp extends Expression {
 	return operator + " " + operand;
     }
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generate)
+	throws IOException,InvalidCodeException,TypeClashException{
+	if (operand instanceof IntegerExp)
+	    ((IntegerExp)operand).negative();
+	else if (operand instanceof FloatExp)
+	    ((FloatExp)operand).negative();
+	operand.tox86(generate);
     }
 
     public boolean isStaticallyKnown() { return operand.isStaticallyKnown(); }

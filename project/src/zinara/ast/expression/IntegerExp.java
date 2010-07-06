@@ -18,6 +18,8 @@ public class IntegerExp extends Expression {
 	String reg = generate.regName(register,new IntType());
  	generate.write(generate.movInt(reg,this.toString()));
     }
+    
+    public void negative(){ this.value *= -1; }
 
     public boolean isStaticallyKnown() { return true; }
 

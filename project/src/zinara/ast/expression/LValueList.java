@@ -30,12 +30,14 @@ public class LValueList extends LValue {
     }
     public String toString() { return constructor + "[" + index + "]"; }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException {
 	generator.write("; B-----\n");
 
 	try {
+	    constructor.register = register;
 	    String constructorReg = generator.addrRegName(constructor.register);
-	    String valueReg       = generator.regName(constructor.register, getType());
+	    String valueReg       = generator.regName(constructor.register,getType());
 
 	    //Esto deja la direccion en constructorReg
 	    currentDirection(generator);
@@ -53,26 +55,10 @@ public class LValueList extends LValue {
 				      type.getType()
 				      )
 			);
-
-	// if (type.getType() instanceof IntType)
-	//     generator.write(generator.movInt(valueReg,
-	// 				     "[" + addrReg + "]"));
-	// else if (type.getType() instanceof FloatType)
-	//     generator.write(generator.movReal(valueReg,
-	// 				  "[" + addrReg + "]"));
-	// else if (type.getType() instanceof BoolType)
-	//     generator.write(generator.movBool(valueReg,
-	// 				  "[" + addrReg + "]"));
-	// else if ((type.getType() instanceof ListType)||
-	// 	 (type.getType() instanceof DictType)){
-	//     generator.write("; E-----\n");
-	//     return;
-	// }
-	// else
-	//     generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
     }
 
-    public void currentDirection(Genx86 generator)throws InvalidCodeException, IOException{
+    public void currentDirection(Genx86 generator)
+	throws InvalidCodeException,IOException,TypeClashException{
 	constructor.register = register;
 	index.register       = register + 1;
 	String constructorReg = generator.addrRegName(constructor.register);
@@ -83,7 +69,7 @@ public class LValueList extends LValue {
 
 	constructor.currentDirection(generator);
 
-	//save
+	generator.write(generator.save(register+1));
 	generator.write(generator.save(register+1));
 
 	index.tox86(generator);
@@ -94,7 +80,7 @@ public class LValueList extends LValue {
 	generator.write(generator.add(constructorReg,
 				      offsetReg));
 
-	//restore
+	generator.write(generator.restore(register+1));
 	generator.write(generator.restore(register+1));
     }
     /*****NOTA*****/

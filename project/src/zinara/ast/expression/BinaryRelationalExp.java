@@ -29,7 +29,8 @@ public class BinaryRelationalExp extends BooleanExp {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException{
 	left.register  = register;
 	right.register = register + 1;
 

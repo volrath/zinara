@@ -5,6 +5,7 @@ import zinara.ast.instructions.*;
 import zinara.ast.expression.*;
 import zinara.exceptions.InvalidArchitectureException;
 import zinara.exceptions.InvalidCodeException;
+import zinara.exceptions.TypeClashException;
 import zinara.parser.sym;
 import zinara.symtable.SymTable;
 import zinara.symtable.SymValue;
@@ -30,6 +31,7 @@ public class Genx86{
     private int next_reg;
     private int bits;
     private int labelCounter = 0;
+    private int word_size;
 
     private BufferedWriter file;
 
@@ -91,8 +93,9 @@ public class Genx86{
 	    stackp = "rsp";
 	    framep = "rbp";
 	    stackAlig = "8";
-
+	    
 	    n_regs = 14;
+	    word_size = 8;
 	}
 	else if (bits == 32){
 	    regs = new String[6];
@@ -117,6 +120,7 @@ public class Genx86{
 	    stackAlig = "4";
 
 	    n_regs = 6;
+	    word_size = 4;
 	}
 	else
 	    throw new InvalidArchitectureException(bits); 
@@ -137,7 +141,7 @@ public class Genx86{
     }
 
     public void generateProgram(Program program)
-	throws IOException,InvalidCodeException {
+	throws IOException,InvalidCodeException,TypeClashException {
 	// Main
 	program.getMain().register = 0;
 	program.getMain().getCode().nextInst = "halt";
@@ -163,13 +167,13 @@ public class Genx86{
 	    symValue = symtable.getSymbol(identifier);
 	    if (symValue.type.size() == 0){continue;}
 
-	    symValue.setOffset(total_size);
+	    symValue.setOffset(Integer.toString(total_size));
 	    total_size += symValue.type.size();
 	}
 
 	// then for main variables
 	SymTable mainSymTable = symtable.getSon(symtable.getSons().size()-1);
-	total_size = mainSymTable.reserve_mem(total_size);
+	total_size = mainSymTable.reserve_mem_main(total_size,global_offset);
 
 	// .ASM HEADER
 	//  El espacio para variables, texto de las funciones
@@ -181,11 +185,19 @@ public class Genx86{
     //Reserva tanta memoria como le pidan. data_size es la cantidad
     //de bytes. 
     public String reserve_space_str(String label, int data_size){
-	return "section .bss\n   "+label+": resb "+data_size+"\n";
+	String code = "";
+
+	code += "section .bss\n   "+label+": resb "+data_size+"\n"; 
+	code += "section .rodata\n";
+	code += "   int_format  db  \"%i\",0\n";
+	code += "   float_format  db  \"%f\",0\n";
+	code += "   string_format  db  \"%s\",0\n";
+	code += "   write_format  db  \"w\",0\n";
+	return code;
     }
 
     public String main_header_str(){
-	return "section .text\n   global main\nmain:\n";
+	return "section .text\n   global main\nextern printf\nmain:\n";
     }
 
     public int stack_align(){
@@ -196,6 +208,9 @@ public class Genx86{
 	return "zn" + labelCounter++;
     }
 
+    
+    public int word_size() { return word_size; }
+    
     private String regId(int regNumber) {
 	return regs[regNumber % n_regs];
     }
@@ -289,8 +304,8 @@ public class Genx86{
 	if (this.bits == 32)
 	    return "push "+thing+"\n";
 	else{
-	    code += mov("[rsp]",thing);
 	    code += sub("rsp",stackAlig);
+	    code += mov("[rsp]",thing);
 	    return code;
 	}
     }
@@ -299,8 +314,8 @@ public class Genx86{
     public String push (String thing, int size){
 	String code = "";
 
-	code += mov("["+this.stackp+"]",thing);
 	code += sub(this.stackp,Integer.toString(size));
+	code += mov("["+this.stackp+"]",thing);
 	return code;
     }
 
@@ -308,20 +323,20 @@ public class Genx86{
     public String pushb (String thing){
 	String code = "";
 
-	code += mov("["+this.stackp+"]",thing);
 	code += sub(this.stackp,"1");
+	code += mov("["+this.stackp+"]",thing);
 	return code;
     }
 
-    //Push de 32 bits (word)
+    //Push de 32 bits (dword)
     public String pushw (String thing){
 	String code = "";
 
 	if (this.bits == 32)
 	    return "push "+thing+"\n";
 	else{
-	    code += mov("[rsp]",thing);
 	    code += sub("rsp","4");
+	    code += mov("[rsp]",thing);
 	    return code;
 	}
     }
@@ -330,10 +345,10 @@ public class Genx86{
     public String pushq (String thing) throws InvalidCodeException{
 	String code = "";
 	if (this.bits == 64){
-	    code += mov("[rsp]",thing);
 	    code += sub("rsp",stackAlig);
+	    code += mov("[rsp]",thing);
 	    return code;
-	}
+ 	}
 	else{
 	    throw new InvalidCodeException("pushq en 32 bits");
 	}
@@ -350,8 +365,8 @@ public class Genx86{
 	if (this.bits == 32)
 	    return "pop "+thing+"\n";
 	else{
-	    code += add("rsp",this.stackAlig);
 	    code += mov(thing,"[rsp]");
+	    code += add("rsp",this.stackAlig);
 	    return code;
 	}
     }
@@ -381,8 +396,8 @@ public class Genx86{
 	    throw new InvalidCodeException("modificador de tamano invalido");
     
 	String code = "";
-	code += add(this.stackp,size);
 	code += mov(thing,"["+this.stackp+"]",size_mod);
+	code += add(this.stackp,size);
 	return code;
     }
 
@@ -609,25 +624,29 @@ public class Genx86{
     }
 
     //Division de enteros, el resultado queda en dividend
-    public String idiv(String dividend, String diviser){
+    public String idiv(String dividend, String diviser)
+	throws InvalidCodeException{
 	String code = "";
+	String ax = regId(0);
+	String bx = regId(1);
+	String dx = regId(3);
 
-	code += pushw("eax"); //Parte baja del dividendo
-	code += pushw("ebx"); //Divisor
-	code += pushw("edx"); //Parte alta del dividendo
+	code += push(ax); //Parte baja del dividendo
+	code += push(bx); //Divisor
+	code += push(dx); //Parte alta del dividendo
 
 	//Aqui pongo los argumentos en los registros
-	code += pushw(dividend);
-	code += pushw(diviser);
-	code += pop("ebx");
-	code += pop("eax");
+	code += pushInt(dividend);
+	code += pushInt(diviser);
+	code += popInt("ebx");
+	code += popInt("eax");
 
-	code += mov("edx","0h","dword");
+	code += mov(dx,"0h");
 	//Limpio la parte alta porque no se va a usar
 
 	code += "idiv ebx\n";
-	code += pop("edx");//Restauro registros 
-	code += pop("ebx");//Restauro registros 
+	code += pop(dx);//Restauro registros 
+	code += pop(bx);//Restauro registros 
 
 	//If en caso de que el registro donde debe quedar la division
 	//esa el mismo eax, no lo puedo sobreescribir
@@ -635,7 +654,7 @@ public class Genx86{
 	    code += add(this.stackp,this.stackAlig);
 	else{
 	    code += mov(dividend,"eax");
-	    code += pop("eax");
+	    code += pop(ax);
 	}
 	return code;
     }
@@ -829,17 +848,23 @@ public class Genx86{
     }
 
     public String save(int reg) throws InvalidCodeException{
-	if (this.bits == 32)
-	    return pushw(regId(reg));
+	if (reg > n_regs)
+	    if (this.bits == 32)
+		return pushw(regId(reg));
+	    else
+		return pushq(regId(reg));
 	else
-	    return pushq(regId(reg));
+	    return "";
     }
 
     public String restore(int reg) throws InvalidCodeException{
-	if (this.bits == 32)
-	    return pop(regId(reg),"dword");
+	if (reg > n_regs)
+	    if (this.bits == 32)
+		return pop(regId(reg),"dword");
+	    else
+		return pop(regId(reg),"qword");
 	else
-	    return pop(regId(reg),"qword");
+	    return "";
     }
 
     public String save_print_regs() throws InvalidCodeException{
@@ -882,30 +907,26 @@ public class Genx86{
 
     //El llamado guarda los registros rbx y r12-r15 para x86_64
     //El llamado guarda los registros eax,ecx y edx para x86
-    public String save_regs_callee(int reg)
+    public String save_regs_callee()
 	throws InvalidCodeException{
 	String code = "";
 
 	if (this.bits == 32){
 	    //eax
-	    if (reg > 0)
-		code += push(regs[0]);
+	    code += push(regs[0]);
 
 	    //ecx
-	    if (reg > 2)
-		code += push(regs[2]);
+	    code += push(regs[2]);
 
 	    //edx
-	    if (reg > 3)
-		code += push(regs[3]);
+	    code += push(regs[3]);
 	}
 	else{
 	    //rbx
-	    if (reg > 1) 
-		code += push(regs[1]);
+	    code += push(regs[1]);
 	    
 	    //r12 - r15
-	    for(int i=10; i<reg && i<=13 ; ++i){
+	    for(int i=10; i<=13 ; ++i){
 		code += push(regs[i]);
 	    }
 	}
@@ -915,32 +936,28 @@ public class Genx86{
 
     //El llamado guarda los registros rbx y r12-r15 para x86_64
     //El llamado guarda los registros eax,ecx y edx para x86
-    public String restore_regs_callee(int reg)
+    public String restore_regs_callee()
 	throws InvalidCodeException{
 	String code = "";
 
 	if (this.bits == 32){
 	    //edx
-	    if (reg > 3)
-		code += pop(regs[3]);
-
+	    code += pop(regs[3]);
+	    
 	    //ecx
-	    if (reg > 2)
-		code += pop(regs[2]);
-
+	    code += pop(regs[2]);
+	    
 	    //eax
-	    if (reg > 0)
-		code += pop(regs[0]);
+	    code += pop(regs[0]);
 	}
 	else{	    
 	    //r12 - r15
-	    for(int i=min(13,reg); i >= 10; --i){
+	    for(int i=13; i >= 10; --i){
 		code += pop(regs[i]);
 	    }
 
 	    //rbx
-	    if (reg > 1) 
-		code += pop(regs[1]);
+	    code += pop(regs[1]);
 	}
 	
 	return code;	

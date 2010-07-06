@@ -1,9 +1,17 @@
 package zinara.ast.instructions;
 
+import zinara.ast.Param;
+import zinara.ast.RoutineGenerator;
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.Identifier;
+import zinara.ast.type.Type;
+import zinara.ast.type.RoutineType;
+import zinara.ast.type.ListType;
+import zinara.ast.type.TupleType;
+import zinara.ast.type.DictType;
 import zinara.code_generator.*;
 import zinara.exceptions.InvalidCodeException;
-import zinara.ast.type.RoutineType;
+import zinara.exceptions.TypeClashException;
 import zinara.symtable.*;
 
 import java.io.IOException;
@@ -35,20 +43,10 @@ public class ProcedureCall extends Instruction{
 	return (ret.substring(0, ret.length()-2) + ")>");
     }
 
-    public void tox86(Genx86 generate)
-	throws InvalidCodeException,IOException{
-	RoutineType routine;
-	String code = "";
-
-	code += generate.save_regs_caller(register);
-	//params
-
-	routine = (RoutineType)(symTable.getSymValueForId(func_name).type);
-	code += generate.call(routine.label);
-	
-	//params
-	code += generate.restore_regs_caller(register);
-
-	generate.write(code);
+    public void tox86(Genx86 generator)
+	throws InvalidCodeException,IOException,TypeClashException{
+	RoutineGenerator.gen_routine(generator,symTable,
+				     func_name,expr_list,
+				     register,false);
     }
 }

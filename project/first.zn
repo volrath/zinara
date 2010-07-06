@@ -1,19 +1,22 @@
+/.
 def hola():
     print(156)
     print(87)
 enddef
+./
 
 Int a = 2
 Float b = 9.
 var Int c
 
 main:
-   //[Int|2] d = []
-   //a = d[2] + 1
-   //d[1] = c
-   //d[1] = [1,2,3]
-   //var Int a' = a
 /.
+   [Int|2] d = []
+   a = d[2] + 1
+   d[1] = c
+   d[1] = [1,2,3]
+   var Int a' = a
+
    var Int x' = 0
    var [Int|5] x''
    x'' = 0 .. 5
@@ -22,7 +25,6 @@ main:
       x' = x'+1
    end
 
-./
    for i in [1,2,3,4,5]:
       if i<2:
       while True:
@@ -32,10 +34,10 @@ main:
       print(i)
       break 
    endfor
-
-   hola()
-   print(90)
-
+./
+//   hola()
+//   print(90)
+c=8
 /.
    c = c + a
    c = c * 2
