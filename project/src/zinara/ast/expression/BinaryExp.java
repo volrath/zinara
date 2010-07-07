@@ -33,7 +33,8 @@ public class BinaryExp extends Expression {
 	return "("+left + " " + operator + " " + right+")" ;
     }
 
-    public void tox86(Genx86 generate) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generate)
+	throws IOException,InvalidCodeException,TypeClashException{
 	String save;
 	String restore;
 

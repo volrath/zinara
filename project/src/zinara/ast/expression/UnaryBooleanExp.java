@@ -29,7 +29,8 @@ public class UnaryBooleanExp extends BooleanExp {
 	return operator + " " + operand;
     }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException{
 	operand.yesLabel = noLabel;
 	operand.noLabel  = yesLabel;
 	operand.tox86(generator);

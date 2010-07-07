@@ -11,6 +11,7 @@ public class StringExp extends Expression {
     public String toString() { return "\"" + value + "\""; }
 
     public void tox86(Genx86 generate){
+	
     }
 
     public boolean isStaticallyKnown() { return true; }

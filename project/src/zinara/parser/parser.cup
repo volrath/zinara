@@ -9,6 +9,7 @@ import zinara.ast.*;
 import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
 import zinara.ast.type.*;
+import zinara.ast.Param;
 import zinara.exceptions.InvalidDictionaryException;
 import zinara.exceptions.InvalidVariantException;
 import zinara.exceptions.KeyErrorException;
@@ -134,7 +135,7 @@ nonterminal Expression expr, relational_expr,other_expr;
 nonterminal LValue l_value;
 nonterminal Instruction ctrl_struct, instruction, instruction_loop;
 nonterminal ArrayList args_list, args_list2; // arraylist of types
-nonterminal Type arg;
+nonterminal Param arg;
 nonterminal HashMap dict_vals;
 nonterminal ArrayList dict_val;
 nonterminal fi, elihw, elcyc, rof, fed, newtype, aliastype;
@@ -208,7 +209,11 @@ def_decl     ::= DEF IDENTIFIER:id
 		 :}
                    LPAREN args_list:al RPAREN def_type:t DOUBLEDOTTERM
 		 {:
-		     currentTable.addSymbol("return", new SymValue(t,new Constant(null)));
+		     currentTable.addSymbol("return", new SymValue(t,new Constant(null),true,true));
+		     if (t != null)
+			 currentTable.getFather().addSymbol(id,new SymValue(new FunctionType(al, t, null), new Constant(null)));
+		     else
+			 currentTable.getFather().addSymbol(id,new SymValue(new ProcedureType(al, null), new Constant(null)));
 		 :}
 		     code_block:cb 
                  fed
@@ -222,10 +227,8 @@ def_decl     ::= DEF IDENTIFIER:id
                          cb.checkNoReturns();
 			 RESULT = new SingleDeclaration(new ProcedureType(al, cb), id, null, false, currentTable);
                      }
-		     if (t != null)
-			 currentTable.addSymbol(id,new SymValue(new FunctionType(al, t, cb), new Constant(null)));
-		     else
-			 currentTable.addSymbol(id,new SymValue(new ProcedureType(al, cb), new Constant(null)));
+
+		     ((RoutineType)(currentTable.getSymbol(id).type)).codeBlock = cb;
                  :};
 
 args_list    ::= args_list2:al                   {: RESULT = al; :}
@@ -240,12 +243,12 @@ args_list2   ::= args_list2:al COMMA arg:a        {: al.add(a); RESULT = al; :}
                ;
 
 arg          ::= COPY IDENTIFIER:id AS type:t    {: 
-						  RESULT = t;
-						  currentTable.addSymbol(id,new SymValue(t, new Constant(null))); // fix this!
+						  RESULT = new Param(id,t,true);
+						  currentTable.addSymbol(id,new SymValue(t, new Variable(), true, true)); // fix this!
 						  :}
                | IDENTIFIER:id AS type:t         {: 
-		                                  RESULT = t;
-						  currentTable.addSymbol(id,new SymValue(t, new Variable()));
+		                                  RESULT = new Param(id,t,false);
+						  currentTable.addSymbol(id,new SymValue(t, new Variable(), true, false));
 						  :}
                ;
 
@@ -583,8 +586,6 @@ other_expr   ::=
     /* ----- LVALUE ----- */
              | l_value:lv                                  {: RESULT = lv; :}
     /* ----- Composite types operations ----- */
-//| IDENTIFIER LBRACKET expr RBRACKET                 // indexing
-//| IDENTIFIER LBRACKET other_expr DOUBLEDOT other_expr RBRACKET  // slicing
              | other_expr PLUSPLUS other_expr                                // plosplos
              | other_expr LTLT other_expr                                    // push
              | other_expr GTGT other_expr                                    // pop

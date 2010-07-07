@@ -61,7 +61,8 @@ public class ListExp extends Expression {
 	return (value.size() == 0 ? ret : ret.substring(0, ret.length()-2)) + "]";
     }
 
-    public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException, InvalidCodeException,TypeClashException{
 	Expression expr;
 	Type listType =  ((ListType)type).getInsideType();
 	String reg = generator.regName(register,listType);
@@ -79,7 +80,6 @@ public class ListExp extends Expression {
 
 	//Por ultimo, devuelvo la direccion donde comienza la lista
 	generator.write(generator.mov(regAddr,generator.stack_pointer()));
-	generator.write(generator.add(regAddr,Integer.toString(listType.size())));
     }
 
     public boolean isStaticallyKnown() {

@@ -31,7 +31,7 @@ public class While extends Instruction{
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException {
+	throws IOException,InvalidCodeException,TypeClashException{
 	expr.yesLabel = generator.newLabel();
 	expr.noLabel  = nextInst;
 

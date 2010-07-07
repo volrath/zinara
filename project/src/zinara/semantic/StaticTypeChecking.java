@@ -88,7 +88,10 @@ public class StaticTypeChecking {
 	    else if (expr.getType().equals(idSymValue.getType()))
 		return new Return(expr);
 	    else 
-		throw new TypeClashException("Tipo de retorno de la funcion " + idSymValue.getType() + " difiere del tipo de la expresion " + expr);
+		throw new TypeClashException("Tipo de retorno de la funcion " + 
+					     idSymValue.getType() + 
+					     " difiere del tipo de la expresion " + 
+					     expr);
 	}
 	else 
 	    throw new InvalidInstructionException("Instruccion `return` no permitida en el main");
@@ -118,7 +121,7 @@ public class StaticTypeChecking {
 	Expression currentExpr;
 	for (int i = 0; i < expr_list.size(); i++) {
 	    currentExpr = (Expression)expr_list.get(i);
-	    if (!currentExpr.getType().equals(funcType.getArgument(i)))
+	    if (!currentExpr.getType().equals(funcType.getArgumentType(i)))
 		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + funcName);
 	}
 	return new FunctionCall(funcName, expr_list, st);
@@ -135,7 +138,7 @@ public class StaticTypeChecking {
 	Expression currentExpr;
 	for (int i = 0; i < expr_list.size(); i++) {
 	    currentExpr = (Expression)expr_list.get(i);
-	    if (!currentExpr.getType().equals(procType.getArgument(i)))
+	    if (!currentExpr.getType().equals(procType.getArgumentType(i)))
 		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + procName);
 	}
 	return new ProcedureCall(procName, expr_list, st);

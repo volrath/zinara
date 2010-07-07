@@ -8,9 +8,11 @@ import zinara.exceptions.TypeClashException;
 import java.io.IOException;
 
 public abstract class LValue extends BooleanExp {
-    public abstract void tox86(Genx86 generator) throws IOException, InvalidCodeException;
+    public abstract void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException;
 
-    public abstract void currentDirection(Genx86 generator) throws IOException, InvalidCodeException;
+    public abstract void currentDirection(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException;
 
     public abstract boolean isConstant();
 }

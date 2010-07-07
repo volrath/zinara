@@ -3,6 +3,7 @@ package zinara.ast;
 import java.io.IOException;
 
 import zinara.ast.ASTNode;
+import zinara.ast.Param;
 import zinara.ast.type.Type;
 import zinara.ast.expression.Expression;
 import zinara.ast.expression.BooleanExp;
@@ -68,26 +69,37 @@ public class SingleDeclaration extends Declaration {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException, InvalidCodeException {
+	throws IOException,InvalidCodeException,TypeClashException{
 
-	if (type instanceof RoutineType){
+	if (this.type instanceof RoutineType){
 	    String label = generator.newLabel();
+	    label = label + "_" + identifier;
 	    RoutineType routine_type = (RoutineType)(symTable.getSymbol(identifier).type);
-	
-	    make_proc(generator,label);
+	    int local_vars;
+
+	    //Seteo el offset de las variables de la subrutina
+	    SymTable routineTable = routine_type.codeBlock.getSymTable();
+	    String frame_p = generator.frame_pointer();
+	    int word_size = generator.word_size();
+
+	    local_vars = routineTable.reserve_mem_stack(word_size,frame_p);
+	    routineTable.set_params_offset(frame_p,
+					   word_size,
+					   routine_type.args);
 
 	    //Set del label del procedimiento en el Symtable
-	    ((RoutineType)type).label = label;
+	    ((RoutineType)(this.type)).label = label;
 	    routine_type.label = label;
+
+	    make_proc(generator,label,local_vars);
 
 	    return;
 	}
-
 	
 	if (expr != null) {
 	    SymValue sv = symTable.getSymbol(identifier);
 	    String exprReg;
-	    String lvalueAddr = generator.global_offset()+"+"+sv.getOffset();
+	    String lvalueAddr = sv.getArea()+sv.getOffset();
 	    
 	    expr.register = register;
 	    if (type.equals(new BoolType())) {
@@ -104,7 +116,8 @@ public class SingleDeclaration extends Declaration {
     }
 
     // This one can be improved =S
-    public void booleanAssignationToX86(Genx86 generator, String lvalueAddr) throws IOException,InvalidCodeException {
+    public void booleanAssignationToX86(Genx86 generator, String lvalueAddr)
+	throws IOException,InvalidCodeException,TypeClashException{
 	BooleanExp bExpr = (BooleanExp)expr;
 	String nextDecl = generator.newLabel();
 
@@ -135,14 +148,13 @@ public class SingleDeclaration extends Declaration {
     }
 
     private void storeValue(Genx86 generator, Type t, String lvalueAddr, String exprReg)
-	throws IOException,InvalidCodeException{
+	throws IOException,InvalidCodeException,TypeClashException{
 	
 	if (t.getType() instanceof ListType) {
 	    Type listType = ((ListType)t.getType()).getInsideType();
 	    String auxReg = generator.regName(register+1,listType);
 	    String lvalueReg = generator.addrRegName(register+2);
 
-	    //save
 	    generator.write(generator.save(register+1));
 	    generator.write(generator.save(register+2));
 
@@ -156,7 +168,6 @@ public class SingleDeclaration extends Declaration {
 		generator.write(generator.add(exprReg,Integer.toString(listType.size())));
 	    }
 
-	    //restore
 	    generator.write(generator.restore(register+2));
 	    generator.write(generator.restore(register+1));
 	}
@@ -166,27 +177,43 @@ public class SingleDeclaration extends Declaration {
 	}
     }
 
-    private void make_proc(Genx86 generator,String label)
-	throws InvalidCodeException,IOException {
+    private void make_proc(Genx86 generator,String label,int local_vars)
+	throws InvalidCodeException,IOException,TypeClashException{
 	String asm = "";
+	String local_vars_size = Integer.toString(local_vars);
+	String frame_p = generator.frame_pointer();
+	String stack_p = generator.stack_pointer();
+	String word_size = Integer.toString(generator.word_size());
 	
 	asm += label+":\n";
-	asm += generator.sub("rsp","8"); //pork call no actualiza rsp
-	asm += generator.push(generator.frame_pointer());
-	asm += generator.mov(generator.frame_pointer(),
-			     generator.stack_pointer());
-	//Vars locales
-	asm += generator.save_regs_callee(register);
+
+	//Guardo la cadena dinamica
+	asm += generator.pushAddr(frame_p);
+
+	//Actualizo el frame pointer
+	asm += generator.mov(frame_p,stack_p);
+
+	//Variables locales
+	asm += generator.sub(stack_p,local_vars_size);
+
+	//Registros salvados
+	asm += generator.save_regs_callee();
+
 	generator.write(asm);
 
 	((RoutineType)type).codeBlock.register = 0;
 	((RoutineType)type).codeBlock.tox86(generator);
 
 	asm = "";
-	asm += generator.restore_regs_callee(register);
-	//vars locales
-	asm += generator.pop(generator.frame_pointer());
-	asm += generator.add("rsp","8");//para que en el tope este la direccion de retorno
+	asm += generator.restore_regs_callee();
+
+	//Se desempila todo que esta despues de la cadena dinamica
+	asm += generator.mov(stack_p,frame_p);
+
+	//Se restaura la cadena dinamica
+	asm += generator.pop(frame_p);
+	
+	//Return
 	asm += generator.ret();
 	generator.write(asm);
     }

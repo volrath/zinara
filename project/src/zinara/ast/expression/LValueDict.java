@@ -35,7 +35,8 @@ public class LValueDict extends LValue {
 
     public String toString() { return constructor + "[" + identifier + "]"; }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException,TypeClashException{
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 	String indexValue = generator.regName(constructor.register,type);
@@ -65,15 +66,16 @@ public class LValueDict extends LValue {
 	// }
     }
 
-    public void currentDirection(Genx86 generator) throws InvalidCodeException, IOException{
+    public void currentDirection(Genx86 generator)
+	throws InvalidCodeException,IOException,TypeClashException{
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 
 	constructor.tox86(generator);
-	try {
+	//try {
 	    Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
 	    generator.write(generator.add(constructorReg, offset.toString()));
-	} catch (TypeClashException e) {}
+	    //} catch (TypeClashException e) {}
     }
 
     public boolean isStaticallyKnown() {

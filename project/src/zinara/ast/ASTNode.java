@@ -10,5 +10,5 @@ public abstract class ASTNode {
     public String code;
     public int register;
     public abstract void tox86(Genx86 generate)
-	throws IOException, InvalidCodeException;
+	throws IOException,InvalidCodeException,TypeClashException;
 }

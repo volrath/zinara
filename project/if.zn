@@ -1,0 +1,63 @@
+def hola():
+    print(1)
+    print(9)
+enddef
+
+def sum(copy Int a, copy Int b) -> Int:
+    return a+b
+end
+
+def min(copy Int a, copy Int b) -> Int:
+    if a<b:
+       return a
+    else:
+       return b
+    end
+end
+
+def set(Int a, copy Int b):
+    a = b
+end
+
+def useless(copy Int a, copy Int b):
+    a = b
+    print(a)
+end
+
+main:
+
+    [Int|8] lista = [1,2,3,4,5,6,7,8]
+    Int elem = 3
+
+    var Int der = 7
+    var Int izq = 0
+    var Int cent = (der+izq)/2
+
+    while (der>izq):
+    	  if (elem > lista[cent]):
+	     der = cent
+	  else
+	     set(izq,cent)
+	  endif
+	  
+	  cent = (der+izq)/2
+    endwhile
+
+    for i in 1..8:
+    	print(lista[i])
+	println()
+    endfor
+    
+    print(lista[cent])
+    println()
+
+    print(sum(lista[cent],elem))
+    println()
+    
+    print(min(elem),lista[0])
+    println()
+
+    print(useless(lista[0],lista[7]))
+    println()
+    print(lista[0])
+endmain

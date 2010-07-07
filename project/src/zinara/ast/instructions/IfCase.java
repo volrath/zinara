@@ -33,7 +33,7 @@ public class IfCase extends Instruction {
     }
 
     public void tox86(Genx86 generator)
-	throws  InvalidCodeException, IOException {
+	throws InvalidCodeException,IOException,TypeClashException{
 	expr.yesLabel = generator.newLabel();
 	expr.noLabel  = nextInst;
 

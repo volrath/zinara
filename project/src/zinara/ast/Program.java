@@ -39,7 +39,8 @@ public class Program extends ASTNode {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException, InvalidCodeException {
+	throws IOException, InvalidCodeException, TypeClashException {
+	// Generacion de subrutinas
 	if (declarations != null)
 	    for (int i = 0; i < declarations.size(); i++){
 		Declaration d = (Declaration)(declarations.get(i));
@@ -50,6 +51,7 @@ public class Program extends ASTNode {
 	// Reserva de espacio y etiqueta del main
 	generator.generateHeader(symtable);
 
+	// Asignacion de declaraciones
 	if (declarations != null)
 	    for (int i = 0; i < declarations.size(); i++){
 		Declaration d = (Declaration)(declarations.get(i));

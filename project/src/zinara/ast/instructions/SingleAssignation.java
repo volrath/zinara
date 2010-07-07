@@ -3,6 +3,7 @@ package zinara.ast.instructions;
 import zinara.ast.expression.Expression;
 import zinara.ast.expression.BooleanExp;
 import zinara.ast.expression.Identifier;
+import zinara.ast.expression.ListExp;
 import zinara.ast.expression.LValue;
 import zinara.ast.type.*;
 import zinara.code_generator.Genx86;
@@ -37,7 +38,7 @@ public class SingleAssignation extends Assignation {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException {
+	throws IOException,InvalidCodeException,TypeClashException{
 	String exprReg;
 	String lvalueReg;
 
@@ -48,21 +49,36 @@ public class SingleAssignation extends Assignation {
 	    return;
 	}
 
+	//Se genera la expresion
 	expr.tox86(generator);
 
 	exprReg = generator.regName(expr.register,expr.type);
 	lvalueReg = generator.addrRegName(lvalue.register);
+	
+	generator.save(lvalue.register);
 
+	//Se calcula la direccion de lvalue
 	lvalue.currentDirection(generator);
-	storeValue(generator, lvalue.type, lvalueReg, exprReg);
-	if (lvalue.type.getType() instanceof ListType) {
-	    generator.write(generator.add(generator.stack_pointer(),Integer.toString(lvalue.type.getType().size())));
+
+	//Se guarda el valor de la exp en el lvalue
+	storeValue(generator, lvalue.type, 
+		   lvalueReg, exprReg,
+		   register+2);
+
+	if ((expr.type.getType() instanceof ListType)&&
+	    (expr instanceof ListExp)) {
+	    //Si era una lista literal se genero en la pila.
+	    //Hay que desempilarla
+	    generator.write(generator.add(generator.stack_pointer(),
+					  Integer.toString(lvalue.type.getType().size())));
 	}
+	
+	generator.restore(lvalue.register);
     }
 
     // This one can be improved =S
     public void booleanAssignationToX86(Genx86 generator)
-	throws IOException,InvalidCodeException {
+	throws IOException,InvalidCodeException,TypeClashException {
 	String lvalueReg;
 
 	BooleanExp bExpr = (BooleanExp)expr;
@@ -87,7 +103,6 @@ public class SingleAssignation extends Assignation {
 
 	generator.writeLabel(bExpr.yesLabel);
 
-	// Missing save and restore
 	lvalue.currentDirection(generator);
 	generator.write(generator.movBool("[" + lvalueReg + "]", "1"));
 
@@ -95,40 +110,33 @@ public class SingleAssignation extends Assignation {
 
 	generator.writeLabel(bExpr.noLabel);
 
-	// Missing save and restore
 	lvalue.currentDirection(generator);
 	generator.write(generator.movBool("[" + lvalueReg + "]", "0"));
     }
 
-    private void storeValue(Genx86 generator, Type t, String lvalueReg, String exprReg)
+    private void storeValue(Genx86 generator, Type t, 
+			    String lvalueReg, String exprReg,
+			    int free_register)
 	throws IOException,InvalidCodeException{
-	if (t.getType() instanceof ListType) {
-	    // save
+	if (! (t.getType() instanceof ListType))
+	    generator.write(generator.mov("[" + lvalueReg + "]",
+					  exprReg, t.getType()));
+	else{
+	    generator.save(free_register);
+
 	    Type listType = ((ListType)t.getType()).getInsideType();
-	    String auxReg = generator.regName(register+2,listType);
-	    //String spAddr1     = generator.addrRegName(register + 1), expReg2;
-	    //String lvalueAddr2 = generator.addrRegName(register + 2);
-	    int j = 1;
+	    String auxReg = generator.regName(free_register,listType);
+	    String listTypeSize = Integer.toString(listType.size());
+
 	    for (int i = ((ListType)t.getType()).len(); i > 0; i--) {
 		generator.write(generator.mov(auxReg,"["+exprReg+"]",listType));
 		generator.write(generator.mov("["+lvalueReg+"]",auxReg,listType));
 
-		generator.write(generator.add(lvalueReg,Integer.toString(listType.size())));
-		generator.write(generator.add(exprReg,Integer.toString(listType.size())));
-		// generator.write(generator.add(spAddr1, Integer.toString((j * generator.stack_align()))));
-
-		// generator.write(generator.movAddr(lvalueAddr2, lvalueReg));
-		// generator.write(generator.add(lvalueAddr2, Integer.toString(((i-1)*listType.size()))));
-
-		// expReg2 = generator.regName(register + 1,listType);
-
-		// storeValue(generator, listType, lvalueAddr2, expReg2);
-		// j++;
+		generator.write(generator.add(lvalueReg,listTypeSize));
+		generator.write(generator.add(exprReg,listTypeSize));
 	    }
-	    // restore
+
+	    generator.restore(free_register);
 	}
-	else
-	    generator.write(generator.mov("[" + lvalueReg + "]",
-					  exprReg, t.getType()));
     }
 }
