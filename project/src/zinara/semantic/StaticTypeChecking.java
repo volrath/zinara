@@ -9,12 +9,14 @@ import zinara.ast.expression.LValue;
 import zinara.ast.expression.LValueList;
 import zinara.ast.expression.LValueTuple;
 import zinara.ast.expression.LValueDict;
+import zinara.ast.expression.LValueVariant;
 import zinara.ast.expression.Identifier;
 import zinara.ast.expression.FunctionCall;
 import zinara.ast.instructions.CodeBlock;
 import zinara.ast.instructions.Instruction;
 import zinara.ast.instructions.Return;
 import zinara.ast.instructions.ProcedureCall;
+import zinara.ast.instructions.SetVariant;
 import zinara.ast.type.Type;
 import zinara.ast.type.DictType;
 import zinara.ast.type.IntType;
@@ -22,9 +24,11 @@ import zinara.ast.type.ListType;
 import zinara.ast.type.TupleType;
 import zinara.ast.type.FunctionType;
 import zinara.ast.type.ProcedureType;
+import zinara.ast.type.VariantType;
 import zinara.exceptions.IdentifierNotDeclaredException;
 import zinara.exceptions.InvalidAccessException;
 import zinara.exceptions.InvalidInstructionException;
+import zinara.exceptions.InvalidVariantException;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
 import zinara.symtable.*;
@@ -176,19 +180,22 @@ public class StaticTypeChecking {
 	throws InvalidAccessException, TypeClashException, KeyErrorException, IdentifierNotDeclaredException {
 	Type constructorType = constructor.getType().getType();
 	//@assume constructor.getType() != null;
-	if (constructorType instanceof ListType) {
-	    SymTable st = ct.getSymTableForId(id);
-	    if (st == null) throw new IdentifierNotDeclaredException(id);
-	    SymValue sv = st.getSymValueForId(id);
-	    //@assume sv != null;
-	    if (sv.getType() instanceof IntType)
-		return new LValueList(constructor, new Identifier(id, st));
-	    else
-		throw new InvalidAccessException("El identificador " + id + " tiene tipo " + sv.getType() + ", se requiere Int");
-	}
-	if (!(constructorType instanceof DictType))
-	    throw new InvalidAccessException("La expresion " + constructor + " no representa un diccionario y no puede ser indexado con un identificador.");
-	return new LValueDict(constructor, id);
+// 	if (constructorType instanceof ListType) {
+// 	    SymTable st = ct.getSymTableForId(id);
+// 	    if (st == null) throw new IdentifierNotDeclaredException(id);
+// 	    SymValue sv = st.getSymValueForId(id);
+// 	    //@assume sv != null;
+// 	    if (sv.getType() instanceof IntType)
+// 		return new LValueList(constructor, new Identifier(id, st));
+// 	    else
+// 		throw new InvalidAccessException("El identificador " + id + " tiene tipo " + sv.getType() + ", se requiere Int");
+// 	}
+	if (!(constructorType instanceof DictType) && !(constructorType instanceof VariantType))
+	    throw new InvalidAccessException("La expresion " + constructor + " no representa un diccionario o una variante y no puede ser indexado con un identificador.");
+	if (constructorType instanceof DictType)
+	    return new LValueDict(constructor, id);
+	else
+	    return new LValueVariant(constructor, id);
     }
 
     public static int returnStaticInt(Expression expr) throws TypeClashException {
@@ -202,6 +209,16 @@ public class StaticTypeChecking {
 	if (!(s instanceof Integer))
 	    throw new TypeClashException("La expresion " + expr + " no pudo ser reducida a un entero");
 	return ((Integer)s).intValue();
+    }
+
+    public static SetVariant checkVariantChange(LValue lv, String var)
+	throws TypeClashException, InvalidVariantException {
+	Type lvType = lv.getType().getType();
+	if (!(lvType instanceof VariantType))
+	    throw new InvalidVariantException("El identificador " + lv + " no es una variante");
+	if (((VariantType)lvType).getVariant(var) == null)
+	    throw new InvalidVariantException("El identificador " + lv + " no tiene una variante con nombre " + var);
+	return new SetVariant(lv, var);
     }
 }
 

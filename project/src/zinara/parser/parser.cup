@@ -10,6 +10,7 @@ import zinara.ast.expression.*;
 import zinara.ast.instructions.*;
 import zinara.ast.type.*;
 import zinara.exceptions.InvalidDictionaryException;
+import zinara.exceptions.InvalidVariantException;
 import zinara.exceptions.KeyErrorException;
 import zinara.exceptions.TypeClashException;
 import zinara.exceptions.SyntaxErrorException;
@@ -113,10 +114,10 @@ terminal END, ENDIF, ENDWHILE, ENDFOR, ENDCYCLE, ENDDEF, ENDMAIN;
 terminal INTEGER, FLOAT, CHAR, BOOL, STRING, NEWTYPE, ALIASTYPE;
 terminal LBRACKET, LPAREN, LBRACET, RBRACKET, RPAREN, RBRACET, DOT, DOTDOT;
 terminal COMMA, DOUBLEDOTTERM, DOUBLEDOT, RETURN, LITTLE_ARROW;
-terminal COPY, VAR, READ, PRINT, PLUSPLUS, LTLT, GTGT;
+terminal COPY, VAR, JOINED, READ, PRINT, PLUSPLUS, LTLT, GTGT;
 terminal AS, IN;
 terminal IF, ELSE, ELIF, WHILE, CYCLE, ON, DO, DEFAULT, FOR, DEF, ASIG;
-terminal CONTINUE, BREAK;
+terminal CONTINUE, BREAK, SET_VARIANT;
 
 /* Non-terminals */
 nonterminal Program program;
@@ -144,6 +145,8 @@ nonterminal ArrayList type_list;
 nonterminal HashMap dict_types;
 nonterminal ArrayList dict_type;
 nonterminal Type def_type;
+nonterminal HashMap variant_joins;
+nonterminal ArrayList variant_entry;
 
 
 /* Precedences */
@@ -309,6 +312,7 @@ type         ::=
                  // tuple - (type0, type1, ..., typen)
                | LBRACET dict_types:dt RBRACET                {: RESULT = new DictType(dt); :}  
                  // dictionary - {ident0:type0,ident1:type1...,identn:typen}
+               | LBRACET dict_types:base RBRACET JOINED variant_joins:joins                {: RESULT = new VariantType(base, joins); :}  
                ;
 
 type_list    ::= type_list:tl COMMA type:t     {:tl.add(t); RESULT = tl;:}
@@ -325,6 +329,14 @@ dict_types   ::= dict_types:dts COMMA dict_type:dt {:
 
 dict_type    ::= IDENTIFIER:id DOUBLEDOT type:t  {: RESULT = new ArrayList(2); RESULT.add(id); RESULT.add(t);:}
                ;
+
+variant_joins ::= variant_joins:js SOR variant_entry:ve        {:
+								if (js.put(ve.get(0), ve.get(1)) != null)
+								    throw new InvalidVariantException("Variante con dos discriminadores iguales");
+								RESULT = js;
+							       :}
+                | variant_entry:ve                             {: RESULT = new HashMap(); RESULT.put((String)ve.get(0), (HashMap)ve.get(1)); :};
+variant_entry ::= IDENTIFIER:id LBRACET dict_types:dts RBRACET  {: RESULT = new ArrayList(2); RESULT.add(id); RESULT.add(dts); :};
 
 def_type ::= LITTLE_ARROW type:t {: RESULT = t; :}
            | 
@@ -353,6 +365,7 @@ instruction   ::= asig:a                                    {: RESULT = a; :}
 							       else
 							          badBreak();
                                                             :}
+                | SET_VARIANT l_value:lv AS IDENTIFIER:var  {: RESULT = StaticTypeChecking.checkVariantChange(lv, var); :}
                 ;
 
 //Codeblocks special for loops because only loops have break and continue
@@ -370,6 +383,7 @@ instruction_loop  ::= asig:a                                      {: RESULT = a;
                     | RETURN expr:e                               {: RESULT = new Return(e); :}
                     | CONTINUE                                    {: RESULT = new Continue(); :}
                     | BREAK                                       {: RESULT = new Break(); :}
+                    | SET_VARIANT l_value:lv AS IDENTIFIER:var    {: RESULT = StaticTypeChecking.checkVariantChange(lv, var); :}
                     ;
 
 /* --- Control structures --- */
