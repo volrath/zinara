@@ -19,6 +19,10 @@ public class BinaryExp extends Expression {
 	left=l;
 	right=r;
 	type = parser.operators.check(this.operator, this.left.getType(), this.right.getType());
+	if ((l.getType().getType() instanceof IntType) && (r.getType().getType() instanceof FloatType))
+	    left  = new CastedExp(new FloatType(), l);
+	else if ((l.getType().getType() instanceof FloatType) && (r.getType().getType() instanceof IntType))
+	    right = new CastedExp(new FloatType(), r);
     }
     
     public Type getType() {
