@@ -24,16 +24,16 @@ public class FunctionCall extends Expression {
     private ArrayList expr_list; // arraylist of expressions
     private SymTable symTable;
 
-    public FunctionCall(String name, ArrayList s, SymTable st) { 
-	this.func_name = name;
+    public FunctionCall(String func_name, ArrayList s, SymTable st) { 
+	this.func_name = func_name;
 	this.expr_list = s;
 	this.symTable = st;
-	this.type = symTable.getSymValueForId(this.func_name).getType();
     }
 
     public Type getType() {
+	System.out.println(type);
 	if (type != null) return type;
-	type = ((FunctionType)symtable.getSymValueForId(this.name).getType()).getReturnType();
+	type = ((FunctionType)symTable.getSymValueForId(this.func_name).getType()).getReturnType();
 	return type;
     }
 

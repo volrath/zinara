@@ -38,7 +38,7 @@ public class SingleAssignation extends Assignation {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException {
+	throws IOException,InvalidCodeException,TypeClashException{
 	String exprReg;
 	String lvalueReg;
 

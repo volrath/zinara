@@ -69,7 +69,7 @@ public class SingleDeclaration extends Declaration {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException, InvalidCodeException {
+	throws IOException,InvalidCodeException,TypeClashException{
 
 	if (this.type instanceof RoutineType){
 	    String label = generator.newLabel();
@@ -95,7 +95,6 @@ public class SingleDeclaration extends Declaration {
 
 	    return;
 	}
-
 	
 	if (expr != null) {
 	    SymValue sv = symTable.getSymbol(identifier);

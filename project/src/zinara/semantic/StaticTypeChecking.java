@@ -84,7 +84,10 @@ public class StaticTypeChecking {
 	    else if (expr.getType().equals(idSymValue.getType()))
 		return new Return(expr);
 	    else 
-		throw new TypeClashException("Tipo de retorno de la funcion " + idSymValue.getType() + " difiere del tipo de la expresion " + expr);
+		throw new TypeClashException("Tipo de retorno de la funcion " + 
+					     idSymValue.getType() + 
+					     " difiere del tipo de la expresion " + 
+					     expr);
 	}
 	else 
 	    throw new InvalidInstructionException("Instruccion `return` no permitida en el main");
