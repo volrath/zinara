@@ -36,7 +36,7 @@ public class LValueVariant extends LValue {
 
     public String toString() { return constructor + "." + identifier; }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generator) throws IOException,InvalidCodeException, TypeClashException {
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 	String indexValue = generator.regName(constructor.register,type);
@@ -66,7 +66,7 @@ public class LValueVariant extends LValue {
 	// }
     }
 
-    public void currentDirection(Genx86 generator) throws InvalidCodeException, IOException{
+    public void currentDirection(Genx86 generator) throws InvalidCodeException, IOException, TypeClashException {
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 
