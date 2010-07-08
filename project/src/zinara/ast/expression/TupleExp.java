@@ -22,7 +22,6 @@ public class TupleExp extends Expression {
 	type = new TupleType(types);
 	return type;
     }
-    // TupleType(null) = (), which in this case, doesn't exist.
 
     public String toString() {
 	String ret = "(";
@@ -31,7 +30,26 @@ public class TupleExp extends Expression {
 	return ret.substring(0, ret.length()-2) + ")";
     }
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generate)
+	throws IOException, InvalidCodeException,TypeClashException{
+	Expression expr;
+	//Type listType =  ((ListType)type).getInsideType();
+	String reg;
+	String regAddr = generator.addrRegName(register);
+
+	for (int i = value.size()-1; i >= 0 ; i--) {
+	    //Se genera el valor
+	    expr = (Expression)value.get(i);
+	    expr.register = register;
+	    expr.tox86(generator);
+	    
+	    //Se pushea en la pila
+	    reg = generator.regName(register, expr.getType());
+	    generator.write(generator.push(reg, expr.getType().size()));
+	}
+
+	//Por ultimo, devuelvo la direccion donde comienza la lista
+	generator.write(generator.mov(regAddr,generator.stack_pointer()));
     }
 
     public boolean isStaticallyKnown() {

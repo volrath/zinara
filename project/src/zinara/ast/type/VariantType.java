@@ -58,10 +58,19 @@ public class VariantType extends Type {
     public Type get(String key) { return (Type)base.get(key); }
 
     public Type getOrDie(String key) throws KeyErrorException {
-// 	Type type = (Type)base.get(key);
-// 	if (type == null)
-// 	    throw new KeyErrorException("La clave " + key + " no se encuentra definida en el tipo de diccionario " + toString());
-	return null;
+	Type type = (Type)base.get(key);
+	if (type != null) return type;
+	Iterator it = joins.keySet().iterator(), it2;
+	HashMap tablei;
+	while(it.hasNext()) {
+	    tablei = (HashMap)joins.get((String)it.next());
+	    it2 = tablei.keySet().iterator();
+	    while(it2.hasNext()) {
+		type = (Type)tablei.get((String)it2.next());
+		if (type != null) return type;
+	    }
+	}
+	throw new KeyErrorException("La clave " + key + " no se encuentra definida en el tipo de diccionario " + toString());
     }
 
     public HashMap getVariant(String var) {
@@ -80,6 +89,7 @@ public class VariantType extends Type {
 	    currentKey = (String)it.next();
 	    ret += currentKey + ": " + (Type)base.get(currentKey) + ", ";
 	}
+	ret = ret.substring(0, ret.length()-2);
 	ret += "} joined to";
 
 	it = joins.keySet().iterator();
@@ -93,6 +103,7 @@ public class VariantType extends Type {
 		currentKey = (String)it2.next();
 		ret += currentKey + ": " + (Type)tablai.get(currentKey) + ", ";
 	    }
+	    ret = ret.substring(0, ret.length()-2);
 	    ret += "}";
 	}
 	return ret + ">";
@@ -101,21 +112,22 @@ public class VariantType extends Type {
     public Type getType() { return this; }
 
     public boolean equals(Type other) {
-	if (!(other instanceof VariantType)) return false;
-	VariantType otherVariant = (VariantType)other;
-	if (!otherVariant.getName().equals("") && !name.equals("")) return  otherVariant.getName().equals(name);
-	// Checks internally
-	if (size() != otherVariant.size()) return false;
-	Iterator it1 = getIterator();
-	Iterator it2 = otherVariant.getIterator();
-	String ckey1, ckey2;
-	while(it1.hasNext()) {
-	    ckey1 = (String)it1.next();
-	    ckey2 = (String)it2.next();
-	    if (ckey1 != ckey2 || !get(ckey1).equals(((Type)otherVariant.get(ckey2)).getType()))
-		return false;
-	}
-	return true;
+	return false; // No se puede comparar nada contra un variant, pero si contra sus elementos.
+// 	if (!(other instanceof VariantType)) return false;
+// 	VariantType otherVariant = (VariantType)other;
+// 	if (!otherVariant.getName().equals("") && !name.equals("")) return  otherVariant.getName().equals(name);
+// 	// Checks internally
+// 	if (size() != otherVariant.size()) return false;
+// 	Iterator it1 = getIterator();
+// 	Iterator it2 = otherVariant.getIterator();
+// 	String ckey1, ckey2;
+// 	while(it1.hasNext()) {
+// 	    ckey1 = (String)it1.next();
+// 	    ckey2 = (String)it2.next();
+// 	    if (ckey1 != ckey2 || !get(ckey1).equals(((Type)otherVariant.get(ckey2)).getType()))
+// 		return false;
+// 	}
+// 	return true;
     }
 
     public void setName(String n) { name = n; }

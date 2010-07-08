@@ -454,30 +454,57 @@ igual al del identificador que recibe a la derecha.
 \section{Tipos definidos por el usuario}
 \label{sec:tiposusuario}
 \emph{\textbf{Zinara}} permite al usuario declarar sus propios tipos,
-de tal manera que pueda abstraer el problema de la manera mas c\'omoda
-posible. Para permitir esto \emph{\textbf{Zinara}} usa un alias profundo
-para ligar un nombre definido por el usuario al sistema de tipos del
-lenguaje.\\
-\indent Los objetos de un tipo \texttt{A} definido por el usuario son
-compatibles \'unicamente con objetos del mismo tipo \texttt{A}.\\
-\indent Un nuevo tipo se puede crear a partir de cualquier tipo b\'asico
-o compuesto del lenguaje. La sintaxis para declarar un tipo nuevo es la
-que sigue:
-\begin{verbatim}
-newtype <tipo_nuevo> <tipo>
-\end{verbatim}
-\texttt{\textless tipo\_nuevo\textgreater} representa el nombre del tipo
-nuevo. Este nombre debe pertenecer al lenguaje regular
-\texttt{[a-zA-Z][a-zA-Z\_0-9]*}. \texttt{\textless tipo\textgreater} representa un
-tipo, b\'asico o compuesto, ya definido por el lenguaje.\\
-Cuando se operan dos tipos definidos por el usuario, el compilador
-revisa que la operaci\'on sea compatible con los tipos subyacentes.\\
-No se puede hacer newtype sobre un tipo definido por el usuario, solo
-sobre tipos definidos por el lenguaje.
+así como también hacer alias de los ya existentes, de tal manera que
+pueda abstraer el problema de la manera mas c\'omoda posible. Para
+permitir esto \emph{\textbf{Zinara}} usa un alias profundo para ligar
+un nombre definido por el usuario al sistema de tipos del lenguaje, y
+un alias superficial para renombrar cualquier tipo ya existente.
 
-\subsubsection{Operaciones sobre tipos definidos por el usuario}
-Dado que los tipos definidos por el usuario son un alias, se operan
-igual que el tipo al cual se le hace el alias.
+\subsection{Alias Profundo o \texttt{newtype}}
+\label{sec:tiposusuario:newtype}
+Las variables o constantes de un tipo \texttt{A} definido por el
+usuario son compatibles \'unicamente con las variables o constantes
+del mismo tipo \texttt{A}.\\
+\indent Un nuevo tipo se puede crear a partir de cualquier tipo
+b\'asico o compuesto del lenguaje, así como también de cualquier tipo
+ya previamente definido por el usuario. La sintaxis para declarar un
+tipo nuevo es la que sigue:
+
+\begin{verbatim}
+newtype <tipo_nuevo> as <tipo>
+\end{verbatim}
+
+\texttt{\textless tipo\_nuevo\textgreater} representa el nombre del
+tipo nuevo. Este nombre debe pertenecer al lenguaje regular
+\texttt{[a-zA-Z][a-zA-Z\_0-9]*}. \texttt{\textless tipo\textgreater}
+representa un tipo, b\'asico o compuesto, ya definido por el lenguaje.\\
+
+Cuando se opera un tipo definido por el usuario con un tipo intrinseco
+del lenguaje, el compilador revisa que la operaci\'on sea compatible
+con los tipos subyacentes.\\
+Dos tipos definidos por el usuario son siempre incompatibles, incluso
+cuando los dos estan representado por el mismo tipo intrinseco del
+lenguaje.\\
+
+\subsection{Alias Superficial o \texttt{aliastype}}
+Los alias de tipos en \emph{\textbf{Zinara}} representan simplemente
+un seudómino que el usuario puede darle a cualquier tipo del sistema
+de tipos (incluso los definidos por el usuario). Para definir un alias
+se utiliza la siguiente sintaxis:
+
+\begin{verbatim}
+aliastype <alias_nuevo> as <tipo>
+\end{verbatim}
+
+Dónde \texttt{\textless alias\_nuevo\textgreater} representa el nombre
+del nuevo alias. Este nombre debe pertencer al lenguaje regular
+\texttt{[a-zA-Z][a-zA-Z\_0-9]*}. \texttt{\textless tipo\textgreater}
+representa un tipo previamente definido en el programa.
+
+Los alias son únicamente para beneficio de lectura del programador. El
+compilador transforma cualquier alias en el tipo al que éste hace
+referencia, y por ende los alias no estan ligados al sistema de tipos
+de \emph{\textbf{Zinara}}.\\
 
 \chapter{Compatiblidad de tipos}
 \label{subsec:comp-tipos}

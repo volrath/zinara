@@ -61,7 +61,7 @@ public class DictType extends Type {
 	    currentKey = (String)it.next();
 	    ret += currentKey + ": " + (Type)table.get(currentKey) + ", ";
 	}
-	return (ret + "}>");
+	return (ret.substring(0, ret.length()-2) + "}>");
     }
 
     public Type getType() { return this; }
