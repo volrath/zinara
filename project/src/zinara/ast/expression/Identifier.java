@@ -36,7 +36,9 @@ public class Identifier extends LValue {
 
     public void tox86(Genx86 generator)
 	throws IOException, InvalidCodeException {
-	System.out.println(identifier);
+	/*OJO: tox86 devuelve el valor en la direccion de memoria.
+	  si se necesita la direccion de memoria sola usar currentDirection
+	 */    
 	String reg = generator.regName(register,getType());
 	String addrReg = generator.addrRegName(register);
 
@@ -58,7 +60,9 @@ public class Identifier extends LValue {
     
     private void storeValue(Genx86 generator, String currentReg, String addrReg)
 	throws IOException,InvalidCodeException{
-        //Si es un tipo numerico o boleano, se copian los contenidos
+	/*OJO: storeValue devuelve el valor en la direccion de memoria.
+	  si se necesita la direccion de memoria sola usar currentDirection
+	 */    
 	currentDirection(generator);
 	generator.write(generator.mov(currentReg,
 				      "["+addrReg+"]"));
