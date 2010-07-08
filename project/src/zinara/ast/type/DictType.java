@@ -12,13 +12,16 @@ public class DictType extends Type {
 
     public DictType(HashMap t) {
 	table = t;
+	offsets = new HashMap();
 	String key;
 	Type ct;
 	Iterator it = table.keySet().iterator();
+	int offset = 0;
 	while(it.hasNext()) {
 	    key = (String)it.next();
 	    ct  = (Type)table.get(key);
-	    offsets.put(key, new Integer(ct.size()));
+	    offsets.put(key, new Integer(offset));
+	    offset += ct.size();
 	}
     }
 
@@ -58,7 +61,7 @@ public class DictType extends Type {
 	    currentKey = (String)it.next();
 	    ret += currentKey + ": " + (Type)table.get(currentKey) + ", ";
 	}
-	return (ret + "}>");
+	return (ret.substring(0, ret.length()-2) + "}>");
     }
 
     public Type getType() { return this; }

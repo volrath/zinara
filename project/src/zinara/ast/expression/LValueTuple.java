@@ -58,6 +58,8 @@ public class LValueTuple extends LValue {
 
     public void currentDirection(Genx86 generator)
 	throws InvalidCodeException,IOException{
+	constructor.register = register;
+
 	String constructorReg = generator.addrRegName(constructor.register);
 	constructor.currentDirection(generator);
 

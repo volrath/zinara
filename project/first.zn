@@ -22,7 +22,7 @@ main:
    var OtroEntero ent
    var TuplaEntero tupla
    ent = 1
-   tupla = (ent, 2)
+   //tupla = (ent, 2)
 
    //[Int|2] d = []
    //a = d[2] + 1
@@ -82,4 +82,7 @@ c=8
    y = False
    //d[1] = x and y
 ./
+
+var {a:Int,b:Int} joined to v1{c:Char} | v2{d:String} var1
+set_variant var1 as v1
 endmain

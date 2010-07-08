@@ -68,10 +68,12 @@ Number      = {Digit}+
  "Char"                          { return symbol(sym.CHAR); }
  "String"                        { return symbol(sym.STRING); }
  "Bool"                          { return symbol(sym.BOOL); }
+ "joined to"                     { return symbol(sym.JOINED); }
  "newtype"                       { return symbol(sym.NEWTYPE); }
  "aliastype"                     { return symbol(sym.ALIASTYPE); }
  "var"                           { return symbol(sym.VAR); }
  "def"                           { return symbol(sym.DEF); }
+ "set_variant"                   { return symbol(sym.SET_VARIANT); }
  ":" "\ "* {LineTerminator}      { return symbol(sym.DOUBLEDOTTERM); }
  ":"                             { return symbol(sym.DOUBLEDOT); }
  "copy"                          { return symbol(sym.COPY); }

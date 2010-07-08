@@ -38,10 +38,30 @@ public class DictExp extends Expression {
 	    ckey = (String)it.next();
 	    ret += ckey + ": " + (Expression)value.get(ckey) + ", ";
 	}
-	return ret.substring(0, ret.length()-2) + "}";
+	return ret.substring(0, ret.length()-2) + value.size() + "}";
     }
 
-    public void tox86(Genx86 generate){
+    public void tox86(Genx86 generate)
+	throws IOException, InvalidCodeException,TypeClashException{
+	Expression expr;
+	//Type listType =  ((ListType)type).getInsideType();
+	String reg;
+	String regAddr = generator.addrRegName(register);
+
+	Iterator it = value.keySet().iterator();
+	while(it.hasNext()) {
+	    //Se genera el valor
+	    expr = (Expression)value.get((String)it.next());
+	    expr.register = register;
+	    expr.tox86(generator);
+	    
+	    //Se pushea en la pila
+	    reg = generator.regName(register, expr.getType());
+	    generator.write(generator.push(reg, expr.getType().size()));
+	}
+
+	//Por ultimo, devuelvo la direccion donde comienza la lista
+	generator.write(generator.mov(regAddr,generator.stack_pointer()));
     }
 
     public boolean isStaticallyKnown() {

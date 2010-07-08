@@ -18,7 +18,9 @@ public class CastedExp extends Expression {
     }
     
     public Type getType() throws TypeClashException {
-	return parser.operators.check(parser.operators.cast, this.expr.getType(), null);
+	if (type == null)
+	    type = parser.operators.check(parser.operators.cast, this.expr.getType(), null);
+	return type;
     }
 
     public String toString() {
