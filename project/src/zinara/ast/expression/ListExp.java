@@ -62,7 +62,7 @@ public class ListExp extends Expression {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException, InvalidCodeException,TypeClashException{
+	throws IOException, InvalidCodeException{
 	Expression expr;
 	Type listType =  ((ListType)type).getInsideType();
 	String reg = generator.regName(register,listType);

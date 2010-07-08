@@ -13,7 +13,8 @@ public class CharExp extends Expression {
     public Type getType() { return type; }
     public String toString() { return Character.toString(value); }
 
-    public void tox86(Genx86 generate) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generate)
+	throws IOException,InvalidCodeException {
 	String reg = generate.regName(register,new CharType());
  	generate.write(generate.movChar(reg,generate.toASCII(value)));
     }

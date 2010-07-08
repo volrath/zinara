@@ -40,7 +40,7 @@ public class FunctionCall extends Expression {
     public String toString() { return func_name + "(" + expr_list + ")"; }
 
     public void tox86(Genx86 generator)
-	throws InvalidCodeException,IOException,TypeClashException{
+	throws InvalidCodeException,IOException{
 
 	RoutineGenerator.gen_routine(generator,symTable,
 				     func_name,expr_list,

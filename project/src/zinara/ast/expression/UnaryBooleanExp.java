@@ -13,7 +13,8 @@ public class UnaryBooleanExp extends BooleanExp {
     public int operator;
     public BooleanExp operand;
     
-    public UnaryBooleanExp ( int o, Expression e ) throws TypeClashException {
+    public UnaryBooleanExp ( int o, Expression e )
+	throws TypeClashException {
 	if (!(e instanceof BooleanExp))
 	    throw new TypeClashException("La expresion " + e + " no es del tipo Bool por lo tanto no puede ser negada");
 	operator = o;
@@ -30,7 +31,7 @@ public class UnaryBooleanExp extends BooleanExp {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	operand.yesLabel = noLabel;
 	operand.noLabel  = yesLabel;
 	operand.tox86(generator);

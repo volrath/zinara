@@ -31,7 +31,7 @@ public class LValueList extends LValue {
     public String toString() { return constructor + "[" + index + "]"; }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException {
+	throws IOException,InvalidCodeException{
 	generator.write("; B-----\n");
 
 	try {
@@ -58,7 +58,7 @@ public class LValueList extends LValue {
     }
 
     public void currentDirection(Genx86 generator)
-	throws InvalidCodeException,IOException,TypeClashException{
+	throws InvalidCodeException,IOException{
 	constructor.register = register;
 	index.register       = register + 1;
 	String constructorReg = generator.addrRegName(constructor.register);

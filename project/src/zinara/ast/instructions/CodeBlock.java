@@ -52,7 +52,7 @@ public class CodeBlock extends Instruction{
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	Instruction inst;
 	
 	for (int i = 0; i < block.size(); i++) {

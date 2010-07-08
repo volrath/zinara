@@ -13,7 +13,6 @@ import zinara.ast.type.TupleType;
 import zinara.ast.type.DictType;
 import zinara.code_generator.*;
 import zinara.exceptions.InvalidCodeException;
-import zinara.exceptions.TypeClashException;
 import zinara.symtable.*;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ public class RoutineGenerator{
 				   ArrayList expr_list,
 				   int register,
 				   boolean isFunction)
-	throws InvalidCodeException,IOException,TypeClashException{
+	throws InvalidCodeException,IOException{
 	String code = "";
 
 	SymValue proc = symTable.getSymValueForId(func_name);
@@ -49,7 +48,8 @@ public class RoutineGenerator{
 	    //Caso por valor
 	    if ( ((Param)routine.getArgument(i)).byValue() ){
 		//Seteo el nombre correcto del registro a utilizar
-		exprType = expr.getType();
+		//exprType = expr.getType();
+		exprType = expr.type;
 		reg = generator.regName(register,exprType);
 		
 		/*********Se pushea en la pila*********/		
@@ -74,7 +74,7 @@ public class RoutineGenerator{
 
 		    ((Identifier)expr).currentDirection(generator);
 		    
-		    copyList(generator,expr.type.getType(),reg,register+1);
+		    copyList(generator,expr.type/*.getType()*/,reg,register+1);
 		}
 		//Si es un tipo compuesto literal, ya se genero en la pila
 		else{

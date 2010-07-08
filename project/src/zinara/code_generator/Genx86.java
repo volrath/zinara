@@ -592,6 +592,14 @@ public class Genx86{
 	return "fld "+orig+"\n";
     }
 
+    public String fist(String dst){
+	return "fist "+dst+"\n";
+    }
+
+    public String fild(String orig){
+	return "fild "+orig+"\n";
+    }
+
     public String fxch(){
 	return "fxch\n";
     }
@@ -700,7 +708,7 @@ public class Genx86{
 	if (this.bits == 32)
 	    size = "dword";
 	else
-	    size = "dword";
+	    size = "qword";
 	
 	code += mov("["+this.stackp+"]",dst);
 	code += fld("["+this.stackp+"]",size);
@@ -722,7 +730,7 @@ public class Genx86{
 	if (this.bits == 32)
 	    size = "dword";
 	else
-	    size = "dword";
+	    size = "qword";
 	
 	code += mov("["+this.stackp+"]",dst);
 	code += fld("["+this.stackp+"]",size);
@@ -744,7 +752,7 @@ public class Genx86{
 	if (this.bits == 32)
 	    size = "dword";
 	else
-	    size = "dword";
+	    size = "qword";
 	
 	code += mov("["+this.stackp+"]",dst);
 	code += fld("["+this.stackp+"]",size);
@@ -766,7 +774,7 @@ public class Genx86{
 	if (this.bits == 32)
 	    size = "dword";
 	else
-	    size = "dword";
+	    size = "qword";
 	
 	code += mov("["+this.stackp+"]",dst);
 	code += fld("["+this.stackp+"]",size);
@@ -792,14 +800,65 @@ public class Genx86{
 	return "xor "+a+","+b+"\n";
     }
 
-    public String jump(String label){
-        return "jmp " + label + "\n";
+    public String fcom(){
+	return "ficom\n";
+    }
+
+    public String ficom(String integer,String size){
+	return "ficom "+size+" "+integer+"\n";
     }
 
     public String cmp(String a, String b){
 	return "cmp "+a+","+b+"\n";
     }
 
+    public String compare(String a, String b, Type at, Type bt)
+	throws InvalidCodeException{
+	String code = "";
+	String size;
+	if (this.bits == 32)
+	    size = "dword";
+	else
+	    size = "qword";
+
+	if (at instanceof IntType){
+	    if (bt instanceof IntType)
+		return cmp(a,b);
+	    else if (bt instanceof FloatType){
+		code += fld(b,size);
+		code += ficom(a,size);
+		code += fninit();
+		return code;
+	    }
+	}
+	else if (at instanceof FloatType){
+	    if (bt instanceof IntType){
+		code += fld(a,size);
+		code += ficom(b,size);
+		code += fninit();
+		return code;
+	    }
+	    else if (bt instanceof FloatType){
+		code += fld(a,size);
+		code += fld(b,size);
+		code += fcom();
+		code += fninit();
+		return code;
+	    }
+	}
+	else
+	    throw new InvalidCodeException("No se pueden comparar "+
+					   at+
+					   "contra "+
+					   bt);
+
+	return "";
+    }
+    
+    public String jump(String label){
+        return "jmp " + label + "\n";
+    }
+    
     public String jz(String label){
 	return "jz "+label+"\n";
     }

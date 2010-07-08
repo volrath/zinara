@@ -30,7 +30,7 @@ public class BinaryRelationalExp extends BooleanExp {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	left.register  = register;
 	right.register = register + 1;
 

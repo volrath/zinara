@@ -11,7 +11,7 @@ public abstract class Instruction extends ASTNode {
     public String nextInst;
     public abstract String toString();
     public abstract void tox86(Genx86 generate)
-	throws InvalidCodeException,IOException,TypeClashException;
+	throws InvalidCodeException,IOException;
     
     public void checkNoReturns(){};
 }

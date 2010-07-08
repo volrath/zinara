@@ -45,7 +45,7 @@ public class MultipleAssignation extends Assignation {
     }
 
     public void tox86(Genx86 generate)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	for (int i = 0; i < assignations.size(); i++)
 	    ((SingleAssignation)assignations.get(i)).tox86(generate);
     }

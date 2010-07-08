@@ -24,10 +24,11 @@ public class Return extends Instruction{
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	expr.register = register;
 
-	Type exprType = expr.getType();
+	//Type exprType = expr.getType();
+	Type exprType = expr.type;
 	String expReg = generator.regName(expr.register,exprType);
 
 	String asm = "";

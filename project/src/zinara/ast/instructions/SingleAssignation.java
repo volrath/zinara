@@ -38,7 +38,7 @@ public class SingleAssignation extends Assignation {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	String exprReg;
 	String lvalueReg;
 
@@ -78,7 +78,7 @@ public class SingleAssignation extends Assignation {
 
     // This one can be improved =S
     public void booleanAssignationToX86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException {
+	throws IOException,InvalidCodeException{
 	String lvalueReg;
 
 	BooleanExp bExpr = (BooleanExp)expr;

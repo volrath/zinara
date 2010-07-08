@@ -61,8 +61,8 @@ public class Operators {
 	// Relational
 	this.table.put(new OP(this.relational, new IntType(), new IntType()).toString(), new BoolType());
 	this.table.put(new OP(this.relational, new FloatType(), new FloatType()).toString(), new BoolType());
-	this.table.put(new OP(this.relational, new CharType(), new CharType()).toString(), new BoolType());
-	this.table.put(new OP(this.relational, new BoolType(), new BoolType()).toString(), new BoolType());
+	//this.table.put(new OP(this.relational, new CharType(), new CharType()).toString(), new BoolType());
+	//this.table.put(new OP(this.relational, new BoolType(), new BoolType()).toString(), new BoolType());
 	this.table.put(new OP(this.relational, new IntType(), new FloatType()).toString(), new BoolType());
 	this.table.put(new OP(this.relational, new FloatType(), new IntType()).toString(), new BoolType());
 
@@ -85,7 +85,8 @@ public class Operators {
 
 	//Casting
 	//El 2do argumentdo del constructor de OP es el tipo HACIA el que se castea
-	this.table.put(new OP(this.cast, new IntType(), new FloatType()).toString(), new IntType());
+	this.table.put(new OP(this.cast, new IntType(), new FloatType()).toString(), new FloatType());
+	this.table.put(new OP(this.cast, new FloatType(), new IntType()).toString(), new IntType());
     }
 
     // also returns the type cohersion if needed

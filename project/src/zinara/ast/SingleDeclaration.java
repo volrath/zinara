@@ -69,7 +69,7 @@ public class SingleDeclaration extends Declaration {
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 
 	if (this.type instanceof RoutineType){
 	    String label = generator.newLabel();
@@ -117,7 +117,7 @@ public class SingleDeclaration extends Declaration {
 
     // This one can be improved =S
     public void booleanAssignationToX86(Genx86 generator, String lvalueAddr)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	BooleanExp bExpr = (BooleanExp)expr;
 	String nextDecl = generator.newLabel();
 
@@ -148,7 +148,7 @@ public class SingleDeclaration extends Declaration {
     }
 
     private void storeValue(Genx86 generator, Type t, String lvalueAddr, String exprReg)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	
 	if (t.getType() instanceof ListType) {
 	    Type listType = ((ListType)t.getType()).getInsideType();
@@ -178,7 +178,7 @@ public class SingleDeclaration extends Declaration {
     }
 
     private void make_proc(Genx86 generator,String label,int local_vars)
-	throws InvalidCodeException,IOException,TypeClashException{
+	throws InvalidCodeException,IOException{
 	String asm = "";
 	String local_vars_size = Integer.toString(local_vars);
 	String frame_p = generator.frame_pointer();

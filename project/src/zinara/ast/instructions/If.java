@@ -36,7 +36,7 @@ public class If extends Instruction{
     }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	IfCase ic;
 	for (int i = 0; i < cases.size(); i++) {
 	    ic = (IfCase)cases.get(i);

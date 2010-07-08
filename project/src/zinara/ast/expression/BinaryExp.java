@@ -30,7 +30,7 @@ public class BinaryExp extends Expression {
     }
 
     public void tox86(Genx86 generate)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	String save;
 	String restore;
 

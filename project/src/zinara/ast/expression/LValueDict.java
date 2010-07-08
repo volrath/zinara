@@ -36,7 +36,7 @@ public class LValueDict extends LValue {
     public String toString() { return constructor + "[" + identifier + "]"; }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 	String indexValue = generator.regName(constructor.register,type);
@@ -49,33 +49,19 @@ public class LValueDict extends LValue {
 				      type.getType()
 				      )
 			);
-
-	// if (type.getType() instanceof IntType)
-	//     generator.write(generator.movInt(indexValue,
-	// 				     "[" + constructorReg + "]"));
-	// else if (type.getType() instanceof FloatType)
-	//     generator.write(generator.movReal(indexValue,
-	// 				      "[" + constructorReg + "]"));
-	// else if (type.getType() instanceof BoolType)
-	//     generator.write(generator.movBool(indexValue,
-	// 				      "[" + constructorReg + "]"));
-	// else if ((type.getType() instanceof ListType)||
-	// 	 (type.getType() instanceof DictType)){
-	//     generator.write("; E-----\n");
-	//     return;
-	// }
     }
 
     public void currentDirection(Genx86 generator)
-	throws InvalidCodeException,IOException,TypeClashException{
+	throws InvalidCodeException,IOException{
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 
 	constructor.tox86(generator);
 	//try {
-	    Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
-	    generator.write(generator.add(constructorReg, offset.toString()));
-	    //} catch (TypeClashException e) {}
+	//Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
+	Integer offset = ((DictType)constructor.type).getOffsetFor(identifier);
+	generator.write(generator.add(constructorReg, offset.toString()));
+	//} catch (TypeClashException e) {}
     }
 
     public boolean isStaticallyKnown() {

@@ -13,7 +13,8 @@ public class FloatExp extends Expression {
     public Type getType() { return type; }
     public String toString() { return Float.toString(value); }
 
-    public void tox86(Genx86 generate) throws IOException,InvalidCodeException {
+    public void tox86(Genx86 generate)
+	throws IOException,InvalidCodeException {
 	String reg = generate.regName(register,new FloatType());
  	generate.write(generate.movReal(reg,generate.toReal(value)));
     }

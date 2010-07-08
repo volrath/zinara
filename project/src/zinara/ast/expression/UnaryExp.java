@@ -27,7 +27,7 @@ public class UnaryExp extends Expression {
     }
 
     public void tox86(Genx86 generate)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	if (operand instanceof IntegerExp)
 	    ((IntegerExp)operand).negative();
 	else if (operand instanceof FloatExp)

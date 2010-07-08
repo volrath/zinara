@@ -32,7 +32,7 @@ public class LValueTuple extends LValue {
     public String toString() { return constructor + "[" + index + "]"; }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	generator.write("; B-----\n");
 
 	constructor.register = register;
@@ -48,33 +48,16 @@ public class LValueTuple extends LValue {
     }
 
     private void storeValue(Genx86 generator, String valueReg, String addrReg)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	generator.write(generator.mov(valueReg,
 				      "[" + addrReg + "]",
 				      type.getType()
 				      )
 			);
-
-	// if (type.getType() instanceof IntType)
-	//     generator.write(generator.movInt(valueReg,
-	// 				     "[" + addrReg + "]"));
-	// else if (type.getType() instanceof FloatType)
-	//     generator.write(generator.movReal(valueReg,
-	// 				  "[" + addrReg + "]"));
-	// else if (type.getType() instanceof BoolType)
-	//     generator.write(generator.movBool(valueReg,
-	// 				  "[" + addrReg + "]"));
-	// else if ((type.getType() instanceof ListType)||
-	// 	 (type.getType() instanceof DictType)){
-	//     generator.write("; E-----\n");
-	//     return;
-	// }
-	// else
-	//     generator.write("Indexamiento de valores del tipo "+type.getType().toString()+" no implementado\n");
     }
 
     public void currentDirection(Genx86 generator)
-	throws InvalidCodeException,IOException,TypeClashException{
+	throws InvalidCodeException,IOException{
 	String constructorReg = generator.addrRegName(constructor.register);
 	constructor.currentDirection(generator);
 

@@ -34,7 +34,8 @@ public class Identifier extends LValue {
     }
     public String toString() { return identifier; }
 
-    public void tox86(Genx86 generator) throws IOException, InvalidCodeException {
+    public void tox86(Genx86 generator)
+	throws IOException, InvalidCodeException {
 	String reg = generator.regName(register,getType());
 
 	storeValue(generator, reg);

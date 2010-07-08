@@ -19,7 +19,7 @@ public class DecInst extends Instruction {
     public String toString() { return "<" + declaration + ">"; }
 
     public void tox86(Genx86 generator)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	declaration.tox86(generator);
     }
 }

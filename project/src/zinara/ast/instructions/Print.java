@@ -27,7 +27,7 @@ public class Print extends Instruction{
     }
 
     public void tox86(Genx86 generate)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	// expr.register = register;
 	// String expReg = generate.addrRegName(expr.register);
 
