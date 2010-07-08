@@ -27,7 +27,7 @@ public class Main extends ASTNode {
     }
 
     public void tox86(Genx86 generate)
-	throws IOException,InvalidCodeException,TypeClashException{
+	throws IOException,InvalidCodeException{
 	this.code.register = register;
 	this.code.tox86(generate);
     }

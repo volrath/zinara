@@ -37,8 +37,9 @@ public class Identifier extends LValue {
     public void tox86(Genx86 generator)
 	throws IOException, InvalidCodeException {
 	String reg = generator.regName(register,getType());
+	String addrReg = generator.addrRegName(register);
 
-	storeValue(generator, reg);
+	storeValue(generator, reg, addrReg);
     }
 
     public void currentDirection(Genx86 generator) throws IOException{
@@ -64,15 +65,12 @@ public class Identifier extends LValue {
 	}
     }
     
-    private void storeValue(Genx86 generator, String currentReg)
+    private void storeValue(Genx86 generator, String currentReg, String addrReg)
 	throws IOException,InvalidCodeException{
         //Si es un tipo numerico o boleano, se copian los contenidos
+	currentDirection(generator);
 	generator.write(generator.mov(currentReg,
-				      "[" +
-				      getSymValue().getArea() +
-				      getSymValue().getOffset() + 
-				      "]",
-				      type.getType()));
+				      "["+addrReg+"]"));
     }
 
     public boolean isStaticallyKnown() {

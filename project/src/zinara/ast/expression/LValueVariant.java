@@ -36,7 +36,8 @@ public class LValueVariant extends LValue {
 
     public String toString() { return constructor + "." + identifier; }
 
-    public void tox86(Genx86 generator) throws IOException,InvalidCodeException, TypeClashException {
+    public void tox86(Genx86 generator)
+	throws IOException,InvalidCodeException{
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 	String indexValue = generator.regName(constructor.register,type);
@@ -49,24 +50,10 @@ public class LValueVariant extends LValue {
 				      type.getType()
 				      )
 			);
-
-	// if (type.getType() instanceof IntType)
-	//     generator.write(generator.movInt(indexValue,
-	// 				     "[" + constructorReg + "]"));
-	// else if (type.getType() instanceof FloatType)
-	//     generator.write(generator.movReal(indexValue,
-	// 				      "[" + constructorReg + "]"));
-	// else if (type.getType() instanceof BoolType)
-	//     generator.write(generator.movBool(indexValue,
-	// 				      "[" + constructorReg + "]"));
-	// else if ((type.getType() instanceof ListType)||
-	// 	 (type.getType() instanceof VariantType)){
-	//     generator.write("; E-----\n");
-	//     return;
-	// }
     }
 
-    public void currentDirection(Genx86 generator) throws InvalidCodeException, IOException, TypeClashException {
+    public void currentDirection(Genx86 generator)
+	throws InvalidCodeException, IOException{
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 

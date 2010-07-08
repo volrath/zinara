@@ -159,7 +159,7 @@ public class Genx86{
 	String identifier;
 	SymValue symValue;
 
-	// First set space for global variables
+	// Espacio para variable globales
  	Iterator keyIt = symtable.keySet().iterator();
 	int total_size = 0;
 	while(keyIt.hasNext()) {
@@ -167,11 +167,13 @@ public class Genx86{
 	    symValue = symtable.getSymbol(identifier);
 	    if (symValue.type.size() == 0){continue;}
 
-	    symValue.setOffset(Integer.toString(total_size));
+	    symValue.setArea(global_offset());
+	    symValue.setOffset("+"+Integer.toString(total_size));
 	    total_size += symValue.type.size();
 	}
 
-	// then for main variables
+	// Luego para variables del Main
+	// La tabla del main siempre queda al final de la lista de tablas hijo
 	SymTable mainSymTable = symtable.getSon(symtable.getSons().size()-1);
 	total_size = mainSymTable.reserve_mem_main(total_size,global_offset);
 

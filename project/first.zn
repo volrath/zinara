@@ -5,14 +5,14 @@ def hola():
 enddef
 ./
 
-def function(a as Int) -> Float:
+def function(copy a as Int) -> Float:
     print(a)
     return 0.
 enddef
 
 Int a = 2
 Float b = 9.
-var Int c
+var Int c = 4
 newtype Entero as Int
 newtype OtroEntero as Int
 aliastype TuplaEntero as (Entero, Entero)

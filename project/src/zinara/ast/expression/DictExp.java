@@ -3,10 +3,12 @@ import zinara.code_generator.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.io.IOException;
 
 import zinara.ast.type.DictType;
 import zinara.ast.type.Type;
 import zinara.exceptions.InvalidDictionaryException;
+import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
 
 public class DictExp extends Expression {
@@ -41,8 +43,8 @@ public class DictExp extends Expression {
 	return ret.substring(0, ret.length()-2) + value.size() + "}";
     }
 
-    public void tox86(Genx86 generate)
-	throws IOException, InvalidCodeException,TypeClashException{
+    public void tox86(Genx86 generator)
+	throws IOException, InvalidCodeException{
 	Expression expr;
 	//Type listType =  ((ListType)type).getInsideType();
 	String reg;
@@ -56,8 +58,8 @@ public class DictExp extends Expression {
 	    expr.tox86(generator);
 	    
 	    //Se pushea en la pila
-	    reg = generator.regName(register, expr.getType());
-	    generator.write(generator.push(reg, expr.getType().size()));
+	    reg = generator.regName(register, expr.type);
+	    generator.write(generator.push(reg, expr.type.size()));
 	}
 
 	//Por ultimo, devuelvo la direccion donde comienza la lista
