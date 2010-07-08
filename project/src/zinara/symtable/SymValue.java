@@ -21,6 +21,7 @@ public class SymValue{
 	this.status = s;
         this.type = t;
 	this.specialSymbol = false;
+	this.byValue = true; //<- esto DEBE estar en true
     }
 
     //@ requires t != null;

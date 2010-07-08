@@ -57,7 +57,7 @@ public class LValueVariant extends LValue {
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 
-	constructor.tox86(generator);
+	constructor.currentDirection(generator);
 	try {
 	    Integer offset = ((VariantType)constructor.getType().getType()).getOffsetFor(identifier);
 	    generator.write(generator.add(constructorReg, offset.toString()));

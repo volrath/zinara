@@ -264,6 +264,7 @@ public class Genx86{
 	    return charRegName(r);
 	else if ((type instanceof ListType)||
 		 (type instanceof DictType)||
+		 (type instanceof VariantType)||
 		 (type instanceof StringType))
 	    return addrRegName(r);
 	else

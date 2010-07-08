@@ -36,6 +36,7 @@ public class Identifier extends LValue {
 
     public void tox86(Genx86 generator)
 	throws IOException, InvalidCodeException {
+	System.out.println(identifier);
 	String reg = generator.regName(register,getType());
 	String addrReg = generator.addrRegName(register);
 
