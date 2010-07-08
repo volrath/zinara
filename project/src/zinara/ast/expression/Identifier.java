@@ -43,7 +43,6 @@ public class Identifier extends LValue {
     }
 
     public void currentDirection(Genx86 generator) throws IOException{
-	if (getSymValue().isParam()){
 	    String code = "";
 	    String reg = generator.addrRegName(register);
 	    SymValue id = getSymValue();
@@ -54,15 +53,6 @@ public class Identifier extends LValue {
 		code += generator.movAddr(reg,"["+reg+"]");
 	    
 	    generator.write(code);
-	}
-	else{
-	    String reg = generator.addrRegName(register);
-	    generator.write(
-			    generator.movAddr(reg,
-					      getSymValue().getArea()+
-					      getSymValue().getOffset())
-			    );
-	}
     }
     
     private void storeValue(Genx86 generator, String currentReg, String addrReg)
