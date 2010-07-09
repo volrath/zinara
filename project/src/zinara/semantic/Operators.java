@@ -1,6 +1,7 @@
 package zinara.semantic;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import zinara.ast.type.*;
 import zinara.exceptions.TypeClashException;
@@ -116,7 +117,7 @@ public class Operators {
 	case sym.SOR:
 	    om = logical;
 	    break;
-	case -4:
+	case cast:
 	    om = cast;
 	    break;
 	default:

@@ -12,14 +12,13 @@ public class CastedExp extends Expression {
     public Type cast;
     public Expression expr;
     
-    public CastedExp (Type c, Expression e) {
+    public CastedExp (Type c, Expression e) throws TypeClashException {
 	cast=c;
 	expr=e;
+	type = parser.operators.check(parser.operators.cast, this.expr.getType(), c);
     }
     
     public Type getType() throws TypeClashException {
-	if (type == null)
-	    type = parser.operators.check(parser.operators.cast, this.expr.getType(), null);
 	return type;
     }
 
