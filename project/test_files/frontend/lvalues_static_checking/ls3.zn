@@ -1,0 +1,5 @@
+var [Int|4] x
+
+main:
+x[0] = 'a'
+endmain

@@ -1,0 +1,4 @@
+main:
+    var Int x
+    x = fun()
+endmain

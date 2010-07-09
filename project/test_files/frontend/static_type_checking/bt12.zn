@@ -1,0 +1,12 @@
+def fun() -> Float:
+    Int x = 10
+    return x
+end
+
+main:
+    Int x = 1
+    if True:
+        x = fun()
+    end
+endmain
+    

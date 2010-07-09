@@ -1,0 +1,4 @@
+var [Char|2] x
+main:
+x = [1,2]
+endmain

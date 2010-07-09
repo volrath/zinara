@@ -1,0 +1,5 @@
+main:
+    var Int x, y, z
+    Float a = 1.
+    y = a
+endmain

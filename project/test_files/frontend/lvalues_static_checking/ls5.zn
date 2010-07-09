@@ -1,0 +1,4 @@
+main:
+var [[Int|2]|4] x
+x[0] = 1
+endmain

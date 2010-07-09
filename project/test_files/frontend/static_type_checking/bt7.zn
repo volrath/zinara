@@ -1,0 +1,7 @@
+main:
+    Int x = 1
+    if True:
+        x = 1.
+    end
+endmain
+    

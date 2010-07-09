@@ -1,0 +1,8 @@
+def fun(a as Int) -> Bool:
+    return True
+end
+
+main:
+    var Bool x
+    x = fun(y)
+endmain

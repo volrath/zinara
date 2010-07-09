@@ -1,0 +1,13 @@
+main:
+/. FORS ./
+
+Bool h = False
+var [Int|20] x
+
+for i in [1,2,3]:
+   Bool h = True
+   print(h)
+   Bool i'=True
+endfor
+
+endmain

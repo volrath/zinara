@@ -1,0 +1,11 @@
+def fun(x as Float) -> Int:
+    return 0
+end
+
+main:
+    if True:
+       var Float y = 9.
+    end
+
+    fun(y)
+endmain

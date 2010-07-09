@@ -1,0 +1,14 @@
+main:
+    var Int a = 5 + 6*8
+    a = (5+6)*8
+    a = (0-9)
+    a = 7-7
+    a = 6-8+9*7/3
+    a = 6*8-9/7+3
+
+    var Bool bl
+    bl = (7<9) and (6>0)
+    bl = True & False | a<9
+    bl = True | (False & a==a)
+    bl = (a+8)*3 <= 90*2 or a<2 and a <=> 7
+endmain

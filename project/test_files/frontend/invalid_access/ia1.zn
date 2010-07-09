@@ -1,0 +1,9 @@
+[Int|3] x = [1,3,4]
+
+main:
+    x[0] = x[1]
+    var Int y = 5
+    var (Float, Int, Bool, Int) z
+    //z[y] = x[y]
+    z[y-2] = 9
+endmain

@@ -1,0 +1,7 @@
+main:
+{num:Int, list:[Char]} x
+{y:{x:Char, y:Char}, dog:String} y
+
+x[list][0] = y[y][y]
+y[y][x] = x[list][0]
+endmain

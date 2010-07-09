@@ -1,0 +1,4 @@
+main:
+var (Char, Int) x
+x = (1,2)
+endmain

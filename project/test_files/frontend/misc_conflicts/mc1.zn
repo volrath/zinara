@@ -1,0 +1,5 @@
+Int x = 1, 1
+
+main:
+    print(x)
+endmain

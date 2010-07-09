@@ -1,0 +1,6 @@
+Int x = 1
+Int x = 2
+
+main:
+    Int y
+endmain

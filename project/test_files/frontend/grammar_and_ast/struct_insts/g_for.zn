@@ -1,0 +1,17 @@
+main:
+/. No FOR ./
+
+Bool h = False
+
+for i in [True,False,True,True]:
+   Bool h = False
+   print(h)
+   Bool j = True
+endfor
+
+for i in [1,2,3,4,5]:
+   print(1)
+   Int a = 7
+end
+
+endmain

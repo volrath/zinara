@@ -1,0 +1,5 @@
+Int x = 1
+
+main:
+    x = y
+endmain
