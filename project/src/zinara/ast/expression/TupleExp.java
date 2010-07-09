@@ -20,7 +20,7 @@ public class TupleExp extends Expression {
 	if (type != null) return type;
 	ArrayList types = new ArrayList();
 	for (int i = 0; i < value.size(); i++)
-	    types.add(((Expression)value.get(0)).getType());
+	    types.add(((Expression)value.get(i)).getType());
 	type = new TupleType(types);
 	return type;
     }

@@ -1,0 +1,27 @@
+main:
+    Int x = 1, y = 2, w = 2
+    Float z = 1.5
+
+    print(x < y)
+    print(x > y)
+    print(x <= y)
+    print(x >= y)
+    print(w < y)
+    print(w > y)
+    print(w <= y)
+    print(w >= y)
+    print(x == y)
+    print(x != y)
+    print(w == y)
+    print(w != y)
+
+    print(x < z)
+    print(x > z)
+    print(x <= z)
+    print(x >= z)
+
+    print(z < y)
+    print(z > y)
+    print(z <= y)
+    print(z >= y)
+endmain

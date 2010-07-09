@@ -1,0 +1,48 @@
+main:
+    Int x = 2
+    Float y = 1.4
+
+    if (x == 2):
+        print("x es 2")
+    end
+
+    if (x != 2):
+        print("x no es 2")
+    end
+
+    if (x < y):
+        print("Menor")
+    else:
+	print("Mayor")
+    end
+
+    var Int z = 0
+    if (True):
+        z = z + 1
+    else:
+	z = z - 1
+    end
+    print(z)
+
+    if (x > 2):
+        print("Mayor")
+    elif (x < 2):
+    	print("Menor")
+    else:
+	print("Igual")
+    end
+
+    if (False):
+        print("no deberia imprimir esto")
+    else:
+        if (x == 4):
+	    print("no deberia imprimir esto")
+	elif (x == 3):
+	    print("no deberia imprimir esto")
+	elif (x == 2):
+	    print("Esto es lo que tiene que imprimir! x es igual a 2")
+	else:
+	    print("no deberia imprimir esto")
+	end
+    end
+endmain

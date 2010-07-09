@@ -1,0 +1,26 @@
+main:
+    // test 1
+    Int a = 6
+    Int b = a + 7
+    print(a)
+    print(b)
+
+    // test 2
+    Int c = 13
+    Float d = 3.2 * c + 1
+    print(c)
+    print(d)
+
+    // test 3
+    Int a = 6, b = a + 7
+    print(a)
+    print(b)
+
+    // test 4
+    Char x = 'y'
+    print(x)
+
+    // test 5
+    String hello = "Hola!"
+    print(hello)
+endmain

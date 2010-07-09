@@ -1,0 +1,26 @@
+main:
+    // Lists
+    var [Int|4] x = [1,2,3,4]
+    var [Int|4] y = [4,3,2,1]
+
+    print(x[0] + y[4])
+    print(x[1] - y[3])
+    print(x[2] * y[2])
+    print(x[3] / y[1])
+
+    var [ [Char|4]|2 ] w = [['h','o','l','a'], ['c','h','a','o']]
+    print(w[0][x[1]])
+
+    // Tuples
+    var (Int, Char, [Bool|2]) z = (3,'a',[True, False])
+    print(z[0])
+    print(z[1])
+    print(z[2][1])
+
+    // Dicts
+    var {marca: String, placa: Int, seguros: [Bool|4]} carro
+    carro = {marca: "mazda", placa: 6, seguros: [True, True, False, True]}
+    print(carro.marca)
+    print(carro.placa)
+    print(carro.seguros[z[0]])
+endmain

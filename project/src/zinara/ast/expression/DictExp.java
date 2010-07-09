@@ -40,7 +40,7 @@ public class DictExp extends Expression {
 	    ckey = (String)it.next();
 	    ret += ckey + ": " + (Expression)value.get(ckey) + ", ";
 	}
-	return ret.substring(0, ret.length()-2) + value.size() + "}";
+	return ret.substring(0, ret.length()-2) + "}";
     }
 
     public void tox86(Genx86 generator)

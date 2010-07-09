@@ -95,13 +95,14 @@ Number      = {Digit}+
  "<="                            { return symbol(sym.LTE);}
  "=="                            { return symbol(sym.SHEQ);}
  "<=>"                           { return symbol(sym.DEEQ);}
+ "!="                            { return symbol(sym.NOEQ); }
 
  "and"                           { return symbol(sym.AND);}
  "or"                            { return symbol(sym.OR);}
  "&"                             { return symbol(sym.SAND);}
  "|"                             { return symbol(sym.SOR);}
  "xor"                           { return symbol(sym.XOR); }
- "!"                             { return symbol(sym.NOEQ);}
+ "not"                           { return symbol(sym.NOT);}
 
  "for"                           { return symbol(sym.FOR);}
  "in"                            { return symbol(sym.IN);}

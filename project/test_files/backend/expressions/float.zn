@@ -1,0 +1,30 @@
+main:
+    var Float x = 1.5, y = 4.2
+    var Int z = 3
+
+    print(x + y)
+    print(x - y)
+    print(x * y)
+    print(x / y)
+    print(x % y)
+    print(x ** y)
+
+    print(x + 1.1)
+    print(x - 2.2)
+    print(x * 3.3)
+    print(x / 4.4)
+    print(x % 5.5)
+    print(x ** 6.6)
+
+    print(-x)
+    print(-5.5)
+
+    print(x + z)
+    print(x - z)
+    print(x * z)
+    print(x / z)
+    print(x % z)
+    print(x ** z)
+
+    print(((x+y)*z) + 4*((z%y))*((x+y+z)/4)) // prints 105
+endmain

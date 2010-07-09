@@ -1,0 +1,4 @@
+main:
+    var Char a = 'b'
+    print(a)
+endmain

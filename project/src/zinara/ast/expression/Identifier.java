@@ -74,6 +74,7 @@ public class Identifier extends LValue {
 	SymValue sv = symtable.getSymbol(identifier);
 	if (sv.isVariable()) return false;
 	// Recursively check the content of the expression
+	else if (((Constant)sv.getStatus()).getExpression() == null) return false;
 	else return ((Constant)sv.getStatus()).getExpression().isStaticallyKnown();
     }
 
