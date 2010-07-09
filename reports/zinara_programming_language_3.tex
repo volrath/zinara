@@ -249,6 +249,7 @@ de identificadores y parametros formales (secci\'on \ref{sec:ident}) es la que s
 \item if
 \item in
 \item Int
+\item not
 \item or
 \item print
 \item read
@@ -275,13 +276,14 @@ Las cadenas para los operadores son:
 \item \texttt{>=}
 \item \texttt{<=}
 \item \texttt{==}
+\item \texttt{!=}
 \item \texttt{<==>}
 \item \texttt{and}
 \item \texttt{or}
 \item \texttt{\&}
 \item \texttt{|}
 \item \texttt{xor}
-\item \texttt{!}
+\item \texttt{not}
 \end{itemize}
 
 \chapter{Dise\~no de Tipos}
@@ -319,7 +321,7 @@ tipos b\'asicos est\'a documentada en la secci\'on \ref{subsec:comp-tipos}
 \item Mayor o igual (\texttt{>=})
 \item Menor o igual (\texttt{<=})
 \item Igual (\texttt{==})
-\item Negaci\'on      (\texttt{!})
+\item Desigual      (\texttt{!=})
 \end{itemize}
 
 \subsection{Operadores L\'ogicos}
@@ -329,15 +331,16 @@ tipos b\'asicos est\'a documentada en la secci\'on \ref{subsec:comp-tipos}
 \item Or con corto-circuito  (\texttt{or})
 \item Or sin corto-circuito  (\texttt{|})
 \item Xor (\texttt{xor})
+\item Not (\texttt{not})
 \end{itemize}
 
 \subsection{Precedencias y asociatividades de operadores}
 \label{sec:basic_preced}
 Todos los operadores asocian a la izquierda. Sus precedencias son:
 \begin{itemize}
+\item \texttt{not}, \texttt{-} (Unario)
 \item \texttt{and}, \texttt{\&}, \texttt{or}, \texttt{|}, \texttt{xor}
-\item \texttt{<} , \texttt{>} , \texttt{<=} , \texttt{>=} , \texttt{==} , \texttt{<=>} , \texttt{!}
-\item \texttt{-} (Unario)
+\item \texttt{<} , \texttt{>} , \texttt{<=} , \texttt{>=} , \texttt{==} , \texttt{<=>} , \texttt{!=}
 \item \texttt{\^}
 \item \texttt{*} ,  \texttt{/}, \texttt{\%}
 \item \texttt{+}, \texttt{-} (Binario)
@@ -810,6 +813,7 @@ anidada dentro de otra iteraci\'on, solo la estructura m\'as interna
 se ve afectada por esta instrucci\'on.
 
 \section{Impresi\'on}
+\label{inst:impresion}
 Sintaxis:
 \begin{verbatim}
 print ( <expr> )
@@ -867,33 +871,6 @@ Sintaxis:
    end|endwhile
 \end{verbatim}
 
-\section{Cycle}
-Sintaxis:
-\begin{verbatim}
-   cycle:
-     [code_block]
-     [on <expr1> :
-          <code_block1>]
-     [on <expr2> :
-          <code_block2>]
-      .
-      .
-      .
-      # default :
-         <code_blockN> #|
-      # on <exprn> :
-         <code_blockN> #
-   end|endcycle
-\end{verbatim}
-
-Esta estructura de control iterativa recorrera cada una de las
-clausulas \texttt{on} probando el valor de la expresi\'on, tomar\'a la
-primera que sea cierta y cuando termine la ejecuci\'on del bloque de
-c\'odigo asociado a esa clausula volver\'a a recorrerlas. La
-estructura se detiene cuando ninguna clausula se cumple. Opcionalmente
-se puede agregar un bloque de c\'odigo al pricipio de todas las
-clausulas \texttt{on} que se ejecutar\'a al pricipio de todos los
-ciclos.
 
 \section{For}
 Sintaxis:
@@ -965,6 +942,14 @@ instrucciones (para el caso en que tengan efectos de borde).
 \chapter{IO}
 \label{chap:io}
 
+\emph{\textbf{Zinara}} actualmente dispone de una función para poder
+imprimir resultados por pantalla. Esta herramienta esta representada
+sintácticamente en el lenguaje por la instrucción \texttt{print}
+explicada en la sección \ref{inst:impresion}.\\
+
+Internamente el procedimiento de impresión está realizado con la
+función \texttt{printf} del lenguaje \textbf{C}.
+
 \chapter{Requerimientos}
 \label{sec:requ}
 
@@ -977,6 +962,7 @@ los siguientes requerimientos m\'inimos:
 \item Instalaci\'on est\'andar de \emph{JavaCup}.
 \item Instalaci\'on est\'andar de \emph{Apache Ant} (\'Unicamente para
   compilaci\'on).
+\item Instalación del ensamblador \emph{NASM}
 \end{itemize}
 
 \chapter{Compilaci\'on y ejecuci\'on del compilador}
@@ -989,17 +975,16 @@ comando en una consola UNIX.
 \begin{verbatim}
 $> cd Zinara-Barreto-Jaber/project/
 [$> ant clean # para limpiar la compilaci\'on anterior]
-$> ant dist
+$> ant
 \end{verbatim}
 
-Esto se encargar\'a de compilar y empaquetar adecuadamente el proyecto,
-y un ejecutable \texttt{.jar} ser\'a colocado dentro de la carpeta
-\texttt{bin/}.\\
+Esto se encargar\'a de compilar el proyecto y crear los archivos
+\texttt{.class} correspondientes en la carpeta \emph{classes/}.\\
 
 Es importante destacar que si se editan alguno de los archivos
 \texttt{parser.cup} o \texttt{lexer.flex}, es necesario ejecutar sobre
 ellos la herramienta \emph{JavaCUP} o la herramienta \emph{JFlex}
-segÃºn sea el caso, para poder generar los archivos \texttt{.java}
+según sea el caso, para poder generar los archivos \texttt{.java}
 correspondientes.\\
 
 La ejecuci\'on de las herramientas \emph{JavaCUP} y \emph{JFlex} no ser\'a
@@ -1019,18 +1004,14 @@ Los pasos para ejecutar el proyecto en una consola UNIX son los
 siguientes:
 
 \begin{verbatim}
-$> cd Zinara-Barreto-Jaber/project/classes/
-$> java zinara.Main archivo_de_prueba.zn
+$> cd Zinara-Barreto-Jaber/project/
+$> ./znc archivo_de_prueba.zn
 \end{verbatim}
 
-Opcionalmente se puede ejecutar el proyecto desde el un archivo
-\emph{jar} realizando los siguientes pasos:
-
-\begin{verbatim}
-$> cd Zinara-Barreto-Jaber/project/bin/
-$> java -jar zinara.jar archivo_de_prueba.zn
-\end{verbatim}
-
+El script \texttt{./znc} es provisto para realizar la corrida del
+compilador de \emph{\textbf{Zinara}}, generar un codigo de máquina
+intermedio y luego procesarlo con \emph{NASM} para obtener el código
+binario.\\
 
 Es importante recordar que para la ejecuci\'on del proyecto, dada la
 elecci\'on de cualquiera de los dos m\'etodos de ejecuci\'on explicados
@@ -1038,28 +1019,76 @@ anteriormente, es necesario tener bien establecidas las variables de
 ambiente requeridas por las herramientas utilizadas. Referirse a
 \cite{javacup} y \cite{jflex} para m\'as informaci\'on.
 
-\chapter{Compilaci\'on y ejecuci\'on del c\'odigo generado}
-El compilador genera un archivo \texttt{x86.asm} que se debe compilar usando
-el script \texttt{znc}. Solo con ejecuarlo hace las operaciones necesarias.\\
-\indent La compilaci\'on genera un archivo ejecutable x86. Se puede ejecutar
-normalmente.
-
 \chapter{Corrida de Pruebas}
 \label{sec:pruebas}
 Para probar la efectividad del programa tenemos varios casos de
-prueba. Para correr todos los casos de prueba solo se debe ejecutar el
-script \texttt{allTests.sh} (asegurandose que tenga permisos de
-ejecuci\'on) que se encuentra en la carpeta \texttt{project}.
+prueba. Dichos casos son encontrados en la carpeta
 
 \begin{verbatim}
-$> cd Zinara-Barreto-Jaber/project/
-$> ./allTests.sh
+$> cd Zinara-Barreto-Jaber/project/test_files/
 \end{verbatim}
 
-Los archivos de prueba se encuentran en la carpeta
-\texttt{Zinara-Barreto-Jaber/test\_files/}.
 Para que el script pueda correr adecuadamente, se deben tener las clases
 de JUnit en el classpath.
+
+\section{Criterios Generales de Diseño}
+\label{sec:pruebas:diseño}
+
+Los casos de prueba han sido divididos en dos grandes grupos:
+\texttt{backend/} y \texttt{frontend/}.\\
+
+\subsection{Pruebas sobre el Backend}
+\label{sec:pruebas:backend}
+
+En el primer caso se encuentran casos de prueba que no deben fallar y
+deben generar código para imprimir correctamente la salida de los
+programas que allí se encuentran. Se generaron pruebas para constatar
+la correctitud de los siguientes elementos del lenguaje:
+
+\begin{itemize}
+\item Asignaciones
+\item Expresiones
+  \begin{itemize}
+  \item sobre Booleanos
+  \item sobre Caracteres
+  \item sobre Enteros
+  \item sobre Flotantes
+  \item sobre Cadenas de caracteres
+  \item sobre \emph{LValues} o indexaciones
+  \item sobre Operadores Relacionales
+  \end{itemize}
+\item Estructuras de control
+  \begin{itemize}
+  \item For
+  \item If
+  \item While
+  \end{itemize}
+\item Rutinas
+  \begin{itemize}
+  \item Funciones
+  \item Procedimientos
+  \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas sobre el FrontEnd}
+\label{sec:pruebas:frontend}
+
+Para el \texttt{frontend} se realizaron pruebas que chequean la
+capacidad por parte del compilador de detectar errores a tiempo de
+compilación. Todas las pruebas del frontend estan destinadas a fallar
+consiguiendo un error específico en el código.\\
+
+Se realizaron pruebas de detección de errores sobre:
+
+\begin{itemize}
+\item Conflictos de declaraciones
+\item Accesos invalidos en indexación a LValues
+\item Chequeo de tipos en expresiones
+\item Chequeo de tipos en asignaciones o declaraciones
+\item Chequeo de alteraciones de la variable estática de los \texttt{For}
+\item Conflictos de llamadas a procedimientos y funciones
+\item Conflictos en declaraciones de procedimientos y funciones
+\end{itemize}
 
 \chapter{Herramientas utilizadas}
 \label{sec:herramientas}
@@ -1100,6 +1129,13 @@ sido utilizadas en todo el desarrollo del lenguaje.
   \emph{JUnit}, un framework en Java que permite correr de forma
   r\'apida, ordenada y automatizada un conjunto de pruebas unitarias
   definido.
+
+\item Para realizar la tarea de convertir el código intermedio
+  generado por \emph{\textbf{Zinara}} a código de máquina, se utilizó
+  \emph{NASM, the Netwide Assembler}, un ensamblador para
+  arquitecturas x86-64 que tiene una sintáxis parecida a la que
+  utilizan los ensambladores \emph{Intel} pero con un poco menos de
+  complejidad.
 \end{itemize}
 
 \chapter{Detalles de implementaci\'on}
@@ -1210,8 +1246,6 @@ y dentro de \'este archivo se encuentra una \'unica carpeta llamada
 encontrar\'a la siguiente estructura de directorios:
 
 \begin{itemize}
- \item \textbf{labs/}: Directorio donde se guardan los laboratorios
-       asignados en clases.
  \item \textbf{project/}: Directorio principal del proyecto, donde se
        encuentra el codigo fuente y los binarios para la ejecuci\'on.
  \begin{itemize}
@@ -1238,23 +1272,18 @@ Actualmente \emph{\textbf{Zinara}} cuenta con un funcionamiento
 correcto en su analizador lexicogr\'afico y su analizador sint\'actico. A
 parte de esto tambi\'en construye el \'arbol sint\'actico abstracto y la
 tabla de s\'imbolos de un programa dado. El chequeo de tipos est\'a completo.\\
-\indent Respecto a la generaci\'on de c\'odigo, se cuenta con declaraciones,
-asignaciones, if, while, expresiones booleanas, aritmeticas, reales y chars,
-adem\'as de un IO muy limitado.\\
+
+\indent Respecto a la generaci\'on de c\'odigo, se cuenta con
+declaraciones, asignaciones, alias de tipos, if, while, expresiones
+booleanas, aritmeticas, reales y caracteres, funciones y
+procedimientos con pasaje de parámetros por valor y referencia,
+adem\'as de un IO limitado únicamente a la impresión por pantalla.\\
+
 \indent En estos momentos existes varias funcionalidades no
 implementadas en el lenguaje, estas son:
 \begin{itemize}
-\item Chequear que no existas returns dentro del cuerpo del main, ya que
-      no tiene sentido hacer return desde el main.
-\item Implementar, tanto en la gram\'atica como en el \'arbol, el manejo
-      de la instrucci\'on newtype para crear tipos de datos definidos
-      por el usuario.
-\item La construcci\'on de las listas, tuplas y diccionarios no esta hecha,
-      pero si el calculo de sus lvalues
-\item IO solo puede imprimir n\'umeros de un solo d\'igito que vivan en el
-      \'area est\'atica. No se puede leer.
-\item Los for no funcionan correctamente debido a la construcci\'on defectuosa
-      de las listas.
+\item La entrada y salida del lenguaje no puede leer desde la consola,
+  ni tampoco imprimir números flotantes.
 \end{itemize}
 
 \bibliographystyle{plain}

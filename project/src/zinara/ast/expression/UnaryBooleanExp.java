@@ -27,7 +27,7 @@ public class UnaryBooleanExp extends BooleanExp {
    }
 
     public String toString() {
-	return operator + " " + operand;
+	return "not " + operand;
     }
 
     public void tox86(Genx86 generator)
