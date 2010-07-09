@@ -13,7 +13,7 @@ public class StringType extends Type {
 	    return false;
     }
     public Type getType() { return this; }
-    public int size() { return 0; }
+    public int size() { return name.length(); }
     public void setName(String n) { name = n; }
     public String getName() { return name; }
 }

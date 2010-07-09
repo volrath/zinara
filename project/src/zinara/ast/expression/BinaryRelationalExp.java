@@ -46,7 +46,8 @@ public class BinaryRelationalExp extends BooleanExp {
 
 	left.tox86(generator);
 	right.tox86(generator);
-	generator.write(generator.compare(leftReg,rightReg,left.type,right.type));
+	generator.write(generator.compare(leftReg,rightReg,
+					  left.type,right.type));
 
 	switch(operator) {
 	case sym.LT:

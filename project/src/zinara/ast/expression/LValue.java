@@ -7,7 +7,7 @@ import zinara.exceptions.TypeClashException;
 
 import java.io.IOException;
 
-public abstract class LValue extends BooleanExp {
+public abstract class LValue extends Expression{//extends BooleanExp {
     public abstract void tox86(Genx86 generator)
 	throws IOException,InvalidCodeException;
 

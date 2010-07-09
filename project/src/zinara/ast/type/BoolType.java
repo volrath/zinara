@@ -1,7 +1,7 @@
 package zinara.ast.type;
 
 public class BoolType extends Type {
-    public int size = 1;
+    public int size = 4;
 
     public BoolType() {}
     public String toString() { return (name.equals("") ? "<BOOL>" : "<" + name + ">"); }

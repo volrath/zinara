@@ -1,7 +1,7 @@
 package zinara.ast.type;
 
 public class FloatType extends Type {
-    public int size = 4;
+    public int size = 8;
 
     public FloatType() {}
     public String toString() { return (name.equals("") ? "<FLOAT>" : "<" + name + ">"); }

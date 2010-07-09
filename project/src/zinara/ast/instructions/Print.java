@@ -2,6 +2,7 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 import zinara.ast.expression.BooleanExp;
+import zinara.ast.expression.Identifier;
 import zinara.code_generator.*;
 import zinara.ast.type.Type;
 import zinara.ast.type.IntType;
@@ -9,6 +10,8 @@ import zinara.ast.type.FloatType;
 import zinara.ast.type.CharType;
 import zinara.ast.type.BoolType;
 import zinara.ast.type.StringType;
+import zinara.ast.expression.LValue;
+import zinara.ast.expression.StringExp;
 import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
 
@@ -38,33 +41,24 @@ public class Print extends Instruction{
 
     public void tox86(Genx86 generate)
 	throws IOException,InvalidCodeException{
-	// expr.register = register;
-	// String expReg = generate.addrRegName(expr.register);
-
-	// expr.tox86(generate);
-
-	// generate.write(generate.push("rdi"));
-	// generate.write(generate.push("rsi"));
-	// generate.write(generate.push("rax"));
-	
-	// generate.write(generate.movInt("rsi",expReg));
-	// generate.write(generate.movInt("rdi","int_format"));
-	// generate.write(generate.xor("rax","rax"));
-	// generate.write(generate.call("printf"));
-
-	// generate.write(generate.pop("rax"));
-	// generate.write(generate.pop("rdi"));
-	// generate.write(generate.pop("rsi"));
-
-	//Por ahora solo sirve con numeros, bools, chars y flotantes
 	expr.register = register;
 	String expReg = generate.addrRegName(expr.register);
 	String expRegBool = generate.boolRegName(expr.register);
 
-	if (expr.type.equals(new BoolType())){
+	// if (expr.type.equals(new BoolType())){
+	//     String ret = generate.newLabel();
+	//     boolValue(generate,expr,ret,expRegBool);
+	//     generate.writeLabel(ret);
+	// }
+	if (expr instanceof BooleanExp){
 	    String ret = generate.newLabel();
 	    boolValue(generate,expr,ret,expRegBool);
 	    generate.writeLabel(ret);
+	}
+	else if (!(expr instanceof StringExp)&&
+		 (expr.type instanceof StringType)){
+	    System.out.println(expr.toString());
+	    ((LValue)expr).currentDirection(generate);
 	}
 	else
 	    expr.tox86(generate);
@@ -102,32 +96,5 @@ public class Print extends Instruction{
 	generate.write(generate.pop("rcx"));
 	generate.write(generate.pop("rax"));
 	generate.write(generate.pop("rdi"));
-	//Por ahora se asume que todas las expresiones son numeros enteros
-        //de un solo digito.
-        // String code = "";
-	
-    	// expr.register = register;
-        // expr.tox86(generate);
-
-        // //"Transformo" a ASCII
-    	// try {
-    	//     String expReg = generate.regName(register,expr.getType());
-    	//     code += generate.add(expReg,"48");
-	    
-    	//     code += generate.save_print_regs();
-	    
-    	//     //Necesita ser generico, esperando que asm_io funcione
-    	//     code += generate.movInt("["+generate.stack_pointer()+"]",expReg);
-    	//     // Pongo el valor de la expresion en la pila, ya que la llamada
-    	//     //sys_write necesita que el String este en memoria.
-    	// } catch (TypeClashException e) {
-    	//     System.out.println("HEY!!!");
-    	// }
-        
-        // code += generate.setup_print(generate.stack_pointer(),"1","4");
-        // code += generate.syscall();
-        // code += generate.restore_print_regs();
-                    
-        // generate.write(code);
     }
 }

@@ -3,6 +3,7 @@ import zinara.code_generator.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Stack;
 import java.io.IOException;
 
 import zinara.ast.type.Type;
@@ -46,14 +47,18 @@ public class DictExp extends Expression {
     public void tox86(Genx86 generator)
 	throws IOException, InvalidCodeException{
 	Expression expr;
-	//Type listType =  ((ListType)type).getInsideType();
+
 	String reg;
 	String regAddr = generator.addrRegName(register);
 
 	Iterator it = value.keySet().iterator();
+	Stack st = new Stack();
 	while(it.hasNext()) {
+	    st.push(it.next());
+	}
+	while(! st.empty()) {
 	    //Se genera el valor
-	    expr = (Expression)value.get((String)it.next());
+	    expr = (Expression)value.get((String)st.pop());
 	    expr.register = register;
 	    reg = generator.regName(register, expr.type);
 
@@ -70,7 +75,7 @@ public class DictExp extends Expression {
 		!(expr instanceof DictExp)&&
 		!(expr instanceof TupleExp)&&
 		!(expr instanceof StringExp))
-	    generator.write(generator.push(reg, expr.type.size()));
+		generator.write(generator.push(reg, expr.type.size()));
 	}
 
 	//Por ultimo, devuelvo la direccion donde comienza el diccionario

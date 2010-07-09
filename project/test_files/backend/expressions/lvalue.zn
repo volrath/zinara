@@ -20,7 +20,7 @@ main:
     // Dicts
     var {marca: String, placa: Int, seguros: [Bool|4]} carro
     carro = {marca: "mazda", placa: 6, seguros: [True, True, False, True]}
-    print(carro.marca)
+    //print(carro.marca)
     print(carro.placa)
-    print(carro.seguros[z[0]])
+    print(carro.seguros[0])
 endmain

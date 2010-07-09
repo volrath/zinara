@@ -50,7 +50,17 @@ public class DictType extends Type {
 	return type;
     }
 
-    public Integer getOffsetFor(String key) { return (Integer)offsets.get(key); }
+    public Integer getOffsetFor(String key) {
+	return (Integer)offsets.get(key);
+    }
+
+    public void setOffsetFor(String key,int offset)
+    throws KeyErrorException{
+	if (offsets.containsKey(key))
+	    offsets.put(key,new Integer(offset));
+	else
+	    throw new KeyErrorException("Entrada "+key+" no existe");
+    }
 
     public String toString() {
 	if (!name.equals("")) return "<" + name + ">";

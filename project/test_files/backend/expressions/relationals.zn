@@ -2,12 +2,24 @@ main:
     Int x, y, w = 1, 2, 2
     Float z = 1.5
 
+    print("x < y")
     print(x < y)
+
+    print("x > y")
     print(x > y)
+
+    print("x <= y")
     print(x <= y)
+
+    print("x >= y")
     print(x >= y)
+
+    print("w < y")
     print(w < y)
+
+    print("w > y")
     print(w > y)
+
     print(w <= y)
     print(w >= y)
     print(x == y)

@@ -53,7 +53,6 @@ public class Identifier extends LValue {
 	    code += generator.movAddr(reg,id.getArea());
 	    code += generator.add(reg,id.getOffset());
 	    if (id.isParam()&&(! id.byValue())){
-	    System.out.println(id.isParam());
 		code += generator.movAddr(reg,"["+reg+"]");
 	    }
 	    
