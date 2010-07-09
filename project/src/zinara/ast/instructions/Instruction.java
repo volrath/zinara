@@ -26,7 +26,8 @@ public abstract class Instruction extends ASTNode {
 	for (int i = 0; i < code.getBlock().size(); i++) {
 	    inst = (Instruction)code.getBlock().get(i);
 	    
-	    if ((inst instanceof Return)||
+	    if ((inst instanceof Break)||
+		(inst instanceof Continue)||
 		(inst instanceof If)){
 		inst.break_label = break_label;
 		inst.continue_label = continue_label;
