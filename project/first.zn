@@ -87,8 +87,8 @@ var {a:Int,b:Int} joined to v1{c:Char} | v2{d:String} var1
 set_variant var1 as v1
 var1.a = 1
 var1.b = 3
-var1.d = 7
+var1.c = 7
 b'=function(var1.a)
 b'=function(var1.b)
-//b'=function(var1.d)
+//b'=function(var1.c)
 endmain

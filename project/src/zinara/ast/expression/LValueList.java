@@ -61,18 +61,32 @@ public class LValueList extends LValue {
 	throws InvalidCodeException,IOException{
 	constructor.register = register;
 	index.register       = register + 1;
+	
 	String constructorReg = generator.addrRegName(constructor.register);
 	String indexReg       = generator.intRegName(index.register);
+	String errorCheckReg  = generator.intRegName(register+2);
+
+	String listSize = Integer.toString(((ListType)(constructor.type)).len());
 
 	//Ver NOTA
 	String offsetReg      = generator.addrRegName(index.register);
 
 	constructor.currentDirection(generator);
 
-	generator.write(generator.save(register+1));
-	generator.write(generator.save(register+1));
+	generator.write(generator.save(index.register));
+	generator.write(generator.save(register+2));
 
 	index.tox86(generator);
+
+	//Chequeo de errores: indice negativo
+	generator.write(generator.cmp(indexReg,"0"));
+	generator.write(generator.jl("halt"));
+
+	//Chequeo de errores: indice fuera de rango
+	generator.write(generator.movInt(errorCheckReg,listSize));
+	generator.write(generator.sub(errorCheckReg,indexReg));
+	generator.write(generator.cmp(errorCheckReg,"0"));
+	generator.write(generator.jle("halt"));
 
 	generator.write(generator.imul(indexReg,
 				       Integer.toString(new IntType().size())));
@@ -80,8 +94,8 @@ public class LValueList extends LValue {
 	generator.write(generator.add(constructorReg,
 				      offsetReg));
 
-	generator.write(generator.restore(register+1));
-	generator.write(generator.restore(register+1));
+	generator.write(generator.restore(register+2));
+	generator.write(generator.restore(index.register));
     }
     /*****NOTA*****/
     /* Los enteros, para 64bits, son de 32bits, pero las direcciones

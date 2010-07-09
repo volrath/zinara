@@ -80,4 +80,6 @@ main:
     useless(lista[0],lista[7])
     //println()
     print(lista[0])
+
+    Int error = lista[45]
 endmain
