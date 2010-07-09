@@ -1,5 +1,5 @@
 main:
-    Int x = 1, y = 2, w = 2
+    Int x, y, w = 1, 2, 2
     Float z = 1.5
 
     print(x < y)

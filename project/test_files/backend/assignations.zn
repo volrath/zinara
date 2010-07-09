@@ -12,15 +12,10 @@ main:
     print(d)
 
     // test 3
-    Int a = 6, b = a + 7
-    print(a)
-    print(b)
-
-    // test 4
     Char x = 'y'
     print(x)
 
-    // test 5
+    // test 4
     String hello = "Hola!"
     print(hello)
 endmain
