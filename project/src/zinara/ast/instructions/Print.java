@@ -63,6 +63,8 @@ public class Print extends Instruction{
 
 	generate.write(generate.push("rdi"));
 	generate.write(generate.push("rax"));
+	generate.write(generate.push("rcx"));
+	generate.write(generate.push("r11"));
 
 	generate.write(generate.mov("rdi",expReg));
 	if (expr.type instanceof IntType){
@@ -88,6 +90,8 @@ public class Print extends Instruction{
 	}
 	generate.write("call print_nl\n");
 	
+	generate.write(generate.pop("r11"));
+	generate.write(generate.pop("rcx"));
 	generate.write(generate.pop("rax"));
 	generate.write(generate.pop("rdi"));
 	//Por ahora se asume que todas las expresiones son numeros enteros

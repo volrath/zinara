@@ -820,7 +820,7 @@ public class Genx86{
     }
 
     public String fcomi(){
-	return "fcomi\n";
+	return "fcomi st0, st1\n";
     }
 
     public String ficom(String integer,String size){
@@ -846,16 +846,16 @@ public class Genx86{
 	}
 	else if (at instanceof FloatType){
 	    if (bt instanceof FloatType){
-		code += pushFloat(a);
+		code += fninit();
+		code += pushReal(a);
 		code += fld("["+stackp+"]",size);
 
 		code += movReal("["+stackp+"]",b);
 		code += fld("["+stackp+"]",size);
 		
-		code += popFloat(b);
+		code += popReal(b);
 		
 		code += fcomi();
-		code += fninit();
 		return code;
 	    }
 	}

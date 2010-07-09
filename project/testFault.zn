@@ -1,0 +1,21 @@
+main:
+    var [Int|5] list = [6,7,8,9,10]
+    Int y = 20
+    for e in list:
+    	print(e)
+    end
+
+    for e in 1 .. 6:
+    	print(e)
+    end
+
+    for e in 10 .. y:
+    	print(e)
+    end
+
+    for i in 0 .. 5:
+    	for i' in list:
+	    print(i + i')
+	end
+    end
+endmain
