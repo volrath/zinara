@@ -1,0 +1,4 @@
+main:
+    var String x = "hola"
+    print(x)
+endmain

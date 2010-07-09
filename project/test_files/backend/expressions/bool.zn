@@ -1,0 +1,17 @@
+main:
+    var Bool t = True, f = False
+
+    print(t or f)
+    print(t | f)
+    print(t and f)
+    print(t & f)
+    print(not t)
+    print(not f)
+
+    print(t == t)
+    print(f == f)
+    print(t != f)
+    print(t == f)
+
+    print((t and f) != ((t or f) ==  (not f))) // prints True
+endmain
