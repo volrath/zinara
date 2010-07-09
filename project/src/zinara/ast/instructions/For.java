@@ -2,6 +2,8 @@ package zinara.ast.instructions;
 import zinara.code_generator.*;
 
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.ListExp;
+import zinara.ast.expression.Identifier;
 import zinara.ast.type.Type;
 import zinara.ast.type.ListType;
 import zinara.exceptions.InvalidCodeException;
@@ -60,7 +62,13 @@ public class For extends Instruction{
 
 	break_label = nextInst;
 
-	expr.tox86(generator);
+	if (expr instanceof Identifier)
+	    ((Identifier)expr).currentDirection(generator);
+	else if (expr instanceof ListExp)
+	    expr.tox86(generator);
+	else
+	    throw new InvalidCodeException("For sobre algo que no es lista literal ni identificador tipo lista");
+
 	for(int i = 0; i< ((ListType)expr.type).len(); ++i){
 	    continue_label = generator.newLabel();
 	    set_breaks_continues(code,break_label,continue_label);
