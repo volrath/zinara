@@ -400,6 +400,7 @@ ctrl_struct   ::=
                       code_block:cb
                   else:el fi                  
 		  {:currentTable = currentTable.getFather();
+		      System.out.println("-->>   " + e);
 		  el.add(0,new IfCase(cb,(BooleanExp)e)); RESULT = new If(el); :}
 
                   /*WHILE*/

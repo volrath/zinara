@@ -19,7 +19,7 @@ import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
 import zinara.symtable.*;
 
-public class FunctionCall extends Expression {
+public class FunctionCall extends BooleanExp {
     private String func_name;
     private ArrayList expr_list; // arraylist of expressions
     private SymTable symTable;

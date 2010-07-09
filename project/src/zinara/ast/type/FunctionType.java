@@ -8,7 +8,7 @@ public class FunctionType extends RoutineType {
     public Type returnType;
 
     public FunctionType(ArrayList al, Type rt, CodeBlock cb) { 
-	this.args = al;
+	this.args = al; // arraylist of param
 	this.returnType = rt;
 	this.codeBlock = cb;
     }
