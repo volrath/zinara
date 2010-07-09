@@ -17,7 +17,7 @@ public class Print extends Instruction{
     private Expression expr;
 
     public Print(Expression ex) throws TypeClashException {
-	Type eType = expr.getType();
+	Type eType = ex.getType();
 	if (!(eType instanceof StringType) &&
 	    !(eType instanceof CharType) &&
 	    !(eType instanceof IntType) &&
