@@ -5,6 +5,7 @@ import zinara.ast.expression.BooleanExp;
 import zinara.ast.expression.Identifier;
 import zinara.ast.expression.ListExp;
 import zinara.ast.expression.LValue;
+import zinara.ast.expression.StringExp;
 import zinara.ast.type.*;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.TypeClashException;
@@ -61,7 +62,7 @@ public class SingleAssignation extends Assignation {
 	lvalue.currentDirection(generator);
 
 	//Se guarda el valor de la exp en el lvalue
-	storeValue(generator, lvalue.type, 
+	storeValue(generator, lvalue.type, expr,
 		   lvalueReg, exprReg,
 		   register+2);
 
@@ -114,21 +115,35 @@ public class SingleAssignation extends Assignation {
 	generator.write(generator.movBool("[" + lvalueReg + "]", "0"));
     }
 
-    private void storeValue(Genx86 generator, Type t, 
+    private void storeValue(Genx86 generator, Type t, Expression expr,
 			    String lvalueReg, String exprReg,
 			    int free_register)
 	throws IOException,InvalidCodeException{
-	if (! (t.getType() instanceof ListType))
-	    generator.write(generator.mov("[" + lvalueReg + "]",
-					  exprReg, t.getType()));
-	else{
+
+	if (t.getType() instanceof StringType){
+	    generator.save(free_register);
+
+	    String auxReg = generator.charRegName(free_register);
+	    int stringLen = ((StringExp)expr).value.length();
+
+	    for (int i = 0; i < stringLen; ++i) {
+		generator.write(generator.movChar(auxReg,"["+exprReg+"]"));
+		generator.write(generator.movChar("["+lvalueReg+"]",auxReg));
+
+		generator.write(generator.add(lvalueReg,"1"));
+		generator.write(generator.add(exprReg,"1"));
+	    }
+
+	    generator.restore(free_register);
+	}
+	else if (t.getType() instanceof ListType){
 	    generator.save(free_register);
 
 	    Type listType = ((ListType)t.getType()).getInsideType();
 	    String auxReg = generator.regName(free_register,listType);
 	    String listTypeSize = Integer.toString(listType.size());
 
-	    for (int i = ((ListType)t.getType()).len(); i > 0; i--) {
+	    for (int i = 0; i < ((ListType)t.getType()).len(); i--) {
 		generator.write(generator.mov(auxReg,"["+exprReg+"]",listType));
 		generator.write(generator.mov("["+lvalueReg+"]",auxReg,listType));
 
@@ -138,5 +153,8 @@ public class SingleAssignation extends Assignation {
 
 	    generator.restore(free_register);
 	}
+	else
+	    generator.write(generator.mov("[" + lvalueReg + "]",
+					  exprReg, t.getType()));
     }
 }

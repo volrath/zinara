@@ -411,8 +411,8 @@ public class Genx86{
 	    return pushReal(t);
 	else if (type instanceof BoolType)
 	    return pushInt(t);
-	// else if (type instanceof CharType)
-	//     return pushChar(t);
+	else if (type instanceof CharType)
+	    return pushChar(t);
 	else if ((type instanceof ListType)||
 		 (type instanceof DictType)||
 		 (type instanceof StringType))
@@ -450,9 +450,9 @@ public class Genx86{
 	}
     }
 
-    // public String pushChar (String ch){
-    // 	    return push(ch,"byte");
-    // }
+    public String pushChar (String ch){
+    	    return pushb(ch);
+    }
 
     public String pushAddr (String addr){
 	return push(addr);
