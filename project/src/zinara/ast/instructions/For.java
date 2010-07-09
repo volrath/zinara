@@ -45,10 +45,11 @@ public class For extends Instruction{
     public void tox86(Genx86 generator)
 	throws IOException,InvalidCodeException{
 	Type listType = ((ListType)expr.type).getInsideType();
+	SymValue iterVar = code.getSymTable().getSymbol(this.i);
 	String exprAddr = generator.addrRegName(register);  //direccion del la lista
 	String iteration_var = generator.regName(register+1, listType);
-	String iteration_var_addr = generator.global_offset();
-	iteration_var_addr += "+"+code.getSymTable().getSymbol(this.i).getOffset();
+	String iteration_var_addr = iterVar.getArea();
+	iteration_var_addr += iterVar.getOffset();
 
 	expr.register = register;
 	code.register = register+2;

@@ -62,21 +62,23 @@ public class Print extends Instruction{
 	expr.tox86(generate);
 
 	generate.write(generate.push("rdi"));
+	generate.write(generate.push("rax"));
 
 	if (expr.type instanceof IntType){
-	    generate.write(generate.movInt("rdi",expReg));
+	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_int\n");
+	    generate.write("call print_nl\n");
 	}
 	else if (expr.type instanceof BoolType){
-	    generate.write(generate.movBool("rdi",expReg));
+	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_int\n");
 	}
 	else if (expr.type instanceof FloatType){
-	    generate.write(generate.movReal("rdi",expReg));
+	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_float\n");
 	}
 	else if (expr.type instanceof CharType){
-	    generate.write(generate.movChar("rdi",expReg));
+	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_char\n");
 	}
 	else{
@@ -86,8 +88,8 @@ public class Print extends Instruction{
 	    System.out.println("====================");
 	}
 	
+	generate.write(generate.pop("rax"));
 	generate.write(generate.pop("rdi"));
-
 	//Por ahora se asume que todas las expresiones son numeros enteros
         //de un solo digito.
         // String code = "";
