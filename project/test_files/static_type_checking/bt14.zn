@@ -1,7 +1,0 @@
-def fun() -> Int:
-    return 1.
-end
-
-main:
-    fun()
-endmain

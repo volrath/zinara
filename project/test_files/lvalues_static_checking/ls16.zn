@@ -1,5 +1,0 @@
-var [Int|2] x
-main:
-Char y = 'a'
-x[0] = y
-endmain

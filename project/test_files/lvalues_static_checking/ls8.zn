@@ -1,6 +1,0 @@
-[Int|2]  x = [1,2]
-[Char|1] y = ['a']
-
-main:
-Int z = x[0] + y[0]
-endmain

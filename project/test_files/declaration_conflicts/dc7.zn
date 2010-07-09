@@ -1,4 +1,0 @@
-main:
-    var Bool x
-    x = -y
-endmain

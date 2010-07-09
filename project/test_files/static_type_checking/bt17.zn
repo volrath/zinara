@@ -1,5 +1,0 @@
-main:
-    if 'x':
-        print("mal")
-    end
-endmain

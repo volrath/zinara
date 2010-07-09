@@ -1,9 +1,0 @@
-main:
-/. No IF ./
-
-//No elifs
- True:
-   print(1)
-end
-
-endmain

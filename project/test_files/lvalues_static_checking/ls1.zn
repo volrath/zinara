@@ -1,5 +1,0 @@
-var [Int|1] x
-
-main:
-    x[0] = 'a'
-endmain

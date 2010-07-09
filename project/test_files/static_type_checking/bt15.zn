@@ -1,5 +1,0 @@
-main:
-    if 15 + 1:
-        print("mal")
-    end
-endmain

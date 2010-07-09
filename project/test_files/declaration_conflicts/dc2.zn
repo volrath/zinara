@@ -1,4 +1,0 @@
-main:
-    Int x = 1
-    x = y
-endmain

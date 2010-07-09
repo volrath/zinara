@@ -1,7 +1,0 @@
-main:
-    Int x = 1
-    Float y = 1.
-    if True:
-        x = y
-    end
-endmain

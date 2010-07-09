@@ -1,4 +1,0 @@
-var (Char, Int) x
-main:
-x[1] = 2.2
-endmain

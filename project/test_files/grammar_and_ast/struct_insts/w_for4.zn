@@ -1,7 +1,0 @@
-main:
-/. No END ./
-
-for i in:
-   print(1)
-
-endmain

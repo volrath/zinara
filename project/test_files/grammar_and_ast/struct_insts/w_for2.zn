@@ -1,8 +1,0 @@
-main:
-/. No VARIABLE ./
-
-for in [True,False,True,True]:
-   print(1)
-endfor
-
-endmain

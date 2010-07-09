@@ -1,5 +1,0 @@
-[Int|1] x = ['a']
-
-main:
-print(1)
-endmain

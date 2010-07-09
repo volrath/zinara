@@ -1,4 +1,0 @@
-main:
-    var Int x
-    Int x = 4
-endmain

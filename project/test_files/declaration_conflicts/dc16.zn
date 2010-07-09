@@ -1,5 +1,0 @@
-main:
-    for i in [2, 3]:
-    	Int i = 5
-    end
-endmain

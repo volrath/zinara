@@ -1,4 +1,0 @@
-(Char, Int) x = ('a', 2)
-main:
-Int z = x[0] + x[1]
-endmain

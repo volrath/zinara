@@ -1,5 +1,0 @@
-main:
-    for i in [True, False]:
-    	Int x = i
-    end
-endmain

@@ -1,5 +1,0 @@
-main:
-    for i in True:
-        print("mal!")
-    end
-endmain

@@ -1,6 +1,0 @@
-main:
-    Int x = 1
-    Float y = 1.
-    x = x + y
-endmain
-    

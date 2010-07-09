@@ -1,6 +1,0 @@
-main:
-    var [(Int, Float)|5] int_float_pairs
-    for pair in int_float_pairs:
-    	var Int not_a_pair = pair
-    end
-endmain

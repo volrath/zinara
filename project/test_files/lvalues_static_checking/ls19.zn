@@ -1,4 +1,0 @@
-Char y = 'a'
-main:
-(Int, Char) x = (y,y)
-endmain

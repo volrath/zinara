@@ -1,3 +1,0 @@
-main:
-(Char, Int) x = (1 , 2)
-endmain
