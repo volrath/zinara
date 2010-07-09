@@ -1,0 +1,42 @@
+String acceso_global = "La variable acceso_global es conocida en las funciones"
+Int x = 5
+
+def por_dos(x as Int) -> Int:
+    return x * 2
+enddef
+
+def ref_modifier(x as Int) -> Bool:
+    x = x * 2
+    return True
+enddef
+
+def ref_unmodifier(copy x as Int) -> Bool:
+    x = x * 2
+    return False
+enddef
+
+def par_o_impar(copy x as Int) -> String:
+    if (x % 2 == 0):
+        return "Par"
+    else:
+        return "Impar"
+    end
+    return ""
+enddef
+
+main:
+    for i in 1 .. 10:
+        print(por_dos(i))
+    end
+
+    var Int x = 5
+    if (ref_modifier(x)):
+        print(x)
+    end
+
+    if (not ref_unmodifier(x)):
+        print(x)
+    end
+
+    print(par_o_impar(x + 1))    
+endmain

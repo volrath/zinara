@@ -16,6 +16,10 @@ public abstract class RoutineType extends Type {
 	return ((Param)(args.get(i)));
     }
 
+    public boolean isArgumentByRef(int i) {
+	return !((Param)(args.get(i))).byValue();
+    }
+
     public Type getArgumentType(int i) {
 	return ((Param)(args.get(i))).getType();
     }

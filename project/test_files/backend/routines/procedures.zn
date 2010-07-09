@@ -1,0 +1,48 @@
+String acceso_global = "La variable acceso_global es conocida en los procedimientos"
+Int x = 5
+
+def proc1(x as Int):
+    print("saludo numero")
+    print(x)
+enddef
+
+def proc2():
+    print(acceso_global)
+enddef
+
+def proc3():
+    var Int y = 3
+    print(x + y)
+enddef
+
+def proc4(copy y as Int):
+    print(x + y)
+enddef
+
+def refModifier(y as Int):
+    y = y * 2
+enddef
+
+def refUnModifier(copy y as Int):
+    y = y * 2
+enddef
+
+main:
+    for i in 1 .. 10:
+        proc1(i)
+    end
+
+    proc2()
+
+    proc3()
+
+    proc4(7)
+
+    var Int y = 15
+    refModifier(y)
+    print(y)
+
+    y = 15
+    refUnModifier(y)
+    print(y)
+endmain

@@ -112,7 +112,7 @@ public class StaticTypeChecking {
     }
 
     public static FunctionCall checkFunctionCall(String funcName, ArrayList expr_list, SymTable st)
-	throws TypeClashException, IdentifierNotDeclaredException {
+	throws TypeClashException, IdentifierNotDeclaredException, InvalidAccessException {
 	SymValue idSymValue = st.getSymValueForIdOrDie(funcName);
 	if (!(idSymValue.getType() instanceof FunctionType))
 	    throw new TypeClashException("El identificador " + 
@@ -133,12 +133,14 @@ public class StaticTypeChecking {
 					     (i+1) +
 					     " de la funcion " +
 					     funcName);
+	    if (funcType.isArgumentByRef(i) && !(currentExpr instanceof LValue))
+		throw new InvalidAccessException("La expresion " + currentExpr + " no puede ser pasada como parametro por referencia");
 	}
 	return new FunctionCall(funcName, expr_list, st);
     }
 
     public static ProcedureCall checkProcedureCall(String procName, ArrayList expr_list, SymTable st)
-	throws TypeClashException, IdentifierNotDeclaredException {
+	throws TypeClashException, IdentifierNotDeclaredException, InvalidAccessException {
 	SymValue idSymValue = st.getSymValueForIdOrDie(procName);
 	if (!(idSymValue.getType() instanceof ProcedureType))
 	    throw new TypeClashException("El identificador " + procName + " no es un procedimiento");
@@ -150,6 +152,8 @@ public class StaticTypeChecking {
 	    currentExpr = (Expression)expr_list.get(i);
 	    if (!currentExpr.getType().equals(procType.getArgumentType(i)))
 		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + procName);
+	    if (procType.isArgumentByRef(i) && !(currentExpr instanceof LValue))
+		throw new InvalidAccessException("La expresion " + currentExpr + " no puede ser pasada como parametro por referencia");
 	}
 	return new ProcedureCall(procName, expr_list, st);
     }

@@ -63,7 +63,7 @@ public class Operators {
 	this.table.put(new OP(this.relational, new IntType(), new IntType()).toString(), new BoolType());
 	this.table.put(new OP(this.relational, new FloatType(), new FloatType()).toString(), new BoolType());
 	//this.table.put(new OP(this.relational, new CharType(), new CharType()).toString(), new BoolType());
-	//this.table.put(new OP(this.relational, new BoolType(), new BoolType()).toString(), new BoolType());
+	this.table.put(new OP(this.relational, new BoolType(), new BoolType()).toString(), new BoolType());
 	this.table.put(new OP(this.relational, new IntType(), new FloatType()).toString(), new BoolType());
 	this.table.put(new OP(this.relational, new FloatType(), new IntType()).toString(), new BoolType());
 

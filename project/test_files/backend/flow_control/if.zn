@@ -33,16 +33,16 @@ main:
     end
 
     if (False):
-        print("no deberia imprimir esto")
+        print("no deberia imprimir esto NUNCA")
     else:
         if (x == 4):
-	    print("no deberia imprimir esto")
+	    print("no deberia imprimir esto 1")
 	elif (x == 3):
-	    print("no deberia imprimir esto")
+	    print("no deberia imprimir esto 2")
 	elif (x == 2):
 	    print("Esto es lo que tiene que imprimir! x es igual a 2")
 	else:
-	    print("no deberia imprimir esto")
+	    print("no deberia imprimir esto 3")
 	end
     end
 endmain

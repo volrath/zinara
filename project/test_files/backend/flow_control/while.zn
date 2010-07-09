@@ -16,5 +16,6 @@ main:
 	    print("par")
         else:
 	    print("impar")
+	end
     end
 endmain
