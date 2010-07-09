@@ -105,7 +105,7 @@ terminal FalseExp FALSE;
 terminal String IDENTIFIER;
 terminal String PLUS, MINUS, UMINUS, TIMES, DIVIDE, MOD, POW;
 terminal String LT, GT, LTE, GTE, SHEQ, DEEQ, NOEQ;
-terminal String AND, SAND, OR, SOR, XOR;
+terminal String AND, SAND, OR, SOR, XOR, NOT;
 
 terminal Character CHAR_V;
 terminal String STRING_V;
@@ -535,7 +535,7 @@ expr       ::= expr:e1 AND expr:e2       {: RESULT = new BinaryBooleanExp(sym.AN
              | expr:e1 SOR expr:e2       {: RESULT = new BinaryBooleanExp(sym.SOR, e1, e2); :}
              | expr:e1 XOR expr:e2       {: RESULT = new BinaryBooleanExp(sym.XOR, e1, e2); :}
              | LPAREN expr:e RPAREN      {: RESULT = (Expression)e; :}
-             | NOEQ:o expr:e             {: RESULT = new UnaryBooleanExp(sym.NOEQ, e); :}
+             | NOT:o expr:e             {: RESULT = new UnaryBooleanExp(sym.NOT, e); :}
              | relational_expr:re        {: RESULT = re; :}
              ;
 

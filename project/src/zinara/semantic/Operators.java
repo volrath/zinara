@@ -77,9 +77,9 @@ public class Operators {
 	/*
 	  Unary Operators
 	 */
-	this.table.put(new OP(sym.NOEQ, new IntType(), null).toString(), new BoolType());
-	this.table.put(new OP(sym.NOEQ, new FloatType(), null).toString(), new BoolType());
-	this.table.put(new OP(sym.NOEQ, new BoolType(), null).toString(), new BoolType());
+	this.table.put(new OP(sym.NOT, new IntType(), null).toString(), new BoolType());
+	this.table.put(new OP(sym.NOT, new FloatType(), null).toString(), new BoolType());
+	this.table.put(new OP(sym.NOT, new BoolType(), null).toString(), new BoolType());
 
 	this.table.put(new OP(sym.UMINUS, new IntType(), null).toString(), new IntType());
 	this.table.put(new OP(sym.UMINUS, new FloatType(), null).toString(), new FloatType());
@@ -109,6 +109,7 @@ public class Operators {
 	case sym.LTE:
 	case sym.SHEQ:
 	case sym.DEEQ:
+	case sym.NOEQ:
 	    om = relational;
 	    break;
 	case sym.AND:
@@ -116,9 +117,6 @@ public class Operators {
 	case sym.SAND:
 	case sym.SOR:
 	    om = logical;
-	    break;
-	case cast:
-	    om = cast;
 	    break;
 	default:
 	    om = o;

@@ -1,5 +1,6 @@
 package zinara.ast.type;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
@@ -34,7 +35,7 @@ public class DictType extends Type {
 	Type ct;
 	Iterator it = table.entrySet().iterator();
 	while(it.hasNext()) {
-	    ct = (Type)it.next();
+	    ct = (Type)((Map.Entry)it.next()).getValue();
 	    size += ct.size();
 	}
 	return size;
@@ -73,13 +74,20 @@ public class DictType extends Type {
 	// Checks internally
 	if (size() != otherDict.size()) return false;
 	Iterator it1 = getIterator();
-	Iterator it2 = otherDict.getIterator();
 	String ckey1, ckey2;
+	boolean found;
 	while(it1.hasNext()) {
 	    ckey1 = (String)it1.next();
-	    ckey2 = (String)it2.next();
-	    if (ckey1 != ckey2 || !get(ckey1).equals(((Type)otherDict.get(ckey2)).getType()))
-		return false;
+	    found = false;
+	    Iterator it2 = otherDict.getIterator();
+	    while(it2.hasNext()) {
+		ckey2 = (String)it2.next();
+		if (ckey1.equals(ckey2) && get(ckey1).equals(((Type)otherDict.get(ckey2)).getType())) {
+		    found = true;
+		    break;
+		}
+	    }
+	    if (!found) return false;
 	}
 	return true;
     }
