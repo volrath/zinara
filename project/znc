@@ -18,5 +18,5 @@ fi
 ./run.sh Main ../$1
 
 nasm -g -f elf${bits} x86.asm && \
-#nasm -g -f elf${bits} asm_io.asm && \
-gcc -g -o x86 x86.o # asm_io.o -lc
+nasm -g -f elf${bits} asm_io.asm && \
+gcc -g -o x86 x86.o asm_io.o -lc

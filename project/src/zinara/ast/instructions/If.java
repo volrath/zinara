@@ -40,6 +40,10 @@ public class If extends Instruction{
 	IfCase ic;
 	for (int i = 0; i < cases.size(); i++) {
 	    ic = (IfCase)cases.get(i);
+
+	    ic.break_label = break_label;
+	    ic.continue_label = continue_label;
+
 	    ic.register = register;
 	    ic.nextInst = ((i != cases.size() - 1) ? generator.newLabel() : nextInst);
 	    ic.completeIfNextInst = nextInst;

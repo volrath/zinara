@@ -38,6 +38,10 @@ public class While extends Instruction{
 	code.register = register;
 	code.nextInst = generator.newLabel();
 
+	break_label    = nextInst;
+	continue_label = code.nextInst;
+	set_breaks_continues(code,break_label,continue_label);
+
 	generator.write(generator.jump(code.nextInst));
 	generator.writeLabel(expr.yesLabel);
 	code.tox86(generator);

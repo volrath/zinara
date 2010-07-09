@@ -34,6 +34,8 @@ public class IfCase extends Instruction {
 
     public void tox86(Genx86 generator)
 	throws InvalidCodeException,IOException{
+	set_breaks_continues(code,break_label,continue_label);
+
 	expr.yesLabel = generator.newLabel();
 	expr.noLabel  = nextInst;
 

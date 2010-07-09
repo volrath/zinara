@@ -57,8 +57,13 @@ public class For extends Instruction{
 	generator.write(generator.save(register+1));
 	generator.write(generator.save(register+2));
 
+	break_label = nextInst;
+
 	expr.tox86(generator);
 	for(int i = 0; i< ((ListType)expr.type).len(); ++i){
+	    continue_label = generator.newLabel();
+	    set_breaks_continues(code,break_label,continue_label);
+
 	    //Muevo el siguiente valor de la lista un registro
 	    //y de ahi a la direccion de la variable de iteracion
 	    generator.write(generator.mov(iteration_var,"["+exprAddr+"]",listType));
@@ -67,6 +72,7 @@ public class For extends Instruction{
 	    //Genero el codigo
 	    code.tox86(generator);
 
+	    generator.writeLabel(continue_label);
 	    //Muevo exprAddr a apuntar a la siguiente posicion de la lista
 	    generator.write(generator.add(exprAddr,Integer.toString(listType.size())));
 	}

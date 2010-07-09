@@ -114,7 +114,12 @@ public class StaticTypeChecking {
     public static FunctionCall checkFunctionCall(String funcName, ArrayList expr_list, SymTable st)
 	throws TypeClashException, IdentifierNotDeclaredException {
 	SymValue idSymValue = st.getSymValueForIdOrDie(funcName);
-	if (!(idSymValue.getType() instanceof FunctionType)) throw new TypeClashException("El identificador " + funcName + " tiene tipo " + idSymValue.getType() + ", no es una funcion");
+	if (!(idSymValue.getType() instanceof FunctionType))
+	    throw new TypeClashException("El identificador " + 
+					 funcName +
+					 " tiene tipo " +
+					 idSymValue.getType() +
+					 ", no es una funcion");
 	FunctionType funcType = (FunctionType)idSymValue.getType();
 
 	// Check every argument
@@ -122,7 +127,12 @@ public class StaticTypeChecking {
 	for (int i = 0; i < expr_list.size(); i++) {
 	    currentExpr = (Expression)expr_list.get(i);
 	    if (!currentExpr.getType().equals(funcType.getArgumentType(i)))
-		throw new TypeClashException("El tipo de la expresion " + currentExpr + " difiere del tipo del argumento " + (i+1) + " de la funcion " + funcName);
+		throw new TypeClashException("El tipo de la expresion " +
+					     currentExpr +
+					     " difiere del tipo del argumento " +
+					     (i+1) +
+					     " de la funcion " +
+					     funcName);
 	}
 	return new FunctionCall(funcName, expr_list, st);
     }
