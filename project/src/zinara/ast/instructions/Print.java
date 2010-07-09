@@ -2,10 +2,12 @@ package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
 import zinara.code_generator.*;
+import zinara.ast.type.Type;
 import zinara.ast.type.IntType;
 import zinara.ast.type.FloatType;
 import zinara.ast.type.CharType;
 import zinara.ast.type.BoolType;
+import zinara.ast.type.StringType;
 import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
 
@@ -14,7 +16,14 @@ import java.io.IOException;
 public class Print extends Instruction{
     private Expression expr;
 
-    public Print(Expression ex){
+    public Print(Expression ex) throws TypeClashException {
+	Type eType = expr.getType();
+	if (!(eType instanceof StringType) &&
+	    !(eType instanceof CharType) &&
+	    !(eType instanceof IntType) &&
+	    !(eType instanceof FloatType) &&
+	    !(eType instanceof BoolType))
+	    throw new TypeClashException("La expresion " + ex + " no es imprimible");
 	this.expr = ex;
     }
 
