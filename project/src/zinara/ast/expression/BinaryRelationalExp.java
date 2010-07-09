@@ -39,14 +39,14 @@ public class BinaryRelationalExp extends BooleanExp {
 	right.register = register + 1;
 
 	String leftReg = generator.regName(left.register,left.type);
-	String rightReg = generator.regName(left.register + 1,right.type);
+	String rightReg = generator.regName(right.register,right.type);
 
 	//save
 	generator.write(generator.save(register+1));
 
 	left.tox86(generator);
 	right.tox86(generator);
-	generator.write(generator.cmp(leftReg,rightReg));
+	generator.write(generator.compare(leftReg,rightReg,left.type,right.type));
 
 	switch(operator) {
 	case sym.LT:

@@ -30,21 +30,25 @@ public class CastedExp extends Expression {
 	throws IOException,InvalidCodeException{
 	String code = "";
 	String reg = generator.regName(register,expr.type);
+	String stack_p = generator.stack_pointer();
+
+	expr.tox86(generator);  //Se genera la expresion
+	code += generator.push(reg,expr.type);
 	if (expr.type instanceof IntType){
 	    if (cast instanceof FloatType){
-		expr.tox86(generator);      //Se genera la expresion
-		code += generator.fild(reg);//Se guarda la expresion en la pila de flotantes
-		code += generator.fst(reg); //Se saca como flotante
+		code += generator.fild("["+stack_p+"]");//Se guarda la expresion en la pila de flotantes
+		code += generator.fst("["+stack_p+"]"); //Se saca como flotante
 		code += generator.fninit();  //Se reinicializa la pila de flotantes
+		code += generator.pop(reg,expr.type);
 		generator.write(code); 
 	    }
 	}
 	else if (expr.type instanceof FloatType){
 	    if (cast instanceof IntType){
-		expr.tox86(generator);      //Se genera la expresion
-		code += generator.fld(reg); //Se guarda la expresion en la pila de flotantes
-		code += generator.fist(reg);//Se saca como entero
+		code += generator.fld("["+stack_p+"]"); //Se guarda la expresion en la pila de flotantes
+		code += generator.fist("["+stack_p+"]");//Se saca como entero
 		code += generator.fninit();  //Se reinicializa la pila de flotantes
+		code += generator.pop(reg,expr.type);
 		generator.write(code); 
 	    }
 	}

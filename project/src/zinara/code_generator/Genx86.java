@@ -264,6 +264,7 @@ public class Genx86{
 	    return charRegName(r);
 	else if ((type instanceof ListType)||
 		 (type instanceof DictType)||
+		 (type instanceof TupleType)||
 		 (type instanceof VariantType)||
 		 (type instanceof StringType))
 	    return addrRegName(r);
@@ -327,7 +328,7 @@ public class Genx86{
 	String code = "";
 
 	code += sub(this.stackp,"1");
-	code += mov("["+this.stackp+"]",thing);
+	code += mov("["+this.stackp+"]",thing,"byte");
 	return code;
     }
 
@@ -339,7 +340,7 @@ public class Genx86{
 	    return "push "+thing+"\n";
 	else{
 	    code += sub("rsp","4");
-	    code += mov("[rsp]",thing);
+	    code += mov("[rsp]",thing,"dword");
 	    return code;
 	}
     }
@@ -349,7 +350,7 @@ public class Genx86{
 	String code = "";
 	if (this.bits == 64){
 	    code += sub("rsp",stackAlig);
-	    code += mov("[rsp]",thing);
+	    code += mov("[rsp]",thing,"qword");
 	    return code;
  	}
 	else{
@@ -584,23 +585,38 @@ public class Genx86{
     }
 
     public String fst(String dst){
-	return "fst "+dst+"\n";
+	if (this.bits == 32)
+	    return "fst dword"+dst+"\n";
+	else
+	    return "fst qword"+dst+"\n";
     }
 
     public String fstp(String dst){
-	return "fstp "+dst+"\n";
+	if (this.bits == 32)
+	    return "fstp dword"+dst+"\n";
+	else
+	    return "fstp qword"+dst+"\n";
     }
 
     public String fld(String orig){
-	return "fld "+orig+"\n";
+	if (this.bits == 32)
+	    return "fld dword"+orig+"\n";
+	else
+	    return "fld qword"+orig+"\n";
     }
 
     public String fist(String dst){
-	return "fist "+dst+"\n";
+	if (this.bits == 32)
+	    return "fist dword"+dst+"\n";
+	else
+	    return "fist qword"+dst+"\n";
     }
 
     public String fild(String orig){
-	return "fild "+orig+"\n";
+	if (this.bits == 32)
+	    return "fild dword"+orig+"\n";
+	else
+	    return "fild qword"+orig+"\n";
     }
 
     public String fxch(){
@@ -803,8 +819,8 @@ public class Genx86{
 	return "xor "+a+","+b+"\n";
     }
 
-    public String fcom(){
-	return "ficom\n";
+    public String fcomi(){
+	return "fcomi\n";
     }
 
     public String ficom(String integer,String size){
@@ -823,28 +839,22 @@ public class Genx86{
 	    size = "dword";
 	else
 	    size = "qword";
-
+	
 	if (at instanceof IntType){
 	    if (bt instanceof IntType)
 		return cmp(a,b);
-	    else if (bt instanceof FloatType){
-		code += fld(b,size);
-		code += ficom(a,size);
-		code += fninit();
-		return code;
-	    }
 	}
 	else if (at instanceof FloatType){
-	    if (bt instanceof IntType){
-		code += fld(a,size);
-		code += ficom(b,size);
-		code += fninit();
-		return code;
-	    }
-	    else if (bt instanceof FloatType){
-		code += fld(a,size);
-		code += fld(b,size);
-		code += fcom();
+	    if (bt instanceof FloatType){
+		code += pushFloat(a);
+		code += fld("["+stackp+"]",size);
+
+		code += movReal("["+stackp+"]",b);
+		code += fld("["+stackp+"]",size);
+		
+		code += popFloat(b);
+		
+		code += fcomi();
 		code += fninit();
 		return code;
 	    }
@@ -854,7 +864,7 @@ public class Genx86{
 					   at+
 					   "contra "+
 					   bt);
-
+	
 	return "";
     }
     

@@ -12,8 +12,7 @@ public class DataTranslator{
     }
 
     public static String toReal(double D){
-	//return toDouble(D)+"h";
-	return toFloat((float)D)+"h";
+	return toDouble(D)+"h";
     }
 
     public static String toReal(float F){
@@ -21,35 +20,39 @@ public class DataTranslator{
     }
 
     public static String toDouble(double D){
-	String d = "";
 
-	long bits;
-	long mask = 0x00000001;
+	return Long.toHexString(Double.doubleToRawLongBits(D));
+	// String d = "";
 
-	bits = Double.doubleToLongBits(D);
+	// long bits;
+	// long mask = 0x00000001;
+
+	// bits = Double.doubleToLongBits(D);
 	
-	for (int i=1 ; i<=64; ++i){
-	    d = Long.toString(bits & mask)+d;
-	    bits = bits >>> 1;
-	}
+	// for (int i=1 ; i<=64; ++i){
+	//     d = Long.toString(bits & mask)+d;
+	//     bits = bits >>> 1;
+	// }
 	
-	return toHex(d);
+	// return toHex(d);
     }
 
     public static String toFloat(float F){
-	String f = "";
+	return Integer.toHexString(Float.floatToRawIntBits(F));
 
-	int bits;
-	int mask = 0x0001;
+	// String f = "";
 
-	bits = Float.floatToIntBits(F);
+	// int bits;
+	// int mask = 0x0001;
+
+	// bits = Float.floatToIntBits(F);
 	
-	for (int i=1 ; i<=32; ++i){
-	    f = Integer.toString(bits & mask)+f;
-	    bits = bits >>> 1;
-	}
+	// for (int i=1 ; i<=32; ++i){
+	//     f = Integer.toString(bits & mask)+f;
+	//     bits = bits >>> 1;
+	// }
 	
-	return toHex(f);
+	// return toHex(f);
     }
 
     public static String toHex(String binary){

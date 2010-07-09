@@ -22,7 +22,8 @@ public class StringExp extends Expression {
 	String addrReg = generate.addrRegName(register);
 	char ch;
 
-	for (int i = value.length(); i >= 0; --i){
+	code += generate.pushChar("0");//End of string
+	for (int i = value.length()-2; i >= 1; --i){
 	    ch = value.charAt(i);
 	    code += generate.pushChar(generate.toASCII(ch));
 	}

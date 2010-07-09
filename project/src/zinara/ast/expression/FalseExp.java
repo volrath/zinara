@@ -12,7 +12,9 @@ public class FalseExp extends BooleanExp {
     public String toString() { return "False"; }
 
     public void tox86(Genx86 generator) throws IOException {
+	String reg = generator.boolRegName(register);
 	generator.write(generator.jump(noLabel));
+	generator.write(generator.movBool(reg,"0"));
     }
 
     public boolean isStaticallyKnown() { return true; }

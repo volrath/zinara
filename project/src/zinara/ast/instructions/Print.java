@@ -64,22 +64,21 @@ public class Print extends Instruction{
 	generate.write(generate.push("rdi"));
 	generate.write(generate.push("rax"));
 
+	generate.write(generate.mov("rdi",expReg));
 	if (expr.type instanceof IntType){
-	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_int\n");
-	    generate.write("call print_nl\n");
 	}
 	else if (expr.type instanceof BoolType){
-	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_int\n");
 	}
 	else if (expr.type instanceof FloatType){
-	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_float\n");
 	}
 	else if (expr.type instanceof CharType){
-	    generate.write(generate.mov("rdi",expReg));
 	    generate.write("call print_char\n");
+	}
+	else if (expr.type instanceof StringType){
+	    generate.write("call print_string\n");
 	}
 	else{
 	    generate.write("print de "+expr.type+" no implementado");
@@ -87,6 +86,7 @@ public class Print extends Instruction{
 	    System.out.println("print de "+expr.type+" no implementado");
 	    System.out.println("====================");
 	}
+	generate.write("call print_nl\n");
 	
 	generate.write(generate.pop("rax"));
 	generate.write(generate.pop("rdi"));
