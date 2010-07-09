@@ -55,7 +55,21 @@ public class VariantType extends Type {
 
     public int size() {	return size; }
 
-    public Type get(String key) { return (Type)base.get(key); }
+    public Type get(String key) {
+	Type type = (Type)base.get(key);
+	if (type != null) return type;
+	Iterator it = joins.keySet().iterator(), it2;
+	HashMap tablei;
+	while(it.hasNext()) {
+	    tablei = (HashMap)joins.get((String)it.next());
+	    it2 = tablei.keySet().iterator();
+	    while(it2.hasNext()) {
+		type = (Type)tablei.get((String)it2.next());
+		if (type != null) return type;
+	    }
+	}
+	return type;
+    }
 
     public Type getOrDie(String key) throws KeyErrorException {
 	Type type = (Type)base.get(key);
