@@ -264,6 +264,7 @@ public class Genx86{
 	    return charRegName(r);
 	else if ((type instanceof ListType)||
 		 (type instanceof DictType)||
+		 (type instanceof TupleType)||
 		 (type instanceof VariantType)||
 		 (type instanceof StringType))
 	    return addrRegName(r);
@@ -584,7 +585,10 @@ public class Genx86{
     }
 
     public String fst(String dst){
-	return "fst "+dst+"\n";
+	if (this.bits == 32)
+	    return "fst dword"+dst+"\n";
+	else
+	    return "fst qword"+dst+"\n";
     }
 
     public String fstp(String dst){
@@ -602,11 +606,17 @@ public class Genx86{
     }
 
     public String fist(String dst){
-	return "fist "+dst+"\n";
+	if (this.bits == 32)
+	    return "fist dword"+dst+"\n";
+	else
+	    return "fist qword"+dst+"\n";
     }
 
     public String fild(String orig){
-	return "fild "+orig+"\n";
+	if (this.bits == 32)
+	    return "fild dword"+orig+"\n";
+	else
+	    return "fild qword"+orig+"\n";
     }
 
     public String fxch(){
