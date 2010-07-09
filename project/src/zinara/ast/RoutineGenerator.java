@@ -17,6 +17,7 @@ import zinara.symtable.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class RoutineGenerator{
 
@@ -74,7 +75,7 @@ public class RoutineGenerator{
 
 		    ((Identifier)expr).currentDirection(generator);
 		    
-		    copyList(generator,expr.type/*.getType()*/,reg,register+1);
+		    copyList(generator,expr.type,reg,register+1);
 		}
 		//Si es un tipo compuesto literal, ya se genero en la pila
 		else{
@@ -140,6 +141,34 @@ public class RoutineGenerator{
 	    generator.write(generator.mov(auxReg,"["+listAddr+"]",listType));
 	    generator.write(generator.push(auxReg,listType));
 	    generator.write(generator.sub(listAddr,listTypeSize));
+	}
+
+	generator.restore(free_register);
+    }
+
+    public static void copyDict(Genx86 generator,Type t,
+				String dictAddr,int free_register)
+	throws IOException,InvalidCodeException{
+	generator.save(free_register);
+
+	Type itemType;
+	String itemTypeSize;
+	String auxReg;
+	Iterator it = ((DictType)t).getIterator();
+	String dictEnd = Integer.toString(((DictType)t).size());
+
+	//Apunto al final de la lista ya que, como se va a poner
+	//en la pila, de otra forma quedaria alrevez
+	generator.write(generator.add(dictAddr,dictEnd));
+
+	while(it.hasNext()){
+	    itemType = (Type)(it.next());
+	    itemTypeSize = Integer.toString(itemType.size());
+	    auxReg = generator.regName(free_register,itemType);
+
+	    generator.write(generator.mov(auxReg,"["+dictAddr+"]",itemType));
+	    generator.write(generator.push(auxReg,itemType));
+	    generator.write(generator.sub(dictAddr,itemTypeSize));
 	}
 
 	generator.restore(free_register);

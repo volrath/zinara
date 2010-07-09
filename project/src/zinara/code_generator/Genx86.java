@@ -809,8 +809,8 @@ public class Genx86{
 	return "xor "+a+","+b+"\n";
     }
 
-    public String fcom(){
-	return "ficomi\n";
+    public String fcomi(){
+	return "fcomi\n";
     }
 
     public String ficom(String integer,String size){
@@ -829,32 +829,22 @@ public class Genx86{
 	    size = "dword";
 	else
 	    size = "qword";
-
+	
 	if (at instanceof IntType){
 	    if (bt instanceof IntType)
 		return cmp(a,b);
-	    else if (bt instanceof FloatType){
-		code += pushFloat(b);
-		code += fld("["+stack_pointer+"]",size);
-		code += ficom("["+stack_pointer+"]",size);
-		code += fninit();
-		code += popFloat(b);
-		return code;
-	    }
 	}
 	else if (at instanceof FloatType){
-	    if (bt instanceof IntType){
+	    if (bt instanceof FloatType){
 		code += pushFloat(a);
-		code += fld("["+stack_pointer+"]",size);
-		code += ficom("["+stack_pointer+"]",size);
-		code += fninit();
-		code += popFloat(a);
-		return code;
-	    }
-	    else if (bt instanceof FloatType){
-		code += fld(a,size);
-		code += fld(b,size);
-		code += fcom();
+		code += fld("["+stackp+"]",size);
+
+		code += movReal("["+stackp+"]",b);
+		code += fld("["+stackp+"]",size);
+		
+		code += popFloat(b);
+		
+		code += fcomi();
 		code += fninit();
 		return code;
 	    }
@@ -864,7 +854,7 @@ public class Genx86{
 					   at+
 					   "contra "+
 					   bt);
-
+	
 	return "";
     }
     

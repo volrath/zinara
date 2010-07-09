@@ -62,7 +62,7 @@ public class DictExp extends Expression {
 	    generator.write(generator.push(reg, expr.type.size()));
 	}
 
-	//Por ultimo, devuelvo la direccion donde comienza la lista
+	//Por ultimo, devuelvo la direccion donde comienza el diccionario
 	generator.write(generator.mov(regAddr,generator.stack_pointer()));
     }
 
