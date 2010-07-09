@@ -24,7 +24,7 @@ section .rodata
     write_mode db "w",0
 
 section .text
-    global  print_string, print_char, print_nl, print_int, read_int, open_file, write_file, close_file
+    global  print_string, print_float, print_char, print_nl, print_int, read_int, open_file, write_file, close_file
     extern printf, scanf, putchar, fopen, fprintf, fclose
 
     print_string:

@@ -99,7 +99,7 @@ parser code {:
 
 /* Terminals (tokens returned by the scanner). */
 terminal Integer INTEGER_V;
-terminal Float FLOAT_V;
+terminal Double FLOAT_V;
 terminal TrueExp TRUE;
 terminal FalseExp FALSE;
 terminal String IDENTIFIER;

@@ -327,7 +327,7 @@ public class Genx86{
 	String code = "";
 
 	code += sub(this.stackp,"1");
-	code += mov("["+this.stackp+"]",thing);
+	code += mov("["+this.stackp+"]",thing,"byte");
 	return code;
     }
 
@@ -339,7 +339,7 @@ public class Genx86{
 	    return "push "+thing+"\n";
 	else{
 	    code += sub("rsp","4");
-	    code += mov("[rsp]",thing);
+	    code += mov("[rsp]",thing,"dword");
 	    return code;
 	}
     }
@@ -349,7 +349,7 @@ public class Genx86{
 	String code = "";
 	if (this.bits == 64){
 	    code += sub("rsp",stackAlig);
-	    code += mov("[rsp]",thing);
+	    code += mov("[rsp]",thing,"qword");
 	    return code;
  	}
 	else{
@@ -588,11 +588,17 @@ public class Genx86{
     }
 
     public String fstp(String dst){
-	return "fstp "+dst+"\n";
+	if (this.bits == 32)
+	    return "fstp dword"+dst+"\n";
+	else
+	    return "fstp qword"+dst+"\n";
     }
 
     public String fld(String orig){
-	return "fld "+orig+"\n";
+	if (this.bits == 32)
+	    return "fld dword"+orig+"\n";
+	else
+	    return "fld qword"+orig+"\n";
     }
 
     public String fist(String dst){
@@ -804,7 +810,7 @@ public class Genx86{
     }
 
     public String fcom(){
-	return "ficom\n";
+	return "ficomi\n";
     }
 
     public String ficom(String integer,String size){
@@ -828,17 +834,21 @@ public class Genx86{
 	    if (bt instanceof IntType)
 		return cmp(a,b);
 	    else if (bt instanceof FloatType){
-		code += fld(b,size);
-		code += ficom(a,size);
+		code += pushFloat(b);
+		code += fld("["+stack_pointer+"]",size);
+		code += ficom("["+stack_pointer+"]",size);
 		code += fninit();
+		code += popFloat(b);
 		return code;
 	    }
 	}
 	else if (at instanceof FloatType){
 	    if (bt instanceof IntType){
-		code += fld(a,size);
-		code += ficom(b,size);
+		code += pushFloat(a);
+		code += fld("["+stack_pointer+"]",size);
+		code += ficom("["+stack_pointer+"]",size);
 		code += fninit();
+		code += popFloat(a);
 		return code;
 	    }
 	    else if (bt instanceof FloatType){

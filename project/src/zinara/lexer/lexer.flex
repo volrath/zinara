@@ -135,9 +135,9 @@ Number      = {Digit}+
  "False"                         { return symbol(sym.FALSE); }
  
  {Number}+                       { return symbol(sym.INTEGER_V,new Integer(Integer.parseInt(yytext()))); }
- {Number}"."{Number}+            { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()))); }
- {Number}+"."                    { return symbol(sym.FLOAT_V,new Float(Float.parseFloat(yytext()+"0"))); }
- "."{Number}+                    { return symbol(sym.FLOAT_V,new Float(Float.parseFloat("0"+yytext()))); }
+ {Number}"."{Number}+            { return symbol(sym.FLOAT_V,new Double(Double.parseDouble(yytext()))); }
+ {Number}+"."                    { return symbol(sym.FLOAT_V,new Double(Double.parseDouble(yytext()+"0"))); }
+ "."{Number}+                    { return symbol(sym.FLOAT_V,new Double(Double.parseDouble("0"+yytext()))); }
  \'[^\n\r]\'                     { return symbol(sym.CHAR_V,new Character(yytext().charAt(1))); }
  \"[^\n\r\"]*\"                  { return symbol(sym.STRING_V,yytext()); }
  {Letter} [a-zA-Z\'_0-9]*        { return symbol(sym.IDENTIFIER,yytext()); }

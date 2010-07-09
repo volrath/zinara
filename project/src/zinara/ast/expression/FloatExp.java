@@ -8,10 +8,10 @@ import zinara.exceptions.InvalidCodeException;
 import java.io.IOException;
 
 public class FloatExp extends Expression {
-    public float value;
-    public FloatExp ( float n ) { value=n; type = new FloatType(); }
+    public double value;
+    public FloatExp ( double n ) { value=n; type = new FloatType(); }
     public Type getType() { return type; }
-    public String toString() { return Float.toString(value); }
+    public String toString() { return Double.toString(value); }
 
     public void tox86(Genx86 generate)
 	throws IOException,InvalidCodeException {
