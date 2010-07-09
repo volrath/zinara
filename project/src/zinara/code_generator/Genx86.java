@@ -416,6 +416,7 @@ public class Genx86{
 	    return pushChar(t);
 	else if ((type instanceof ListType)||
 		 (type instanceof DictType)||
+		 (type instanceof TupleType)||
 		 (type instanceof StringType))
 	    return pushAddr(t);
 	else
@@ -470,6 +471,7 @@ public class Genx86{
 	    return popChar(t);
 	else if ((type instanceof ListType)||
 		 (type instanceof DictType)||
+		 (type instanceof TupleType)||
 		 (type instanceof StringType))
 	    return popAddr(t);
 	else
@@ -566,6 +568,7 @@ public class Genx86{
 	    return movChar(dst,orig);
 	else if ((type instanceof ListType)||
 		 (type instanceof DictType)||
+		 (type instanceof TupleType)||
 		 (type instanceof StringType))
 	    return movAddr(dst,orig);
 	else

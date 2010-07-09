@@ -56,7 +56,7 @@ public class LValueDict extends LValue {
 	constructor.register = register;
 	String constructorReg = generator.addrRegName(constructor.register);
 
-	constructor.tox86(generator);
+	constructor.currentDirection(generator);
 	//try {
 	//Integer offset = ((DictType)constructor.getType().getType()).getOffsetFor(identifier);
 	Integer offset = ((DictType)constructor.type).getOffsetFor(identifier);

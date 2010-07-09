@@ -1,6 +1,7 @@
 package zinara.ast.instructions;
 
 import zinara.ast.ASTNode;
+import zinara.ast.expression.Expression;
 import zinara.ast.instructions.Instruction;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
@@ -34,5 +35,4 @@ public abstract class Instruction extends ASTNode {
 	    }
 	}
     }
-
 }

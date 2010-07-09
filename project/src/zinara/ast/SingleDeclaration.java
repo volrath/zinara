@@ -150,9 +150,11 @@ public class SingleDeclaration extends Declaration {
     private void storeValue(Genx86 generator, Type t, String lvalueAddr, String exprReg)
 	throws IOException,InvalidCodeException{
 	
-	if (t.getType() instanceof ListType) {
-	    Type listType = ((ListType)t.getType()).getInsideType();
-	    String auxReg = generator.regName(register+1,listType);
+	if ((t.getType() instanceof ListType)||
+		 (t.getType() instanceof TupleType)||
+		 (t.getType() instanceof DictType)){
+	    String auxReg = generator.charRegName(register+1);
+	    int listSize = t.getType().size();
 	    String lvalueReg = generator.addrRegName(register+2);
 
 	    generator.write(generator.save(register+1));
@@ -160,12 +162,12 @@ public class SingleDeclaration extends Declaration {
 
 	    generator.write(generator.mov(lvalueReg,lvalueAddr));
 	    int j = 1;
-	    for (int i = ((ListType)t.getType()).len(); i > 0; i--) {
-		generator.write(generator.mov(auxReg,"["+exprReg+"]",listType));
-		generator.write(generator.mov("["+lvalueReg+"]",auxReg,listType));
+	    for (int i = 0; i < listSize; i++) {
+		generator.write(generator.movChar(auxReg,"["+exprReg+"]"));
+		generator.write(generator.movChar("["+lvalueReg+"]",auxReg));
 
-		generator.write(generator.add(lvalueReg,Integer.toString(listType.size())));
-		generator.write(generator.add(exprReg,Integer.toString(listType.size())));
+		generator.write(generator.add(lvalueReg,"1"));
+		generator.write(generator.add(exprReg,"1"));
 	    }
 
 	    generator.write(generator.restore(register+2));

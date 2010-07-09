@@ -1,5 +1,5 @@
 main:
-    var Bool t = True, f = False
+    var Bool t,f = True,False
 
     print(t or f)
     print(t | f)
