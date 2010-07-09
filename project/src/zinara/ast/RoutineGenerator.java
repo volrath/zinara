@@ -3,6 +3,7 @@ package zinara.ast;
 import zinara.ast.Param;
 import zinara.ast.RoutineGenerator;
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
 import zinara.ast.expression.Identifier;
 import zinara.ast.expression.ListExp;
 import zinara.ast.type.Type;
@@ -60,7 +61,13 @@ public class RoutineGenerator{
 		    !(exprType instanceof DictType)){
 
 		    //Se genera el valor
-		    expr.tox86(generator);
+		    if (expr instanceof BooleanExp){
+			String ret = generator.newLabel();
+			boolValue(generator,expr,ret,reg);
+			generator.writeLabel(ret);		    
+		    }
+		    else
+			expr.tox86(generator);
 
 		    reg = generator.regName(register,exprType);
 
@@ -128,9 +135,8 @@ public class RoutineGenerator{
 	generator.save(free_register);
 
 	Type listType = ((ListType)t.getType()).getInsideType();
-	String auxReg = generator.regName(free_register,listType);
-	String listTypeSize = Integer.toString(listType.size());
-	int listSize = ((ListType)t.getType()).len();
+	String auxReg = generator.charRegName(free_register);
+	int listSize = ((ListType)t.getType()).size();
 	String listEnd = Integer.toString((listSize-1)*listType.size());
 
 	//Apunto al final de la lista ya que, como se va a poner
@@ -138,9 +144,9 @@ public class RoutineGenerator{
 	generator.write(generator.add(listAddr,listEnd));
 
 	for (int i = 0; i < listSize; i++) {
-	    generator.write(generator.mov(auxReg,"["+listAddr+"]",listType));
-	    generator.write(generator.push(auxReg,listType));
-	    generator.write(generator.sub(listAddr,listTypeSize));
+	    generator.write(generator.movChar(auxReg,"["+listAddr+"]"));
+	    generator.write(generator.pushChar(auxReg));
+	    generator.write(generator.sub(listAddr,"1"));
 	}
 
 	generator.restore(free_register);
@@ -172,5 +178,20 @@ public class RoutineGenerator{
 	}
 
 	generator.restore(free_register);
+    }
+
+    public static void boolValue(Genx86 generate,  Expression expr,
+				 String ret, String reg)
+	throws IOException,InvalidCodeException{
+	String yesLabel = generate.newLabel();
+	String noLabel  = generate.newLabel();
+	expr.yesLabel = yesLabel;
+	expr.noLabel = noLabel;
+	expr.tox86(generate);
+	generate.writeLabel(yesLabel);
+	generate.write(generate.movBool(reg,"1"));
+	generate.write(generate.jump(ret));
+	generate.writeLabel(noLabel);
+	generate.write(generate.movBool(reg,"0"));
     }
 }

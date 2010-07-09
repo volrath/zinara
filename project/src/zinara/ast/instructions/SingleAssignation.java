@@ -65,7 +65,6 @@ public class SingleAssignation extends Assignation {
 	storeValue(generator, lvalue.type, expr,
 		   lvalueReg, exprReg,
 		   register+2);
-
 	if ((expr.type.getType() instanceof ListType)&&
 	    (expr instanceof ListExp)) {
 	    //Si era una lista literal se genero en la pila.
@@ -136,19 +135,20 @@ public class SingleAssignation extends Assignation {
 
 	    generator.restore(free_register);
 	}
-	else if (t.getType() instanceof ListType){
+	else if ((t.getType() instanceof ListType)||
+		 (t.getType() instanceof TupleType)||
+		 (t.getType() instanceof DictType)){
 	    generator.save(free_register);
 
-	    Type listType = ((ListType)t.getType()).getInsideType();
-	    String auxReg = generator.regName(free_register,listType);
-	    String listTypeSize = Integer.toString(listType.size());
+	    String auxReg = generator.charRegName(free_register);
+	    int listSize = t.getType().size();
 
-	    for (int i = 0; i < ((ListType)t.getType()).len(); i--) {
-		generator.write(generator.mov(auxReg,"["+exprReg+"]",listType));
-		generator.write(generator.mov("["+lvalueReg+"]",auxReg,listType));
+	    for (int i = 0; i < listSize; i++) {
+		generator.write(generator.movChar(auxReg,"["+exprReg+"]"));
+		generator.write(generator.movChar("["+lvalueReg+"]",auxReg));
 
-		generator.write(generator.add(lvalueReg,listTypeSize));
-		generator.write(generator.add(exprReg,listTypeSize));
+		generator.write(generator.add(lvalueReg,"1"));
+		generator.write(generator.add(exprReg,"1"));
 	    }
 
 	    generator.restore(free_register);

@@ -1,6 +1,7 @@
 package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
 import zinara.ast.type.Type;
 import zinara.code_generator.*;
 import zinara.exceptions.InvalidCodeException;
@@ -41,7 +42,13 @@ public class Return extends Instruction{
 	*/
 	String ax = generator.regName(0,exprType);
 
-	expr.tox86(generator);
+	if (expr instanceof BooleanExp){
+	    String ret = generator.newLabel();
+	    boolValue(generator,expr,ret,ax);
+	    generator.writeLabel(ret);
+	}
+	else
+	    expr.tox86(generator);
 
 	//Resultado en el registro ax
 	asm += generator.mov(ax,expReg);

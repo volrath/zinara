@@ -4,6 +4,7 @@ import zinara.code_generator.*;
 import java.util.ArrayList;
 import java.io.IOException;
 
+import zinara.ast.type.BoolType;
 import zinara.ast.type.TupleType;
 import zinara.ast.type.Type;
 import zinara.exceptions.TypeClashException;
@@ -35,7 +36,7 @@ public class TupleExp extends Expression {
     public void tox86(Genx86 generator)
 	throws IOException, InvalidCodeException{
 	Expression expr;
-	//Type listType =  ((ListType)type).getInsideType();
+
 	String reg;
 	String regAddr = generator.addrRegName(register);
 
@@ -43,11 +44,22 @@ public class TupleExp extends Expression {
 	    //Se genera el valor
 	    expr = (Expression)value.get(i);
 	    expr.register = register;
-	    expr.tox86(generator);
+	    reg = generator.regName(register, expr.type);
+
+	    if (expr.type.equals(new BoolType())){
+		String ret = generator.newLabel();
+		boolValue(generator,expr,ret,reg);
+		generator.writeLabel(ret);		    
+	    }
+	    else
+		expr.tox86(generator);
 	    
 	    //Se pushea en la pila
-	    reg = generator.regName(register, expr.type);
-	    generator.write(generator.push(reg, expr.type.size()));
+	    if (!(expr instanceof ListExp)&&
+		!(expr instanceof DictExp)&&
+		!(expr instanceof TupleExp)&&
+		!(expr instanceof StringExp))
+		generator.write(generator.push(reg, expr.type.size()));
 	}
 
 	//Por ultimo, devuelvo la direccion donde comienza la lista

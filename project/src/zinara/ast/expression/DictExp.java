@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.io.IOException;
 
-import zinara.ast.type.DictType;
 import zinara.ast.type.Type;
+import zinara.ast.type.DictType;
 import zinara.exceptions.InvalidDictionaryException;
 import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
@@ -55,10 +55,21 @@ public class DictExp extends Expression {
 	    //Se genera el valor
 	    expr = (Expression)value.get((String)it.next());
 	    expr.register = register;
-	    expr.tox86(generator);
+	    reg = generator.regName(register, expr.type);
+
+	    if (expr instanceof BooleanExp){
+		String ret = generator.newLabel();
+		boolValue(generator,expr,ret,reg);
+		generator.writeLabel(ret);		    
+	    }
+	    else
+		expr.tox86(generator);
 	    
 	    //Se pushea en la pila
-	    reg = generator.regName(register, expr.type);
+	    if (!(expr instanceof ListExp)&&
+		!(expr instanceof DictExp)&&
+		!(expr instanceof TupleExp)&&
+		!(expr instanceof StringExp))
 	    generator.write(generator.push(reg, expr.type.size()));
 	}
 

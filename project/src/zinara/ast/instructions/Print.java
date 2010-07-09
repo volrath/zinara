@@ -1,6 +1,7 @@
 package zinara.ast.instructions;
 
 import zinara.ast.expression.Expression;
+import zinara.ast.expression.BooleanExp;
 import zinara.code_generator.*;
 import zinara.ast.type.Type;
 import zinara.ast.type.IntType;
@@ -58,8 +59,15 @@ public class Print extends Instruction{
 	//Por ahora solo sirve con numeros, bools, chars y flotantes
 	expr.register = register;
 	String expReg = generate.addrRegName(expr.register);
+	String expRegBool = generate.boolRegName(expr.register);
 
-	expr.tox86(generate);
+	if (expr.type.equals(new BoolType())){
+	    String ret = generate.newLabel();
+	    boolValue(generate,expr,ret,expRegBool);
+	    generate.writeLabel(ret);
+	}
+	else
+	    expr.tox86(generate);
 
 	generate.write(generate.push("rdi"));
 	generate.write(generate.push("rax"));

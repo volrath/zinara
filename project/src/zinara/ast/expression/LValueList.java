@@ -32,7 +32,7 @@ public class LValueList extends LValue {
 
     public void tox86(Genx86 generator)
 	throws IOException,InvalidCodeException{
-	generator.write("; B-----\n");
+	generator.write("; B-asdf----\n");
 
 	try {
 	    constructor.register = register;
@@ -89,7 +89,7 @@ public class LValueList extends LValue {
 	generator.write(generator.jle("halt"));
 
 	generator.write(generator.imul(indexReg,
-				       Integer.toString(new IntType().size())));
+				       Integer.toString(type.size())));
 
 	generator.write(generator.add(constructorReg,
 				      offsetReg));

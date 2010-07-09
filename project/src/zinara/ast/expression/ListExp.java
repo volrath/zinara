@@ -5,6 +5,9 @@ import java.util.ArrayList;
 
 import zinara.ast.type.IntType;
 import zinara.ast.type.ListType;
+import zinara.ast.type.DictType;
+import zinara.ast.type.StringType;
+import zinara.ast.type.TupleType;
 import zinara.ast.type.Type;
 import zinara.exceptions.TypeClashException;
 import zinara.exceptions.InvalidCodeException;
@@ -72,10 +75,22 @@ public class ListExp extends Expression {
 	    //Se genera el valor
 	    expr = (Expression)value.get(i);
 	    expr.register = register;
-	    expr.tox86(generator);
+
+	    if (expr instanceof BooleanExp){
+		String ret = generator.newLabel();
+		boolValue(generator,expr,ret,reg);
+		generator.writeLabel(ret);
+	    }
+	    else
+		expr.tox86(generator);
+	    
 	    
 	    //Se pushea en la pila
-	    generator.write(generator.push(reg,listType.size()));
+	    if (!(expr instanceof ListExp)&&
+		!(expr instanceof DictExp)&&
+		!(expr instanceof TupleExp)&&
+		!(expr instanceof StringExp))
+		generator.write(generator.push(reg,listType.size()));
 	}
 
 	//Por ultimo, devuelvo la direccion donde comienza la lista
