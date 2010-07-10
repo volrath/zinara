@@ -12,7 +12,7 @@ main:
     end
 
     while(y < 20):
-        if((y/2)*2-y == 0): //Modulo
+        if((y/2)*2-y == 0):
 	    print("par")
         else:
 	    print("impar")

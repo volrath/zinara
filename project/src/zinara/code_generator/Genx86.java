@@ -866,6 +866,10 @@ public class Genx86{
 		return code;
 	    }
 	}
+	else if ((at instanceof BoolType) && (bt instanceof BoolType)) {
+	    return cmp(a,b);
+	    //System.out.println(" -> " + a + " ; " + b);
+	}
 	else
 	    throw new InvalidCodeException("No se pueden comparar "+
 					   at+

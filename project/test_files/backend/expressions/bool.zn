@@ -3,9 +3,7 @@ main:
     var Bool f = False
 
     print(t or f)
-    print(t | f)
     print(t and f)
-    print(t & f)
     print(not t)
     print(not f)
 

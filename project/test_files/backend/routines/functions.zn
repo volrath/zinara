@@ -15,8 +15,8 @@ def ref_unmodifier(copy x as Int) -> Bool:
     return False
 enddef
 
-def par_o_impar(copy x as Int) -> String:
-    if (x % 2 == 0):
+def divisible_entre_dos(copy x as Int) -> String:
+    if (x / 2 == 0):
         return "Par"
     else:
         return "Impar"
@@ -38,5 +38,5 @@ main:
         print(x)
     end
 
-    print(par_o_impar(x + 1))    
+    print(divisible_entre_dos(x + 1))    
 endmain

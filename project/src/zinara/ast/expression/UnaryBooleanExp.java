@@ -11,14 +11,14 @@ import java.io.IOException;
 
 public class UnaryBooleanExp extends BooleanExp {
     public int operator;
-    public BooleanExp operand;
+    public Expression operand;
     
     public UnaryBooleanExp ( int o, Expression e )
 	throws TypeClashException {
-	if (!(e instanceof BooleanExp))
+	if (!(e.getType().getType().equals(new BoolType())))
 	    throw new TypeClashException("La expresion " + e + " no es del tipo Bool por lo tanto no puede ser negada");
 	operator = o;
-	operand  = (BooleanExp)e;
+	operand  = e;
 	type = new BoolType();
     }
 
