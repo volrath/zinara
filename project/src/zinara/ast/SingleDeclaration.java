@@ -151,8 +151,9 @@ public class SingleDeclaration extends Declaration {
 	throws IOException,InvalidCodeException{
 	
 	if ((t.getType() instanceof ListType)||
-		 (t.getType() instanceof TupleType)||
-		 (t.getType() instanceof DictType)){
+	    (t.getType() instanceof StringType)||
+	    (t.getType() instanceof TupleType)||
+	    (t.getType() instanceof DictType)){
 	    String auxReg = generator.charRegName(register+1);
 	    int listSize = t.getType().size();
 	    String lvalueReg = generator.addrRegName(register+2);

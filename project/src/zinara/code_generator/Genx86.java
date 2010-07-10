@@ -151,6 +151,10 @@ public class Genx86{
 	// Exits the program
 	writeLabel(program.getMain().getCode().nextInst);
 	exitSyscall(0);
+	writeLabel("haltNI"); //negative Index
+	exitSyscall(1);
+	writeLabel("haltOOB");//Out Of Bounds
+	exitSyscall(2);
 	closeFile();
     }
 
@@ -888,7 +892,7 @@ public class Genx86{
     }
 
     public String jne(String label){
-	return "je "+label+"\n";
+	return "jne "+label+"\n";
     }
 
     public String jg(String label){

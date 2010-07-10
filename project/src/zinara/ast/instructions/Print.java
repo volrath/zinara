@@ -57,11 +57,12 @@ public class Print extends Instruction{
 	}
 	else if (!(expr instanceof StringExp)&&
 		 (expr.type instanceof StringType)){
-	    System.out.println(expr.toString());
+	    System.out.println("noasfa2");
 	    ((LValue)expr).currentDirection(generate);
 	}
-	else
+	else{
 	    expr.tox86(generate);
+	}
 
 	generate.write(generate.push("rdi"));
 	generate.write(generate.push("rax"));

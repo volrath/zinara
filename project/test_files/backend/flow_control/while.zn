@@ -12,10 +12,11 @@ main:
     end
 
     while(y < 20):
-        if(y % 2 == 0):
+        if((y/2)*2-y == 0): //Modulo
 	    print("par")
         else:
 	    print("impar")
 	end
+	y = y+1
     end
 endmain

@@ -5,18 +5,15 @@ main:
     print(x - y)
     print(x * y)
     print(x / y)
-    print(x % y)
 
     var Int z = 5
 
     print(z + 1)
     print(z - 2)
     print(z * 3)
-    print(z / 4)
-    print(z % 5)
 
     print(-z)
     print(-1)
 
-    print(((x+y)*z) + 4*((z%y))*((x+y+z)/4))
+    print(((x+y)*z) + 4*((z-y))*((x+y+z)/4))
 endmain

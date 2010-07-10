@@ -269,7 +269,6 @@ Las cadenas para los operadores son:
 \item \texttt{-}
 \item \texttt{*}
 \item \texttt{/}
-\item \texttt{\%}
 \item \texttt{\^}
 \item \texttt{>}
 \item \texttt{<}
@@ -309,7 +308,6 @@ tipos b\'asicos est\'a documentada en la secci\'on \ref{subsec:comp-tipos}
 \item Resta    (\texttt{-})
 \item Producto (\texttt{*})
 \item Divisi\'on  (\texttt{/})
-\item M\'odulo (\texttt{\%})
 \item Potencia (\texttt{\^})
 \item Menos unario (\texttt{-})
 \end{itemize}
@@ -543,7 +541,7 @@ con un Char y de un Char con un Char.
 \item
 \begin{tabular}{|c||ccccc|}
 	\hline
-\texttt{-,*,\%,/,\^}  &  Int  & Float & Char  & String & Bool  \\
+\texttt{-,*,/,\^}  &  Int  & Float & Char  & String & Bool  \\
 	\hline \hline
 Int    & Int   & Float & \emph{Error} & \emph{Error} & \emph{Error}\\
 Float  & Float & Float & \emph{Error} & \emph{Error} & \emph{Error}\\
@@ -933,7 +931,11 @@ instrucciones (para el caso en que tengan efectos de borde).
                       64bits, de 32 si la arquitectura es de 32bits.
 \item \textbf{Bool}: Booleano, se representan en unos o ceros de 32bits.
 \item \textbf{Char}: Caracter ASCII. Se guardan en un (1) byte.
-\item \textbf{Listas}: Se guardan como arreglos lineales continuos en memoria.
+\item \textbf{Listas}: Se guardan como arreglos lineales continuos en
+      memoria.\\
+      En caso de que se une un \'indice negativo, el lenguaje falla con
+      c\'odigo de salida 1. En caso de \'indice fuera de rango, el
+      lenguaje falla con c\'odigo de salida 2.
 \item \textbf{Tuplas}: Se guardan como arreglos lineales continuos en memoria.
 \item \textbf{Diccionarios}: Se guardan como estructuras que respetan el alineamiento
                        de memoria.
@@ -1273,11 +1275,16 @@ correcto en su analizador lexicogr\'afico y su analizador sint\'actico. A
 parte de esto tambi\'en construye el \'arbol sint\'actico abstracto y la
 tabla de s\'imbolos de un programa dado. El chequeo de tipos est\'a completo.\\
 
-\indent Respecto a la generaci\'on de c\'odigo, se cuenta con
-declaraciones, asignaciones, alias de tipos, if, while, expresiones
-booleanas, aritmeticas, reales y caracteres, funciones y
-procedimientos con pasaje de parámetros por valor y referencia,
-adem\'as de un IO limitado únicamente a la impresión por pantalla.\\
+\indent Respecto a la generaci\'on de c\'odigo, su manejo del tipo
+compuesto String es defectuoso porque no se previ\'o que se hiba a
+requerir conocer el tama\~no del String durante la generaci\'on de
+c\'odigo.\\
+\indent Tambi\'en existen problemas con respecto a la generaci\'on de
+literales flotantes, que en algunos casos generan errores sint\'acticos
+en nasm. Adem\'as, la impresi\'on de flotantes no funciona.
+\indent La parte de lectura del IO no est\'a implementada por falta de
+tiempo.
+
 
 \indent En estos momentos existes varias funcionalidades no
 implementadas en el lenguaje, estas son:

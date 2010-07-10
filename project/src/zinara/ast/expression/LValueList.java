@@ -6,6 +6,7 @@ import zinara.ast.type.FloatType;
 import zinara.ast.type.IntType;
 import zinara.ast.type.ListType;
 import zinara.ast.type.DictType;
+import zinara.ast.instructions.Print;
 import zinara.code_generator.Genx86;
 import zinara.exceptions.InvalidCodeException;
 import zinara.exceptions.TypeClashException;
@@ -70,30 +71,32 @@ public class LValueList extends LValue {
 
 	//Ver NOTA
 	String offsetReg      = generator.addrRegName(index.register);
-
+	
 	constructor.currentDirection(generator);
-
+	    
 	generator.write(generator.save(index.register));
 	generator.write(generator.save(register+2));
-
+	generator.write(generator.save(register+3));
+	    
 	index.tox86(generator);
-
+	    
 	//Chequeo de errores: indice negativo
 	generator.write(generator.cmp(indexReg,"0"));
-	generator.write(generator.jl("halt"));
-
+	generator.write(generator.jl("haltNI"));
+	    
 	//Chequeo de errores: indice fuera de rango
 	generator.write(generator.movInt(errorCheckReg,listSize));
 	generator.write(generator.sub(errorCheckReg,indexReg));
 	generator.write(generator.cmp(errorCheckReg,"0"));
-	generator.write(generator.jle("halt"));
-
+	generator.write(generator.jle("haltOOB"));
+	    
 	generator.write(generator.imul(indexReg,
 				       Integer.toString(type.size())));
-
+	    
 	generator.write(generator.add(constructorReg,
 				      offsetReg));
-
+	    
+	generator.write(generator.restore(register+3));
 	generator.write(generator.restore(register+2));
 	generator.write(generator.restore(index.register));
     }
